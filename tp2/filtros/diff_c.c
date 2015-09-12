@@ -3,6 +3,11 @@
 #include <math.h>
 #include "../tp2.h"
 
+#define MAX(a,b) \
+   __extension__({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a > _b ? _a : _b; })
+
 void diff_c (
 	unsigned char *src,
 	unsigned char *src_2,
@@ -13,21 +18,20 @@ void diff_c (
 	int src_2_row_size,
 	int dst_row_size
 ) {
-	unsigned char (*src_matrix)[src_row_size] = (unsigned char (*)[src_row_size]) src;
-	unsigned char (*src_2_matrix)[src_2_row_size] = (unsigned char (*)[src_2_row_size]) src_2;
-	unsigned char (*dst_matrix)[dst_row_size] = (unsigned char (*)[dst_row_size]) dst;
-
+  int idx;
 	for (int i = 0; i < n; ++i)
 		for (int j = 0; j < src_row_size; j += 4) {
-			unsigned char b_resta = abs( src_matrix[i][j] - src_2_matrix[i][j] );
-			unsigned char g_resta = abs( src_matrix[i][j + 1] - src_2_matrix[i][j + 1] );
-			unsigned char r_resta = abs( src_matrix[i][j + 2] - src_2_matrix[i][j + 2] );
-			unsigned char norma_inf = max(max(b_resta, g_resta), r_resta);
+      idx = i*src_row_size+j;
+			unsigned char b_resta = abs( src[idx] - src_2[idx] );
+			unsigned char g_resta = abs( src[idx + 1] - src_2[idx + 1] );
+			unsigned char r_resta = abs( src[idx + 2] - src_2[idx + 2] );
+			unsigned char norma_inf = MAX(b_resta, g_resta);
+      norma_inf = MAX(norma_inf, r_resta);
 
-			dst_matrix[i][j] = norma_inf; // blue
-			dst_matrix[i][j + 1] = norma_inf; // green
-			dst_matrix[i][j + 2] = norma_inf; // red
-			dst_matrix[i][j + 3] = 255; // alpha
+			dst[idx] = norma_inf; // blue
+			dst[idx + 1] = norma_inf; // green
+			dst[idx + 2] = norma_inf; // red
+			dst[idx + 3] = 255; // alpha
 		}
 
 
