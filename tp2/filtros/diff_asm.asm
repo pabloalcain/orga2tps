@@ -9,11 +9,11 @@ section .data
 
 section .text
 ;void diff_asm    (
-	;unsigned char *src,
-    ;unsigned char *src2,
-	;unsigned char *dst,
-	;int filas,
-	;int cols)
+  ;unsigned char *src,
+  ;unsigned char *src2,
+  ;unsigned char *dst,
+  ;int filas,
+  ;int cols)
 
 _diff_asm:
 diff_asm:
