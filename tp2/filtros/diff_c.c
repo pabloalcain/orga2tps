@@ -20,7 +20,7 @@ void diff_c (
 ) {
   int idx;
   for (int i = 0; i < n; ++i)
-    for (int j = 0; j < m; j += 4) {
+    for (int j = 0; j < 4*m; j += 4) {
       idx = i*src_row_size+j;
       unsigned char b_resta = abs( src[idx] - src_2[idx] );
       unsigned char g_resta = abs( src[idx + 1] - src_2[idx + 1] );
