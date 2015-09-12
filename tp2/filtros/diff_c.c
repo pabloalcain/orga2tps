@@ -27,7 +27,7 @@ void diff_c (
 			dst_matrix[i][j] = norma_inf; // blue
 			dst_matrix[i][j + 1] = norma_inf; // green
 			dst_matrix[i][j + 2] = norma_inf; // red
-			dst_matrix[i][j + 3] = 255; // alpha			
+			dst_matrix[i][j + 3] = 255; // alpha
 		}
 
 
