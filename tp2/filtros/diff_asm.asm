@@ -20,9 +20,11 @@ diff_asm:
     xor r9, r9
     .columnas:
       movq xmm0, [rdi]
-      movq xmm1, [rsi]
+      movq xmm3, [rsi]
+      movq xmm1, xmm0
+      pmaxub xmm1, xmm3
+      pminub xmm0, xmm3
       psubb xmm0, xmm1
-      pabsb xmm0, xmm0
       movq xmm1, xmm0
       pshufb xmm1, xmm2
       pmaxub xmm0, xmm1 
