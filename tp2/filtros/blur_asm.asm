@@ -5,7 +5,7 @@ global blur_asm
 
 section .data
 mask_rot: DB 1, 2, 0, 0xFF, 5, 6, 4, 0xFF
-mask_dw2b: DB 0, 5, 9, 13
+mask_dw2b: DB 0, 4, 8, 12
 
 section .text
 ;void blur_asm (unsigned char *src, unsigned char *dst,
@@ -61,7 +61,7 @@ blur_asm:
     .columnas:
       movd xmm1, [rdi]
       movd [rsi], xmm1
-      pmovsxbd xmm3, xmm1
+      pmovzxbd xmm3, xmm1
       cvtdq2ps xmm1, xmm3
       
       mov r14, rdi
@@ -73,7 +73,7 @@ blur_asm:
         not r12
         .neigh_cols:
           movd xmm2, [r14]
-          pmovsxbd xmm3, xmm2
+          pmovzxbd xmm3, xmm2
           cvtdq2ps xmm2, xmm3
           addps xmm1, xmm2
           inc r12
