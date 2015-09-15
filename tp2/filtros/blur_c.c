@@ -3,6 +3,7 @@
 #include <math.h>
 #include "../tp2.h"
 
+
 void crea_filtro(int radius, float sigma, float *filtro) {
   float sum, dist;
   int x, y, len;
@@ -28,6 +29,13 @@ void crea_filtro(int radius, float sigma, float *filtro) {
   }
 }
 
+
+float* alloc_creafiltro(int radius, float sigma) {
+  int len = (2*radius + 1);
+  float* filtro = (float *)malloc(len * len * sizeof(float));
+  crea_filtro(radius, sigma, filtro);
+  return filtro;
+}
 
 void blur_c (unsigned char *src,
              unsigned char *dst,
