@@ -30,7 +30,8 @@ diff_asm:
       pmaxub xmm0, xmm1 
 
       movq [rdx], xmm0
-
+      mov byte [rdx+3], 0xFF
+      mov byte [rdx+7], 0xFF
       add rsi, 8
       add rdi, 8
       add rdx, 8
