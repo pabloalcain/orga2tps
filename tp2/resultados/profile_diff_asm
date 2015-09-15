@@ -1,0 +1,60 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  Ts/call  Ts/call  name    
+ 10.34      0.19     0.19                             diff_asm.columnas (diff_asm.asm:23 @ 402666)
+  9.25      0.36     0.17                             diff_asm.columnas (diff_asm.asm:36 @ 402687)
+  8.70      0.52     0.16                             diff_asm.columnas (diff_asm.asm:44 @ 4026a0)
+  7.07      0.65     0.13                             diff_asm.columnas (diff_asm.asm:30 @ 402676)
+  6.80      0.78     0.13                             diff_asm.columnas (diff_asm.asm:22 @ 402662)
+  6.53      0.90     0.12                             diff_asm.columnas (diff_asm.asm:37 @ 40268c)
+  5.98      1.01     0.11                             diff_asm.columnas (diff_asm.asm:35 @ 402683)
+  5.98      1.12     0.11                             diff_asm.columnas (diff_asm.asm:25 @ 40266a)
+  5.98      1.23     0.11                             diff_asm.columnas (diff_asm.asm:40 @ 402690)
+  5.17      1.32     0.10                             diff_asm.columnas (diff_asm.asm:31 @ 40267a)
+  4.90      1.41     0.09                             diff_asm.columnas (diff_asm.asm:27 @ 402672)
+  4.35      1.49     0.08                             diff_asm.columnas (diff_asm.asm:45 @ 4026a4)
+  4.08      1.57     0.08                             diff_asm.columnas (diff_asm.asm:34 @ 40267e)
+  3.81      1.64     0.07                             diff_asm.columnas (diff_asm.asm:42 @ 402698)
+  3.81      1.71     0.07                             diff_asm.columnas (diff_asm.asm:49 @ 4026a8)
+  2.45      1.75     0.05                             diff_asm.columnas (diff_asm.asm:26 @ 40266e)
+  2.18      1.79     0.04                             diff_asm.columnas (diff_asm.asm:41 @ 402694)
+  1.09      1.81     0.02                             diff_asm.columnas (diff_asm.asm:52 @ 4026b1)
+  0.54      1.82     0.01                             diff_asm.columnas (diff_asm.asm:43 @ 40269c)
+  0.54      1.83     0.01                             diff_asm.filas (diff_asm.asm:20 @ 40265f)
+  0.27      1.84     0.01                             leer_params_diff (diff.c:34 @ 402441)
+  0.27      1.84     0.01                             leer_params_diff (diff.c:36 @ 40245e)
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+ 
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this 
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
