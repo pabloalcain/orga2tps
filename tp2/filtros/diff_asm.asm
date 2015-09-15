@@ -16,6 +16,9 @@ diff_asm:
   mov rbp, rsp
   xor r10, r10
   movq xmm2, [mask_rot]
+  ; suponemos que van a ser pares la cantidad total de columnas. Si
+  ; así no fuera, el formato viene comprimido y tampoco serviría la
+  ; signatura propuesta
   .filas:
     xor r9, r9
     .columnas:
@@ -43,6 +46,9 @@ diff_asm:
       add rsi, 8
       add rdi, 8
       add rdx, 8
+      ; esto es un poco más rápido (10%) que sumar en un registro
+      ; extra y acceder con [ ] a la posición de memoria con
+      ; desplazamiento
       add r9, 2                 ; procesamos dos pixeles a la vez
       cmp r9, r8
       jnz .columnas
