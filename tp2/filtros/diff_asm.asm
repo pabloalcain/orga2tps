@@ -21,16 +21,22 @@ diff_asm:
     .columnas:
       movq xmm0, [rdi]
       movq xmm3, [rsi]
+
       movq xmm1, xmm0
       pmaxub xmm1, xmm3
       pminub xmm0, xmm3
+      ; ahora xmm1 tiene los altos y xmm0 los bajos
+
       psubb xmm0, xmm1
       movq xmm1, xmm0
+
+      ; el máximo en unas rotaciones
       pshufb xmm1, xmm2
       pmaxub xmm0, xmm1 
       pshufb xmm1, xmm2
       pmaxub xmm0, xmm1 
 
+      ; guardo y escribo el valor de alpha
       movq [rdx], xmm0
       mov byte [rdx+3], 0xFF
       mov byte [rdx+7], 0xFF
