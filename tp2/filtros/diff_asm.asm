@@ -26,9 +26,9 @@ diff_asm:
       movq xmm3, [rsi]
 
       movq xmm1, xmm0
-      pmaxub xmm1, xmm3
-      pminub xmm0, xmm3
-      ; ahora xmm1 tiene los altos y xmm0 los bajos
+      pmaxub xmm0, xmm3
+      pminub xmm1, xmm3
+      ; ahora xmm1 tiene los bajos y xmm0 los altos
 
       psubb xmm0, xmm1
       movq xmm1, xmm0
