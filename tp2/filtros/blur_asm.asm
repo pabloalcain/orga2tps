@@ -1,7 +1,8 @@
 default rel
 global _blur_asm
 global blur_asm
-
+extern alloc_creafiltro
+extern free
 
 section .data
 mask_rot: DB 1, 2, 0, 0xFF, 5, 6, 4, 0xFF
@@ -16,6 +17,27 @@ _blur_asm:
 blur_asm:
   push rbp
   mov rbp, rsp
+  push r15
+
+  push rdi
+  push rsi
+  push rdx
+  push rcx
+  push r8
+  mov rdi, r8
+  call alloc_creafiltro
+  pop r8
+  pop rcx
+  pop rdx
+  pop rsi
+  pop rdi
+
+  mov r15, rax
+  
+
+
+
+
   ; esto es para el tonto filtro de promedio
   cvtsi2ss xmm4, r8
   shufps xmm4, xmm4, 0x00
@@ -30,6 +52,7 @@ blur_asm:
   ; vecinos
 
   mov r9, r8
+  xor rax, rax
   .zero:
     sub rax, rcx
     ; nos movemos r8 filas para arriba
@@ -59,15 +82,15 @@ blur_asm:
   .filas:
     mov r10, r8
     .columnas:
-      movd xmm1, [rdi]
-      movd [rsi], xmm1
+      pxor xmm1, xmm1
       pmovzxbd xmm3, xmm1
       cvtdq2ps xmm1, xmm3
-      
+      mulps xmm1, xmm4
       mov r14, rdi
       add r14, rax
       mov r11, r8
       not r11
+      xor rbx, rbx
       .neigh_filas:
         mov r12, r8
         not r12
@@ -75,9 +98,15 @@ blur_asm:
           movd xmm2, [r14]
           pmovzxbd xmm3, xmm2
           cvtdq2ps xmm2, xmm3
+
+          movd xmm4, [r15 + rbx]
+          shufps xmm4, xmm4, 0x00
+
+          mulps xmm2, xmm4
           addps xmm1, xmm2
           inc r12
           add r14, 4
+          add rbx, 4
           cmp r12, r8
         jnz .neigh_cols
         add r14, r13
@@ -85,7 +114,6 @@ blur_asm:
         cmp r11, r8
       jnz .neigh_filas
 
-      divps xmm1, xmm4
       cvtps2dq xmm3, xmm1
       pshufb xmm3, xmm5
       movd [rsi], xmm3
@@ -101,5 +129,9 @@ blur_asm:
     inc r9
     cmp r9, rdx
   jnz .filas
+  mov rdi, r15
+  call free
+  pop r15
   pop rbp
+
   ret
