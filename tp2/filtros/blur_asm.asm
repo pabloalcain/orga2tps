@@ -18,14 +18,20 @@ blur_asm:
   push rbp
   mov rbp, rsp
   push r15
+  push r14
+  push r13
+  push r12
+  push rbx
 
   push rdi
   push rsi
   push rdx
   push rcx
   push r8
+  sub rsp, 8
   mov rdi, r8
   call alloc_creafiltro
+  add rsp, 8
   pop r8
   pop rcx
   pop rdx
@@ -131,6 +137,10 @@ blur_asm:
   jnz .filas
   mov rdi, r15
   call free
+  pop rbx
+  pop r12
+  pop r13
+  pop r14
   pop r15
   pop rbp
 
