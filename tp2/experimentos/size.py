@@ -34,13 +34,12 @@ for x in sz:
     for filt in filtros:
         for imp in implementaciones:
             niter = int(n[filt][imp]*(1000.0/x)**2)
-            niter = 1
             t = time_me(filt, 'img1.bmp', imp, args[filt], n=niter, path=path)
             tot[filt][imp].append(t/niter)
         # Aquí comparamos que las dos imágenes sean iguales
-        rms = compara_imagenes('img1.bmp.{0}.C.bmp'.format(filt), 
+        diff = compara_imagenes('img1.bmp.{0}.C.bmp'.format(filt), 
                                'img1.bmp.{0}.ASM.bmp'.format(filt),)
-        if rms != 0:
+        if diff:
             msg = 'Atención! rms para {0}x{1} en filtro {2} no concuerda'
             print msg.format(x, x, filt)
             save = 'img{0}_{1}x{2}.bmp'

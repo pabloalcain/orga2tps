@@ -60,15 +60,17 @@ def time_me(filtro, img, imp, params, n=1, path=None):
     system(' '.join(cmd))
     return time.time() - t0
 
-def compara_imagenes(file1, file2):
+def compara_imagenes(file1, file2, threshold=5):
     """
-    Compara dos imágenes y devuelve el rms de la diferencia
+    Compara dos imágenes y devuelve si son diferentes o no (a menos de
+    un threshold)
     """
     
     image1 = Image.open(file1)
     image2 = Image.open(file2)
-    h1 = numpy.array(image1.histogram())
-    h2 = numpy.array(image2.histogram())
-    diff = h1 - h2
-    rms = numpy.sqrt(numpy.dot(diff, diff))
-    return rms
+    h1 = numpy.array(image1)
+    h2 = numpy.array(image2)
+    diff = (abs(h1 - h2) > threshold).any()
+    
+    print abs(h1-h2)
+    return diff
