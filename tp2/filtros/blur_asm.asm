@@ -123,6 +123,7 @@ blur_asm:
       cvtps2dq xmm3, xmm1
       pshufb xmm3, xmm5
       movd [rsi], xmm3
+      mov byte [rsi + 3], 0xFF
       add rdi, 4
       add rsi, 4
       inc r10
