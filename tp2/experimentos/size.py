@@ -24,7 +24,7 @@ filtros = ('diff', 'blur')
 implementaciones = ('c', 'asm')
 
 
-sz = map(int, np.linspace(1000, 20, 50))
+sz = map(int, np.linspace(2000, 100, 200))
 sz = [i - i%4 for i in sz] #Redondeo a múltiplo de 4
 
 for x in sz:
@@ -67,3 +67,4 @@ for filt in filtros:
     ax.set_ylabel(r'Speedup de ASM vs C')
     fig.tight_layout()
     fig.savefig('speedup_{0}.pdf'.format(filt))
+    np.savetxt('tiempos_{0}.dat'.format(filt), transpose([asm, c]), header='asm, c')
