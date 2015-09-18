@@ -24,7 +24,7 @@ filtros = ('diff', 'blur')
 implementaciones = ('c', 'asm')
 
 
-sz = map(int, np.linspace(1000, 20, 1))
+sz = map(int, np.linspace(1000, 20, 50))
 sz = [i - i%4 for i in sz] #Redondeo a múltiplo de 4
 
 for x in sz:
