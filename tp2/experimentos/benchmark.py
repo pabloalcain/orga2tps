@@ -71,6 +71,4 @@ def compara_imagenes(file1, file2, threshold=5):
     h1 = numpy.array(image1)
     h2 = numpy.array(image2)
     diff = (abs(h1 - h2) > threshold).any()
-    
-    print abs(h1-h2)
     return diff

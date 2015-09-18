@@ -38,13 +38,13 @@ for x in sz:
             tot[filt][imp].append(t/niter)
         # Aquí comparamos que las dos imágenes sean iguales
         diff = compara_imagenes('img1.bmp.{0}.C.bmp'.format(filt), 
-                               'img1.bmp.{0}.ASM.bmp'.format(filt),)
+                               'img1.bmp.{0}.ASM.bmp'.format(filt), threshold=0)
         if diff:
-            msg = 'Atención! rms para {0}x{1} en filtro {2} no concuerda'
+            msg = 'Atención! Las imágenes de {0}x{1} en filtro {2} no concuerda'
             print msg.format(x, x, filt)
             save = 'img{0}_{1}x{2}.bmp'
             save_img1 = save.format(1, x, x)
-            save_img2 = save.format(1, x, x)
+            save_img2 = save.format(2, x, x)
             system('cp img{0}.bmp img{0}_{1}x{2}.bmp'.format(1, x, x))
             system('cp img{0}.bmp img{0}_{1}x{2}.bmp'.format(2, x, x))
             print 'Imágenes guardadas en {0} y {1}'.format(save_img1, save_img2)
