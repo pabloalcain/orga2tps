@@ -63,7 +63,7 @@ void blur_c (unsigned char *src,
         }
       }
       for (int l = 0; l < 3; ++l) {
-        dst[idx + l] = (unsigned char) rgb[l];
+        dst[idx + l] = (unsigned char) round(rgb[l]);
       }
       dst[idx + 3] = 0xFF;
     }
