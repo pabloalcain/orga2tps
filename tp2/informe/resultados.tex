@@ -1,0 +1,58 @@
+\indent En esta secci\'on se muestran los tiempos de ejecuci\'on de cada algoritmo comparandose las implementaciones hechas en \textbf{C} contra las implementaciones hechas en \textbf{ASM}.\\
+Dichos resultados se corresponden con la cantidad de ticks del procesador que cada algoritmo tom\'o, usando para ello el par\'ametro \textbf{-t} del programa principal, cuyo valor devuelto es justamente la cantidad de ticks para ejecutar el filtro de entrada una cantidad de veces equivalente a la pasada como par\'ametro.\\
+\indent Como medimos los ticks del procesador? Es algo que se hace internamente en el c\'odigo que la c\'atedra nos proporcion\'o pero de todas formas sabemos que esto se lleva a cabo usando la instrucci\'on \textbf{rdtsc}, la cual obtiene el Time Stamp Counter (TSC). Dicho registro se incrementa en uno con cada ciclo del procesador, de modo que la cantidad de ciclos total equivale a la diferencia del valor despu\'es y antes de ejecutar cada filtro.\\
+Notar que este registro es global y por ende cuenta ticks que todos los procesos del sistema estan consumiendo, no solo el nuestro, de modo que ser\'ia incorrecto hacer solo una medici\'on, en vez de eso hacemos 1000 y tomamos el promedio, para suavizar outliers (observaci\'on num\'ericamente muy distante al resto de los valores).
+
+\subsection{SpeedUp}
+\indent En computaci\'on paralela el \textit{speedup} refiere a cu\'anto m\'as r\'apido es un algoritmo paralelo (en nuestro caso refieren a las implementaciones en Asm que hacen uso de las instrucciones SSE) que el correspondiente algoritmo secuencial (lo que ser\'ia cada implementaci\'on en C).\\\\
+Porqu\'e consideramos importante medir que tanto m\'as r\'apido es la versi\'on paralela que la secuencial? Si bien este tipo de an\'alisis excede originalmente lo pedido por la c\'atedra, nos pareci\'on razonable dar una idea de la magnitud de que tantas veces es mejor una implementaci\'on paralela que secuencial. Si bien este valor se desprende de la cantidad de ticks insumidos por cada implementaci\'on, nos pareci\'o adecuado formalizarlo usando el concepto de \textit{speedup}. Se calcula con la f\'ormula:\\
+\begin{align}
+S_{p} = \dfrac{T_{1}} {T_{p}}
+\end{align}
+donde:\\
+\begin{itemize}
+	\item $T_{1}$ : cantidad de ticks del algoritmo secuencial
+	\item $T_{p}$ : cantidad de ticks del algoritmo paralelo con p procesadores (en nuestro caso el n\'umero de procesadores equivaldr\'ia a cantidad de pixels procesados en paralelo)
+\end{itemize}
+Se considera speedup lineal cuando: \\
+\begin{align}
+S_{p} = p
+\end{align}
+
+
+\subsection{Im\'agenes y consideraciones sobre los gr\'aficos}
+Para el analisis generamos un script en python que genera imagenes al azar, de distintas dimensiones, las imagenes son cuadradas y las dimensiones usadas para la comparacion fueron:
+	ACA REEMPLAZAR POR LAS QUE USAMOS100x100, 150x150, 200x200, 250x250, 300x300, 350x350, 400x400, 450x450, 500x500, 550x550, 600x600, 650x650.\\
+
+\indent Dado que en todos los casos consideramos im\'agenes cuadradas, en el eje de abscisas de los gr\'aficos s\'olo especificamos la cantidad de pixels por fila (o columna, que es igual)\\
+\indent Las mediciones se repitieron 1000 veces y los par\'ametros particulares a cada filtro se especifican previo a su correspondiente gr\'afico. 
+En las siguientes secciones mostramos gr\'aficos con cierto an\'alisis particular para cada filtro seg\'un corresponda y al final, conclusiones que aplican a todos los filtros.
+
+\subsection{Comparaciones entre las optimizaciones de C}
+
+Aca comentar que diferencias hay entre una y otra 
+   
+\subsection{Diferencia de Imagenes}
+  \input{resDif.tex}
+\subsection{Blur Gaussiano}
+  \input{resBlur.tex}
+
+  
+  \newpage
+  
+A partir de los resultados y tablas vistas podemos mencionar las siguientes conclusiones generales que aplican a todos los filtros:
+  \begin{itemize}
+    \item Las implementaciones hechas en \textit{Assembler} son efectivamente m\'as r\'apidas que las implementaciones hechas en \textit{C}. Esto era lo esperado pue\'es las implementaciones en \textit{Assembler} hacen uso de las instrucciones SSE y se procesan mas de un pixel simultaneamente.
+    \item En los algoritmos en los que no hubo conversi\'on a Float de los datos, la velocidad de resoluci\'on fue mayor porque al no ser necesario usar floats, cada pixel ocupaba menos bytes y por ende pod\'iamos procesar mayor cantidad simultaneamente. 
+	\item El SpeedUp de las funciones no cambi\'o demasiado entre las funciones. 
+	Y todas estas operaciones se pueden obtener directamente con instrucciones SIMD, mientras que en C hubo que programarlas, realentizando el algoritmo.
+	\item En los gr\'aficos de SpeedUp se pueden ver picos, que si bien no son muy marcados, llaman	la atenci\'on. Pensamos que esto puede suceder porque medimos los ciclos que tarda el procesador en correr las funciones, y estos se pueden ver afectados por otro uso en simult\'aneo que se le est\'e dando al mismo. 
+    \item En todos los gr\'aficos de comparacion entre C y ASM las curvas presentan un crecimiento semejante al de una funcion cuadr\'atica. Esto se debe a que la escala tomada en el eje de abscisas hace referencia al tama\~no de un lado de las imagenes (todas las imagenes son cuadradas). Como la cantidad total de pixeles en la imagen es el cuadrado de este valor, la cantidad de ciclos de cpu aumenta linealmente respecto a la cantidad de pixeles.
+   \end{itemize}
+  
+
+
+
+
+
+

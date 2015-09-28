@@ -1,0 +1,17 @@
+\indent En este trabajo hemos realizado la implementaci\'on de funciones de procesamiento de im\'agenes en dos lenguajes de programaci\'on, \emph{Assembler} y \emph{C}. Adem\'as realizamos un an\'alisis de la performance de las mismas a fin de determinar cual es mas eficiente respecto al tiempo de ejecuci\'on. Las funciones implementadas son: \\
+
+\begin{itemize}
+	\item \texttt{Diferencia de Im\'agenes}, a partir de dos im\'agenes genera una tercera imagen que resalta los pixeles donde las dos imagenes fuentes difieren. Para obtener la tercer imagen se toma la norma infinito la norma infinito de la resta vectorial entre los píxel, ignorando el canal alfa. La f\'ormula a aplicar para obtener la tercer im\'agen es;
+
+
+	\item \texttt{Blur Gaussiano}, tomando una imagen de fuente genera una segunda similar a la fuente pero con un aspecto desenfocado. La manera de lograr este efecto es calculando cada componente de la imagen de salida como un simple
+promedio de una vecindad del mismo en la imagen original, luego se toma el un promedio ponderado. Las formulas a aplicar para realizar el filtro son las siguientes:
+
+
+
+
+\end{itemize}
+
+\indent En el caso de las implementaciones hechas en \textit{Assembler} hemos usado el modelo de programaci\'on \textit{SIMD}, pues el objectivo de este trabajo pr\'actico es estudiar las ventajas y desventajas de usar ese modelo contra uno \textit{SISD}.\\ \\
+\indent En las siguientes secciones se explicar\'a como se implementaron los filtros, se presentar\'an gr\'aficos mostrando los tiempos de ejecuci\'on de cada filtro comparando ambas implementaciones y luego se presentar\'a una conclusi\'on acerca de los resultados obtenidos y el costo de usar un modelo \textit{SIMD} para programar.
+

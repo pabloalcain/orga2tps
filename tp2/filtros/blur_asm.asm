@@ -11,7 +11,7 @@ mask_dw2b: DB 0, 4, 8, 12
 section .text
 ;void blur_asm (unsigned char *src, unsigned char *dst,
 ;              (       RDI        ,         RSI       ,
-;               int filas, int cols, float sigma, int radius)
+;               int cols, int filas, float sigma, int radius)
 ;                  RDX   ,   RCX   ,    XMM0    ,     R8    )
 _blur_asm:
 blur_asm:
@@ -60,7 +60,7 @@ blur_asm:
   mov r9, r8
   xor rax, rax
   .zero:
-    sub rax, rcx
+    sub rax, rdx
     ; nos movemos r8 filas para arriba
     sub r9, 1
   jnz .zero
@@ -70,15 +70,15 @@ blur_asm:
   ; r13 es la pos relativa entre de (i, 2*r+1) y (i+1, 0) en el
   ; cuadrado de vecinos: le restamos dos veces el radio + 1 a una fila
 
-  mov r13, rcx
+  mov r13, rdx
   sub r13, r8
   sub r13, r8
   sub r13, 1
   sal r13, 2                    ; 4 bytes/casillero
     
-  ;rcx y rdx son el último casillero que filtramos
-  sub rcx, r8
+  ;rdx y rcx son el último casillero que filtramos
   sub rdx, r8
+  sub rcx, r8
 
   ;rdi y rsi apuntan al primer filtrado
   sub rdi, rax
@@ -119,21 +119,20 @@ blur_asm:
         inc r11
         cmp r11, r8
       jnz .neigh_filas
-
       cvtps2dq xmm3, xmm1
       pshufb xmm3, xmm5
       movd [rsi], xmm3
       add rdi, 4
       add rsi, 4
       inc r10
-      cmp r10, rcx
+      cmp r10, rdx
     jnz .columnas
     mov r11, r8
     sal r11, 3
     add rdi, r11
     add rsi, r11
     inc r9
-    cmp r9, rdx
+    cmp r9, rcx
   jnz .filas
   mov rdi, r15
   call free
