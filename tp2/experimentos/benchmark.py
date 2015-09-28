@@ -26,7 +26,7 @@ def image_rand(w, h, fname=None):
     imarray = numpy.random.rand(w, h, 3)*255
     im = Image.fromarray(imarray.astype('uint8'))
     im.save('temporal123.bmp')
-    system('convert temporal123.bmp -matte {0}')
+    system('convert temporal123.bmp -matte {0}'.format(fname))
     system('rm temporal123.bmp')
 
 def time_me(filtro, img, imp, params, n=1, path=None):
