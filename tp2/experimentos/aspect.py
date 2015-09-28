@@ -17,8 +17,8 @@ tot = { 'diff': { 'c': [], 'asm': [] },
 args = { 'diff': 'img2.bmp',
          'blur': '5 2' }
 
-n = { 'diff': { 'c': 100, 'asm': 1000 }, 
-      'blur': { 'c': 100, 'asm': 1000 } }
+n = { 'diff': { 'c': 200, 'asm': 400 }, 
+      'blur': { 'c': 100, 'asm': 400 } }
 # lo que quiero que haga de la de 1kx1k
 filtros = ('diff', 'blur')
 implementaciones = ('c', 'asm')
@@ -42,12 +42,12 @@ for ratio in low:
         image_rand(x, y, fname='img2.bmp')
         for filt in filtros:
             for imp in implementaciones:
-                niter = int(n[filt][imp])
+                niter = int(n[filt][imp]) * (1000.0**2/(x*y))
                 t = time_me(filt, 'img1.bmp', imp, args[filt], n=niter, path=path)
                 tot[filt][imp].append(t/niter)
                 # Aquí comparamos que las dos imágenes sean iguales
             diff = compara_imagenes('img1.bmp.{0}.C.bmp'.format(filt), 
-                                        'img1.bmp.{0}.ASM.bmp'.format(filt), threshold=0)
+                                    'img1.bmp.{0}.ASM.bmp'.format(filt), threshold=0)
             if diff:
                 msg = 'Atención! Las imágenes de {0}x{1} en filtro {2} no concuerda'
                 print msg.format(x, y, filt)
@@ -57,6 +57,7 @@ for ratio in low:
                 system('cp img{0}.bmp img{0}_{1}x{2}.bmp'.format(1, x, y))
                 system('cp img{0}.bmp img{0}_{1}x{2}.bmp'.format(2, x, y))
                 print 'Imágenes guardadas en {0} y {1}'.format(save_img1, save_img2)
+        system('rm img1.bmp img2.bmp img1.bmp.* img2.bmp.*')
 
 ar = np.array(ar)
 area = np.array(area)

@@ -25,9 +25,7 @@ def image_rand(w, h, fname=None):
         fname = 'random{0}x{1}.bmp'.format(w, h)
     imarray = numpy.random.rand(w, h, 3)*255
     im = Image.fromarray(imarray.astype('uint8'))
-    im.save('temporal123.bmp')
-    system('convert temporal123.bmp -matte {0}'.format(fname))
-    system('rm temporal123.bmp')
+    im.save(fname)
 
 def time_me(filtro, img, imp, params, n=1, path=None):
     """Toma una imagen y le aplica el filtro con la implementación
