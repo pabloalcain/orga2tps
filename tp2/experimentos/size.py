@@ -17,8 +17,8 @@ tot = { 'diff': { 'c': [], 'asm': [] },
 args = { 'diff': 'img2.bmp',
          'blur': '5 2' }
 
-n = { 'diff': { 'c': 100, 'asm': 1000 }, 
-      'blur': { 'c': 100, 'asm': 1000 } }
+n = { 'diff': { 'c': 400, 'asm': 4000 }, 
+      'blur': { 'c': 400, 'asm': 4000 } }
 # lo que quiero que haga de la de 1kx1k
 filtros = ('diff', 'blur')
 implementaciones = ('c', 'asm')
@@ -61,10 +61,12 @@ for filt in filtros:
     ax.legend(loc = "center right")
     fig.tight_layout()
     fig.savefig('tiempo_{0}.pdf'.format(filt))
+    fig.savefig('tiempo_{0}.png'.format(filt))
     fig, ax = pl.subplots()
     ax.plot(sz, c/asm)
     ax.set_xlabel('Ancho/Alto de la imagen [px]')
     ax.set_ylabel(r'Speedup de ASM vs C')
     fig.tight_layout()
     fig.savefig('speedup_{0}.pdf'.format(filt))
-    np.savetxt('tiempos_{0}.dat'.format(filt), transpose([asm, c]), header='asm, c')
+    fig.savefig('speedup_{0}.png'.format(filt))
+    np.savetxt('tiempos_{0}.dat'.format(filt), np.transpose([asm, c]), header='asm, c')
