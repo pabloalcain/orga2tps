@@ -141,8 +141,11 @@ casos, como se puede ver en las figuras~\ref{fig:tiempo_ratio_diff},
 \subsection{Comparaciones entre C y ASM: Dependencia con el radio de
   blur}
 
-Finalmente, observamos en la figura~\ref{fig:tiempo_radio} el tiempo
-de procesado por píxel para distintos radios.
+Finalmente, observamos en la figura~\ref{fig:tiempo_radio_blur} el tiempo
+de procesado por píxel para distintos radios. Observamos una
+tendencia, como era de esperar, creciente. Sin embargo, hacen falta
+más estudios para poder caracterizar la forma funcional de la
+dependencia con el tamaño del filtro.
 
 \begin{figure}
   \centering
@@ -152,15 +155,10 @@ de procesado por píxel para distintos radios.
   \label{fig:tiempo_radio_blur}
 \end{figure}
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.7\columnwidth]{speedup_radio_blur.pdf}
-  \caption{\emph{Speedup} de procesado por píxel para distintos radios
-    con filtro blur.}
-  \label{fig:speedup_radio_blur}
-\end{figure}
-
 \subsection{Comparaciones entre C -O0 y C -O3: Filtro de diferencias}
+
+Observamos aquí que -O3 es más rápido que -O0 por un factor 5x, y ese
+factor va decreciendo con el tiempo
 
 \begin{figure}
   \centering
@@ -182,12 +180,26 @@ de procesado por píxel para distintos radios.
 
 A partir de los resultados y tablas vistas podemos mencionar las siguientes conclusiones generales que aplican a todos los filtros:
   \begin{itemize}
-    \item Las implementaciones hechas en \textit{Assembler} son efectivamente m\'as r\'apidas que las implementaciones hechas en \textit{C}. Esto era lo esperado pue\'es las implementaciones en \textit{Assembler} hacen uso de las instrucciones SSE y se procesan mas de un pixel simultaneamente.
-    \item En los algoritmos en los que no hubo conversi\'on a Float de los datos, la velocidad de resoluci\'on fue mayor porque al no ser necesario usar floats, cada pixel ocupaba menos bytes y por ende pod\'iamos procesar mayor cantidad simultaneamente. 
-	\item El SpeedUp de las funciones no cambi\'o demasiado entre las funciones. 
-	Y todas estas operaciones se pueden obtener directamente con instrucciones SIMD, mientras que en C hubo que programarlas, realentizando el algoritmo.
-	\item En los gr\'aficos de SpeedUp se pueden ver picos, que si bien no son muy marcados, llaman	la atenci\'on. Pensamos que esto puede suceder porque medimos los ciclos que tarda el procesador en correr las funciones, y estos se pueden ver afectados por otro uso en simult\'aneo que se le est\'e dando al mismo. 
-    \item En todos los gr\'aficos de comparacion entre C y ASM las curvas presentan un crecimiento semejante al de una funcion cuadr\'atica. Esto se debe a que la escala tomada en el eje de abscisas hace referencia al tama\~no de un lado de las imagenes (todas las imagenes son cuadradas). Como la cantidad total de pixeles en la imagen es el cuadrado de este valor, la cantidad de ciclos de cpu aumenta linealmente respecto a la cantidad de pixeles.
+  \item Las implementaciones hechas en \textit{Assembler} son
+    efectivamente m\'as r\'apidas que las implementaciones hechas en
+    \textit{C}. Esto era lo esperado pue\'es las implementaciones en
+    \textit{Assembler} hacen uso de las instrucciones SSE y se
+    procesan mas de un pixel simultaneamente.
+  \item En los algoritmos en los que no hubo conversi\'on a Float de
+    los datos, la velocidad de resoluci\'on fue mayor porque al no ser
+    necesario usar floats, cada pixel ocupaba menos bytes y por ende
+    pod\'iamos procesar mayor cantidad simultaneamente.
+  \item El SpeedUp de las funciones no cambi\'o demasiado entre las
+    funciones.  Y todas estas operaciones se pueden obtener
+    directamente con instrucciones SIMD, mientras que en C hubo que
+    programarlas, realentizando el algoritmo.
+  \item Ambos códigos en ASM son mejores que la optimización más
+    agresiva de gcc (-O3). Restaría comparar con otros compiladores.
+  \item A partir de la inspección del código generado en ASM de gcc
+    pudimos observar que, en -O3, a pesar de utilizar muchos trucos,
+    nunca usa las instrucciones SIMD, es decir, no autovectoriza.
+  \item La mejora por utilziar -O3 en el filtro de diff es de 5x, ¡sólo
+    con escoger un flag del compilador!
    \end{itemize}
   
 
