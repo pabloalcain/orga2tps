@@ -27,7 +27,7 @@ def image_rand(w, h, fname=None):
     im = Image.fromarray(imarray.astype('uint8'))
     im.save(fname)
 
-def time_me(filtro, img, imp, params, n=1, path=None):
+def time_me(filtro, img, imp, params, n=1, path=None, coda=""):
     """Toma una imagen y le aplica el filtro con la implementación
     determinados por un número de iteraciones. Devuelve el tiempo que
     tardó.
@@ -51,9 +51,9 @@ def time_me(filtro, img, imp, params, n=1, path=None):
         Por defecto es None [se considera instalado]
     """
     if not path:
-        exe = 'tp2'
+        exe = 'tp2'+coda
     else:
-        exe = '{0}/tp2'.format(path)
+        exe = '{0}/tp2'.format(path)+coda
 
     cmd = [exe, filtro, '-i {0}'.format(imp), '-t {0}'.format(n), img, params]
     t0 = time.time()
