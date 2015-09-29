@@ -139,3 +139,51 @@ de {\ttfamily XMM0} ($\text{máx}(\mathbf{p}, \mathbf{q})$) y
 En la figura~\ref{fig:max_sse} se puede observar un esquema de este
 procedimiento.
 
+
+
+\subsubsection{Iteración del Ciclo Principal}
+
+Vamos a mostrar como se cargan y modifican los registros en una iteración de nuestra implementación
+
+\subsubsection{Sección .data}
+
+\indent Definimos una constantes en la sección .data (por ende es una constantes inicializada) 
+\begin{itemize}
+
+\item mask_rot: DB 1, 2, 0, 0xFF, 5, 6, 4, 0xFF, 9, 10, 8, 0xFF, 13, 14, 12, 0xFF : es una máscara que utilizaremos para acomodar los canales
+
+\end{itemize}
+
+
+\subsubsection{Carga de datos}
+
+
+\indent La carga de datos inicial para el ciclo principal del algoritmo es:
+
+
+\begin{itemize}
+\item Copiamos en $XMM2$ la m\'ascara $mask_rot$
+\item Inicializamos $R9$ en 0 con la instrucción $XOR$ para utilizarlo de contador de columnas
+\item Inicializamos $R10$ en 0 con la instrucción $XOR$ para utilizarlo de contador de filas
+\item Preservamos en $R8$ m y lo usamos para saber cu\'ando terminamos una columna
+\item Preservamos en $RCX$ n y lo usamos para saber cu\'ando terminamos una fila
+
+\end{itemize}
+
+\subsubsection{Ciclo Principal}
+
+
+\indent Con los datos cargados en los registros vamos a mostrar una iteraci\'on del ciclo principal del filtro. Para cada l\'inea de la matriz que representa la imagen fuente se realizan las siguientes acciones.
+
+\begin{itemize}
+\item Leemos desde la primer imagen fuente en $RDI$ 16 bytes y los cargamos en $XMM0$, cargando aqui la fila $i - 1$ con la instrucción $MOVDQU$
+\item Leemos desde la segunda imagen fuente en $RSI$ 16 bytes y los cargamos en $XMM3$, cargando aqui la fila $i - 1$ con la instrucción $MOVDQU$
+
+\item Obteniendo en cada uno de los registros
+
+\begin{center}
+\xmmxByteHighBig{$alpha2$}{$B2$}{$G2$}{$R2$}{$alpha3$}{$B3$}{$G3$}{$R3$}\xmmxByteLowBig{$alpha0$}{$B0$}{$G0$}{$R0$}{$alpha1$}{$B1$}{$G1$}{$R1$}
+\end{center}
+
+
+\end{itemize}
