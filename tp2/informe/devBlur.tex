@@ -17,7 +17,7 @@ En este filtro, tenemos que aplicar la siguiente relación que
 mencionamos en la introducción:
 
 \begin{equation}
-  O[i, j, k] = \sum_{x=-r}^{y=r} I[i+x, j+y, k] K_{sigma, r} [r-x, r-y]
+  O[i, j, k] = \sum_{x=-r}^{y=r} I[i+x, j+y, k] K_{\sigma, r} [r-x, r-y]
   \label{eq:blur}
 \end{equation}
 
@@ -29,7 +29,7 @@ con la posición absoluta en la imagen,
 $(i + x, j + y) = (i + x)*n_{\text{cols}} + (j + y)$. Así, con los
 valores de $(R, G, B)$ del píxel $(i, j)$ de la imagen salida
 inicializados a 0, acumulamos en cada uno
-$ I[i+x, j+y] K_{sigma, r} [r-x, r-y]$. Luego, redondeamos este
+$ I[i+x, j+y] K_{\sigma, r} [r-x, r-y]$. Luego, redondeamos este
 resultado (que es de punto flotante de 4 bytes) a un char y lo
 guardamos en la imagen de salida.
 
@@ -63,23 +63,23 @@ y $\mathbf{P}$ a la matriz de píxeles de entrada
 B^0_{i, j})$) la ecuación~\ref{eq:blur} anterior queda
 
 \begin{align}
-  \mathbf{T}[i, j] &= \sum_{x=-r}^{y=r} \mathbf{P}[i+x, j+y] K_{sigma,
+  \mathbf{T}[i, j] &= \sum_{x=-r}^{y=r} \mathbf{P}[i+x, j+y] K_{\sigma,
                      r} [r-x, r-y] \\
-  \mathbf{t}_{i, j} &= \sum_{x=-r}^{y=r} \mathbf{p}_{i+x, j+y} K_{sigma,
+  \mathbf{t}_{i, j} &= \sum_{x=-r}^{y=r} \mathbf{p}_{i+x, j+y} K_{\sigma,
                      r}[r-x, r-y]\\
 \end{align}
 
 Escribimos cada término de la suma:
 
 \begin{equation}
-  \mathbf{\hat{p}} = \mathbf{p}_{i+x, j+y} K_{sigma, r}[r-x, r-y] \\
+  \mathbf{\hat{p}} = \mathbf{p}_{i+x, j+y} K_{\sigma, r}[r-x, r-y] \\
   \mathbf{\hat{p}} = \mathbf{p}_{i+x, j+y} \mathbf{k} 
   \label{eq:blur_vec}
 \end{equation}
 
 Aquí,
-$\mathbf{k} = (K_{sigma, r}[r-x, r-y], K_{sigma, r}[r-x, r-y],
-K_{sigma, r}[r-x, r-y], K_{sigma, r}[r-x, r-y])$
+$\mathbf{k} = (K_{\sigma, r}[r-x, r-y], K_{\sigma, r}[r-x, r-y],
+K_{\sigma, r}[r-x, r-y], K_{\sigma, r}[r-x, r-y])$
 es el filtro expandido hacia un vector, y el último producto es un
 producto elemento a elemento. Así, llegamos a una ecuación vectorizada
 en $(R, G, B, A)$, elementos contiguos en memoria que, al ser floats
