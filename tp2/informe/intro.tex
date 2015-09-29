@@ -3,8 +3,23 @@
 \begin{itemize}
 	\item \texttt{Diferencia de Im\'agenes}, a partir de dos im\'agenes genera una tercera imagen que resalta los pixeles donde las dos imagenes fuentes difieren. Para obtener la tercer imagen se toma la norma infinito la norma infinito de la resta vectorial entre los píxel, ignorando el canal alfa. La f\'ormula a aplicar para obtener la tercer im\'agen es;
 
+	\begin{center}
+		$\forall k \in \{ r,g,b \} $ \hspace{10pt} $O[i, j, k] = \| I_1 [i,j - I_2 [i,j]]\| _{\infty}$ \newline
+		$O[i, j, \alpha ] = 255$
+	\end{center}
+
 
 	\item \texttt{Blur Gaussiano}, tomando una imagen de fuente genera una segunda similar a la fuente pero con un aspecto desenfocado. La manera de lograr este efecto es calculando cada componente de la imagen de salida como un promedio ponderado con una gaussiana 2D de los píxeles que la circundan. Las formulas a aplicar para realizar el filtro son las siguientes:
+
+	\begin{center}
+		$O[i, j, k] = (I * K) [i ,j ,k] = \sum_{x=-r}^{r} \sum_{y=-r}^{r} I[i + x, j + y, x] K[r -x, r - y]$
+	\end{center}
+
+	Donde la matriz $K$ está generada por los par\'ametros $\sigma$ y $r$:
+
+\begin{center}
+		$K_{\sigma, r}[i, j] = G_{\sigma}(r - i, r - j)$ \hspace{30pt} $G_{\sigma}(x, y) = \frac{1}{2 \pi \sigma^{2}} e^{- \frac{x^2 + x^2}{2 \sigma^2}}$
+	\end{center}
 
 
 
