@@ -24,8 +24,8 @@ filtros = ('diff', 'blur')
 implementaciones = ('c', 'asm')
 
 
-width = 2000 # el ancho de la imagen si fuera cuadrada
-low = np.linspace(0.1,1,100)
+width = 1500 # el ancho de la imagen si fuera cuadrada
+low = np.linspace(0.1,1,20)
 ar = []
 area = []
 for ratio in low:
@@ -66,8 +66,8 @@ for filt in filtros:
     asm = np.array(tot[filt]['asm'])
     c = np.array(tot[filt]['c'])
     fig, ax = pl.subplots()
-    ax.plot(ar, 1e9*c/area, label='Tiempo en C')
-    ax.plot(ar, 1e9*asm/area, label='Tiempo en ASM')
+    ax.plot(ar, 1e9*c/area, '.', label='Tiempo en C')
+    ax.plot(ar, 1e9*asm/area, '.',  label='Tiempo en ASM')
     ax.set_ylabel(r'Tiempo por pixel [ns]')
     ax.set_xlabel('Aspect ratio')
     ax.legend(loc = "center right")
@@ -75,7 +75,7 @@ for filt in filtros:
     fig.savefig('tiempo_ratio_{0}.pdf'.format(filt))
     fig.savefig('tiempo_ratio_{0}.png'.format(filt))
     fig, ax = pl.subplots()
-    ax.plot(ar, c/asm)
+    ax.plot(ar, c/asm, '.')
     ax.set_xlabel('Aspect ratio')
     ax.set_ylabel(r'Speedup de ASM vs C')
     fig.tight_layout()
