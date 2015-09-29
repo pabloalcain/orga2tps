@@ -121,18 +121,18 @@ a explicar con detalle cómo se calcula esta expresión para el primer píxel
 vecino en $(i - r, j - r)$, que es la parte vectorizada.
 
 Primero, cargamos los 4 bytes del píxel en un registro, llamémoslo
-{\ttfamily XMM2}. Ahora queremos convertirlos a punto flotante. Para
-eso, tenemos que considerar que la carga anterior llena la parte baja
-del registro. Para convertirlo, primero vamos a extender estos 4 bytes
-a 4 doublewords en un registro temporal {\ttfamily XMMt} (mediante
-{\ttfamily pmovzxbd}) y luego los convertimos a números de punto
-flotante de 4 bytes con {\ttfamily cvtdq2ps} y los guardamos de nuevo
-en {\ttfamily XMM2}. En este punto, {\ttfamily XMM2} tiene guardados
-los 4 ``colores'' en una representación de punto flotante
-($\mathbf{p}_{i+x, j+y}$). Ahora, en la parte baja del registro
-{\ttfamily XMM3} cargamos los 4 bytes (con {\ttfamily movd})
-correspondientes al valor del filtro para $(-r, -r)$ (usando
-$d_{1v}$). Ahora, para crear el vector $\mathbf{k}$ hay que
+{\ttfamily XMM2}, con {\ttfamily movd}. Ahora queremos convertirlos a
+punto flotante. Para eso, tenemos que considerar que la carga anterior
+llena la parte baja del registro. Para convertirlo, primero vamos a
+extender estos 4 bytes a 4 doublewords en un registro temporal
+{\ttfamily XMMt} (mediante {\ttfamily pmovzxbd}) y luego los
+convertimos a números de punto flotante de 4 bytes con {\ttfamily
+  cvtdq2ps} y los guardamos de nuevo en {\ttfamily XMM2}. En este
+punto, {\ttfamily XMM2} tiene guardados los 4 ``colores'' en una
+representación de punto flotante ($\mathbf{p}_{i+x, j+y}$). Ahora, en
+la parte baja del registro {\ttfamily XMM3} cargamos los 4 bytes (con
+{\ttfamily movd}) correspondientes al valor del filtro para $(-r, -r)$
+(usando $d_{1v}$). Ahora, para crear el vector $\mathbf{k}$ hay que
 expandirlo (hacer un broadcast del elemento 0, viendo al registro como
 4 números de punto flotante de 4 bytes) a todos los elementos, a
 través de {\ttfamily suhfps XMM3, XMM3, 0x00}. Ya tenemos los dos
@@ -141,9 +141,27 @@ vectores, y los multiplicamos y lo guardamos en {\ttfamily XMM2} con
   XMM1} ({\ttfamily addps}). Ahora pasamos al siguiente elemento en el
 filtro y en la imagen (agregando 4 bytes). Este procedimiento lo
 realizamos para toda una fila, y luego, para pasar a la siguiente
-columna sumamos $\Delta$ a la posición de memoria de la
-imagen. Este procedimiento se puede observar en el
-esquema~\ref{fig:blur_sse}. 
+columna sumamos $\Delta$ a la posición de memoria de la imagen. Una
+vez acumulado todo el filtro para un píxel en {\ttfamily XMM1}, lo
+convertimos a enteros de 4 bytes con {\ttfamily cvtps2dq}. Como el
+filtro está normalizado a 1, estos enteros no pueden ocupar más de 1
+byte [ya que los datos originales son de 1 byte]. De este modo, ahora
+condensamos en {\ttfamily XMM1} el byte más bajo de cada entero de 4
+byte, con una máscara mask\char`_dw2b[0, 4, 8, 12] y {\ttfamily psuhfb
+  xmm3, mask\char`_d2wb}). Ya podemos guardar {\ttfamily XMM1},
+nuevamente con {\ttfamily movd}, en la posición de memoria destino.
+
+Este procedimiento se puede observar en el
+esquema~\ref{fig:esquema_blur}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\columnwidth]{esquema_blur.pdf}
+  \caption{Esquema que caracteriza el algoritmo de blur con
+    instrucciones {\ttfamily SIMD}}
+  \label{fig:esquema_blur}
+\end{figure}
+
 
 Terminado esto, ¡ya tenemos procesado el píxel! Hacemos esto para toda
 la fila [sumando de a 4 bytes para pasar al siguiente elemento] y,
