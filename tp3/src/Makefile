@@ -43,8 +43,8 @@ KERNELSIZE=89600  # = CODESIZE + TASKSSIZE
 
 TASKSTARTADDR=0x401000
 
-GCC=gcc
-GCC=clang
+CC=gcc
+#CC=clang
 NASM=nasm
 NASMFLAGS=-felf32
 OBJCOPY=objcopy
@@ -60,7 +60,7 @@ QUIET = @
 all:  clean tasks image
 
 %.o: %.c
-	$(GCC) $(CFLAGS) -c -o $@ $^
+	$(CC) $(CFLAGS) -c -o $@ $^
 
 %.o: %.asm
 	$(NASM) $(NASMFLAGS) -o $@ $^
@@ -101,13 +101,13 @@ idle.tsk: idle.asm
 	@echo ''
 
 taskA1.tsko: tareaA1.c
-	$(GCC) $(CFLAGS) -c -o $@ $^
+	$(CC) $(CFLAGS) -c -o $@ $^
 taskA2.tsko: tareaA2.c
-	$(GCC) $(CFLAGS) -c -o $@ $^
+	$(CC) $(CFLAGS) -c -o $@ $^
 taskB1.tsko: tareaB1.c
-	$(GCC) $(CFLAGS) -c -o $@ $^
+	$(CC) $(CFLAGS) -c -o $@ $^
 taskB2.tsko: tareaB2.c
-	$(GCC) $(CFLAGS) -c -o $@ $^
+	$(CC) $(CFLAGS) -c -o $@ $^
 
 %.ctsk: %.tsko
 	@echo 'Linkeando tarea...'
