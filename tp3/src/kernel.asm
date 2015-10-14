@@ -4,6 +4,7 @@
 ; ==============================================================================
 
 %include "imprimir.mac"
+extern GDT_DESC 
 
 global start
 
@@ -42,22 +43,44 @@ start:
 
 
     ; Habilitar A20
+    call habilitar_A20
 
     ; Cargar la GDT
+    lgdt [GDT_DESC]
 
     ; Setear el bit PE del registro CR0
+    mov eax, cr0
+    or eax, 1
+    mov cr0, eax
 
+    xchg bx, bx
     ; Saltar a modo protegido
+    jmp (0x8*8):modo_protegido
+
+    modo_protegido: 
+    BITS 32
 
     ; Establecer selectores de segmentos
 
+    mov ax, (0x8*9)
+
+    mov ds, ax
+    mov es, ax
+    mov gs, ax
+    mov ss, ax
+    mov fs, ax
+
     ; Establecer la base de la pila
+    mov ebp, 0x27000
+    mov esp, ebp
 
     ; Imprimir mensaje de bienvenida
+    imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 0, 0
 
     ; Inicializar el juego
 
     ; Inicializar pantalla
+    
 
     ; Inicializar el manejador de memoria
 
