@@ -38,6 +38,7 @@ typedef unsigned int   uint;
 #define GDT_IDX_DATA_LVL0           9
 #define GDT_IDX_COD_LVL3            10
 #define GDT_IDX_DATA_LVL3           11
+#define GDT_IDX_VIDEO	            12
 
 /* Offsets en la gdt */
 /* -------------------------------------------------------------------------- */

@@ -62,12 +62,14 @@ start:
 
     ; Establecer selectores de segmentos
 
-    mov ax, (0x8*9)
+    mov ax, (0x9*8) ; {index: 9 | gdt/ldt: 0 | rpl: 0 }
 
     mov ds, ax
     mov es, ax
     mov gs, ax
     mov ss, ax
+
+    mov ax, (0xC*8) ; {index: 12 | gdt/ldt: 0 | rpl: 0 }
     mov fs, ax
 
     ; Establecer la base de la pila
@@ -80,7 +82,13 @@ start:
     ; Inicializar el juego
 
     ; Inicializar pantalla
-    
+    xor ebx, ebx
+    xor ax, ax
+    limpiar_pantalla:
+        mov [fs:ebx*2], ax
+        inc ebx
+        cmp ebx, 2000
+        jb limpiar_pantalla
 
     ; Inicializar el manejador de memoria
 
