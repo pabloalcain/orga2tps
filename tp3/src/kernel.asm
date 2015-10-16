@@ -5,6 +5,9 @@
 
 %include "imprimir.mac"
 extern GDT_DESC 
+extern IDT_DESC 
+extern screen_inicializar
+extern idt_inicializar
 
 global start
 
@@ -53,7 +56,6 @@ start:
     or eax, 1
     mov cr0, eax
 
-    xchg bx, bx
     ; Saltar a modo protegido
     jmp (0x8*8):modo_protegido
 
@@ -90,6 +92,8 @@ start:
         cmp ebx, 2000
         jb limpiar_pantalla
 
+    call screen_inicializar
+
     ; Inicializar el manejador de memoria
 
     ; Inicializar el directorio de paginas
@@ -105,8 +109,15 @@ start:
     ; Inicializar el scheduler
 
     ; Inicializar la IDT
+    call idt_inicializar
+        xchg bx, bx
 
     ; Cargar IDT
+    lidt [IDT_DESC]
+
+    xor ax, ax
+    xor dx, dx
+    div ax
 
     ; Configurar controlador de interrupciones
 
