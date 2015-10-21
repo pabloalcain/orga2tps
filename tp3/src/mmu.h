@@ -16,6 +16,34 @@
 #define MAPA_BASE_FISICA  0x500000
 #define MAPA_BASE_VIRTUAL 0x800000
 
+typedef struct str_page_directory_entry {
+    unsigned char present:1;
+    unsigned char rw:1;
+    unsigned char user_supervisor:1;
+    unsigned char page_level_write_through:1;
+    unsigned char page_level_cache_disable:1;
+    unsigned char accessed:1;
+    unsigned char ignored:1;
+    unsigned char page_size:1;
+    unsigned char global:1;
+    unsigned char disp:3;
+    unsigned int  base_dir:20;
+} __attribute__((__packed__)) page_directory_entry;
+
+typedef struct str_page_table_entry {
+    unsigned char present:1;
+    unsigned char rw:1;
+    unsigned char user_supervisor:1;
+    unsigned char page_level_write_through:1;
+    unsigned char page_level_cache_disable:1;
+    unsigned char accessed:1;
+    unsigned char dirty_bit:1;
+    unsigned char page_table_attr_index:1;
+    unsigned char global:1;
+    unsigned char disp:3;
+    unsigned int  base_dir:20;
+} __attribute__((__packed__)) page_table_entry;
+
 void mmu_inicializar();
 
 

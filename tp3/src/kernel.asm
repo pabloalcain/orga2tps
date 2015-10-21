@@ -9,6 +9,13 @@ extern IDT_DESC
 extern screen_inicializar
 extern idt_inicializar
 
+extern mmu_inicializar
+extern mmu_inicializar_dir_kernel
+
+extern deshabilitar_pic
+extern resetear_pic
+extern habilitar_pic 
+
 global start
 
 
@@ -16,7 +23,7 @@ global start
 jmp start
 
 ;;
-;; Seccion de datos.
+;; start de datos.
 ;; -------------------------------------------------------------------------- ;;
 iniciando_mr_msg db     'Iniciando kernel (Modo Real)...'
 iniciando_mr_len equ    $ - iniciando_mr_msg
@@ -93,14 +100,20 @@ start:
         jb limpiar_pantalla
 
     call screen_inicializar
-
+    xchg bx, bx
     ; Inicializar el manejador de memoria
+    call mmu_inicializar
 
     ; Inicializar el directorio de paginas
+    call mmu_inicializar_dir_kernel ;eax = 0x27000
 
     ; Cargar directorio de paginas
+    mov cr3, eax     ;cr3[12:31]=0x27,cr3[0:11]=0x0 => cr3 = 0010 0111 0000 0000 0000 == 0x27000
 
     ; Habilitar paginacion
+    mov eax,cr0
+    or eax,0x80000000
+    mov cr0,eax
 
     ; Inicializar tss
 
@@ -110,21 +123,28 @@ start:
 
     ; Inicializar la IDT
     call idt_inicializar
-        xchg bx, bx
+
 
     ; Cargar IDT
     lidt [IDT_DESC]
 
-    xor ax, ax
-    xor dx, dx
-    div ax
 
     ; Configurar controlador de interrupciones
-
+    ; call deshabilitar_pic
+    ; call resetear_pic
+    ; call habilitar_pic
+    
     ; Cargar tarea inicial
 
-    ; Habilitar interrupciones
+    
+    ; EJERCICIO 2: Generar interrupcion
+    mov eax, 1 
+    mov edx, 0
+    div edx
 
+    ; Habilitar interrupciones
+    sti
+    
     ; Saltar a la primera tarea: Idle
 
     ; Ciclar infinitamente (por si algo sale mal...)

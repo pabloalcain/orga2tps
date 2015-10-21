@@ -48,7 +48,9 @@ MSG_ISR19 db 'SIMD FP Exception',0
 global _isr%1
 
 _isr%1:
+	xchg bx, bx
     mov eax, %1
+	imprimir_texto_mp %2, %3, 0x07, 0, 0
     jmp $
 
 %endmacro
