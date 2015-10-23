@@ -138,12 +138,12 @@ start:
 
     
     ; EJERCICIO 2: Generar interrupcion
-    mov eax, 1 
-    mov edx, 0
-    div edx
+    ; mov eax, 1 
+    ; mov edx, 0
+    ; div edx
 
-    ; Habilitar interrupciones
-    sti
+    ; ; Habilitar interrupciones
+    ; sti
     
     ; Saltar a la primera tarea: Idle
 

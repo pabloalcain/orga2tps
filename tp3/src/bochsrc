@@ -443,9 +443,9 @@ debug: action=report
 # Examples:
 #   debugger_log: ./debugger.out
 #=======================================================================
-#debugger_log: /dev/null
+debugger_log: /dev/null
 #debugger_log: debugger.out
-debugger_log: -
+#debugger_log: -
 
 #=======================================================================
 # COM1, COM2, COM3, COM4:

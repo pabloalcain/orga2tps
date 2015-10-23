@@ -8,10 +8,6 @@
 #ifndef __SCREEN_H__
 #define __SCREEN_H__
 
-/* Definicion de la pantalla */
-#define VIDEO_FILS 50
-#define VIDEO_COLS 80
-
 #define VIDEO                   0x000B8000 /* direccion fisica del buffer de video */
 
 

@@ -27,10 +27,18 @@ void mmu_inicializar() {
 	(*ULTIMA_PAG_LIBRE) = (void*)0x3fe000;
 }
 
-void* mmu_solicitar_pagina_nueva(){
-	void* dir_pag_nueva = *ULTIMA_PAG_LIBRE;
+uint mmu_proxima_pagina_fisica_libre(){
+	uint PROX_PAG_LIBRE = (uint)0x100000;
+	uint dir_pag_nueva = *ULTIMA_PAG_LIBRE;
 	*ULTIMA_PAG_LIBRE = (void*)((*ULTIMA_PAG_LIBRE)-0x1000);		
 	return dir_pag_nueva;
+}
+
+void mmu_mapear_areas_de_kernel_y_libre(unsigned int cr3){
+	int i = 0;
+	for(; i < 0x400; i++){
+		mmu_mapear_pagina(i*0x1000, cr3, i*0x1000);
+	}
 }
 
 void mmu_mapear_pagina  (uint virtual, uint cr3, uint fisica, uint attrs) {
@@ -46,7 +54,7 @@ void mmu_mapear_pagina  (uint virtual, uint cr3, uint fisica, uint attrs) {
 	if (entry_page_dir->present) {
 		dir_page_table = (page_table_entry *)(entry_page_dir->base_dir << 12);
 	} else {
-		dir_page_table = (page_table_entry *) mmu_solicitar_pagina_nueva();
+		dir_page_table = (page_table_entry *) mmu_proxima_pagina_fisica_libre();
 		entry_page_dir->base_dir = ((unsigned int)dir_page_table) >> 12;
 		entry_page_dir->present = 1;
 		entry_page_dir->rw = 1;
@@ -97,3 +105,29 @@ uint mmu_inicializar_dir_kernel() {
 	return PAGE_DIR;
 }
 
+uint mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_tipo) {
+	uint dir_virtual_perro;
+	uint dir_fisica_perro;
+	uint attrs = 0x5; // U/S = 1 (User); R/W = 0 (Read only); P = 1 (present) 	
+	cr3 = mmu_proxima_pagina_fisica_libre(); // Nuevo page directory para este perro
+	mmu_mapear_areas_de_kernel_y_libre(cr3);
+	if (index_jugador == 0) {
+		// calculo de la dirección inicial de la cucha 
+		dir_virtual_perro = 0x800000 + (VIDEO_COLS + 2) * 0x1000 // posicion en el mapa del perro del jugador 0
+
+		dir_fisica_perro = 0x500000 + (VIDEO_COLS + 2) * 0x1000 // posicion en el mapa del perro del jugador 0
+
+
+		
+		mmu_mapear_pagina(dir_virtual_perro, cr3, dir_fisica_perro, atrrs)
+	} else {
+		
+		// calculo de la dirección inicial de la cucha 
+		dir_virtual_perro = 0x800000 + ((VIDEO_COLS * (VIDEO_FILS - 1 )) - 2) * 0x1000 // posicion en el mapa del perro del jugador 1
+
+		dir_fisica_perro = 0x500000 + ((VIDEO_COLS * (VIDEO_FILS - 1 )) - 2) * 0x1000  // posicion en el mapa del perro del jugador 1
+		
+		mmu_mapear_pagina(dir_virtual_perro, cr3, dir_fisica_perro, atrrs);
+	}
+
+}

@@ -53,4 +53,8 @@ typedef unsigned int   uint;
 #define PAGE_TABLE				0x28000		/* direccion de la primera page table */
 
 
+/* Definicion de la pantalla */
+#define VIDEO_FILS 50
+#define VIDEO_COLS 80
+
 #endif  /* !__DEFINES_H__ */
