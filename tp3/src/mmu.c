@@ -16,6 +16,11 @@
 /* En estas direcciones estan los códigos de todas las tareas. De aqui se
  * copiaran al destino indicado por TASK_<i>_CODE_ADDR.
  */
+#define ADDR_COD_TAREA_A1 		0x10000
+#define ADDR_COD_TAREA_A2 		0x11000
+#define ADDR_COD_TAREA_B1 		0x12000
+#define ADDR_COD_TAREA_B2 		0x13000
+#define ADDR_COD_TAREA_IDLE 	0x16000
 
 /* Direcciones fisicas de directorios y tablas de paginas del KERNEL */
 /* -------------------------------------------------------------------------- */
@@ -28,8 +33,7 @@ void mmu_inicializar() {
 }
 
 uint mmu_proxima_pagina_fisica_libre(){
-	uint PROX_PAG_LIBRE = (uint)0x100000;
-	uint dir_pag_nueva = *ULTIMA_PAG_LIBRE;
+	uint dir_pag_nueva = (uint) ULTIMA_PAG_LIBRE;
 	*ULTIMA_PAG_LIBRE = (void*)((*ULTIMA_PAG_LIBRE)-0x1000);		
 	return dir_pag_nueva;
 }
@@ -37,7 +41,7 @@ uint mmu_proxima_pagina_fisica_libre(){
 void mmu_mapear_areas_de_kernel_y_libre(unsigned int cr3){
 	int i = 0;
 	for(; i < 0x400; i++){
-		mmu_mapear_pagina(i*0x1000, cr3, i*0x1000);
+		mmu_mapear_pagina(i*0x1000, cr3, i*0x1000, 0x3);
 	}
 }
 
@@ -105,29 +109,73 @@ uint mmu_inicializar_dir_kernel() {
 	return PAGE_DIR;
 }
 
+void copiar_codigo(uint* codigo, uint* dst, uint cr3){
+	unsigned int cr3_anterior = rcr3();
+	lcr3(cr3);
+	int i;
+	for (i = 0; i < 1024; i++) {
+		dst[i] = codigo[i];
+	}
+	lcr3(cr3_anterior);
+}
+
 uint mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_tipo) {
 	uint dir_virtual_perro;
 	uint dir_fisica_perro;
 	uint attrs = 0x5; // U/S = 1 (User); R/W = 0 (Read only); P = 1 (present) 	
-	cr3 = mmu_proxima_pagina_fisica_libre(); // Nuevo page directory para este perro
+	uint cr3 = mmu_proxima_pagina_fisica_libre(); // Nuevo page directory para este perro
 	mmu_mapear_areas_de_kernel_y_libre(cr3);
-	if (index_jugador == 0) {
+	if (index_jugador == JUGADOR_A) {
 		// calculo de la dirección inicial de la cucha 
-		dir_virtual_perro = 0x800000 + (VIDEO_COLS + 2) * 0x1000 // posicion en el mapa del perro del jugador 0
+		dir_virtual_perro = 0x800000 + (VIDEO_COLS + 2) * 0x1000; // posicion en el mapa del perro del jugador 0
 
-		dir_fisica_perro = 0x500000 + (VIDEO_COLS + 2) * 0x1000 // posicion en el mapa del perro del jugador 0
+		dir_fisica_perro = 0x500000 + (VIDEO_COLS + 2) * 0x1000; // posicion en el mapa del perro del jugador 0
 
-
-		
-		mmu_mapear_pagina(dir_virtual_perro, cr3, dir_fisica_perro, atrrs)
 	} else {
 		
 		// calculo de la dirección inicial de la cucha 
-		dir_virtual_perro = 0x800000 + ((VIDEO_COLS * (VIDEO_FILS - 1 )) - 2) * 0x1000 // posicion en el mapa del perro del jugador 1
+		dir_virtual_perro = 0x800000 + ((VIDEO_COLS * (VIDEO_FILS - 1 )) - 2) * 0x1000; // posicion en el mapa del perro del jugador 1
 
-		dir_fisica_perro = 0x500000 + ((VIDEO_COLS * (VIDEO_FILS - 1 )) - 2) * 0x1000  // posicion en el mapa del perro del jugador 1
+		dir_fisica_perro = 0x500000 + ((VIDEO_COLS * (VIDEO_FILS - 1 )) - 2) * 0x1000; // posicion en el mapa del perro del jugador 1
 		
-		mmu_mapear_pagina(dir_virtual_perro, cr3, dir_fisica_perro, atrrs);
 	}
 
+		mmu_mapear_pagina(dir_virtual_perro, cr3, dir_fisica_perro, attrs);
+
+	uint dir_codigo_perro;
+
+	if (index_jugador == JUGADOR_A && perro->tipo == TIPO_1)
+		dir_codigo_perro = ADDR_COD_TAREA_A1;
+	if (index_jugador == JUGADOR_A && perro->tipo == TIPO_2)
+		dir_codigo_perro = ADDR_COD_TAREA_A2;
+	if (index_jugador == JUGADOR_B && perro->tipo == TIPO_1)
+		dir_codigo_perro = ADDR_COD_TAREA_B1;
+	if (index_jugador == JUGADOR_B && perro->tipo == TIPO_2)
+		dir_codigo_perro = ADDR_COD_TAREA_B2;
+
+	copiar_codigo((uint *)dir_codigo_perro, (uint *) dir_fisica_perro, PAGE_DIR);
+
+	return cr3;
+
+}
+
+void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3){
+	unsigned int index_page_dir = (virtual >> 22) & 0x3FF;
+	unsigned int index_page_table = (virtual << 10);
+	index_page_table = index_page_table >> 22;
+
+	page_directory_entry *pd = (page_directory_entry *) cr3;
+	page_directory_entry *entry_page_dir = &(pd[index_page_dir]);     /* Ir a la entrada dentro del page directory*/
+
+	if (! entry_page_dir->present) {
+		return;
+	}
+
+	page_table_entry *pt = (page_table_entry *) (entry_page_dir->base_dir << 12);
+	page_table_entry *entry_page_table = &(pt[index_page_table]);
+	if (entry_page_table->present) {
+		/* Si la entrada buscada está en el page directory */
+		entry_page_table->present = 0;
+		tlbflush();	
+	}
 }

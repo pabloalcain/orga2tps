@@ -15,6 +15,8 @@ extern mmu_inicializar_dir_kernel
 extern deshabilitar_pic
 extern resetear_pic
 extern habilitar_pic 
+extern game_inicializar
+extern mmu_unmapear_pagina
 
 global start
 
@@ -89,6 +91,7 @@ start:
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 0, 0
 
     ; Inicializar el juego
+    call game_inicializar
 
     ; Inicializar pantalla
     xor ebx, ebx
@@ -100,7 +103,7 @@ start:
         jb limpiar_pantalla
 
     call screen_inicializar
-    xchg bx, bx
+
     ; Inicializar el manejador de memoria
     call mmu_inicializar
 
@@ -141,7 +144,17 @@ start:
     ; mov eax, 1 
     ; mov edx, 0
     ; div edx
-
+    xchg bx, bx
+    ; EJERCICIO 4) f): Desmapear la ultima pag del kernel
+    mov eax,[0x3FF000]
+    mov eax, 0x27000
+    push eax
+    mov eax, 0x3FF000
+    push eax
+    call mmu_unmapear_pagina
+    pop eax
+    pop eax
+    mov eax,[0x3FF000]
     ; ; Habilitar interrupciones
     ; sti
     
