@@ -17,6 +17,8 @@ extern fin_intr_pic1
 ;; Sched
 extern sched_atender_tick
 extern sched_tarea_actual
+extern game_atender_tick
+extern game_atender_teclado
 
 
 ;;
@@ -59,7 +61,27 @@ _isr%1:
 ;; Datos
 ;; -------------------------------------------------------------------------- ;;
 ; Scheduler
-
+;;
+isrnumero1:
+                     dd 0x00000000
+                     dd 0x00000000
+                     dd 0x00000000
+                     dd 0x00000000
+                     dd 0x00000000
+                     dd 0x00000000
+                     dd 0x00000000
+                     dd 0x00000000
+isrnumero2:
+                     dd 0x00000000
+                     dd 0x00000000
+                     dd 0x00000000
+                     dd 0x00000000
+                     dd 0x00000000
+                     dd 0x00000000
+                     dd 0x00000000
+                     dd 0x00000000
+isrnumero:           dd 0x00000000
+isrClock:            db '|/-\'
 ;;
 ;; Rutina de atención de las EXCEPCIONES
 ;; -------------------------------------------------------------------------- ;;
@@ -88,13 +110,48 @@ ISR 19, MSG_ISR19, 17
 ;;
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
+global _isr32
+_isr32:
+    cli
+    pushad
+    pushfd
+    call game_atender_tick
+    call fin_intr_pic1
 
+    .fin:
+    popfd
+    popad
+    sti
+    iret
 ;;
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
+global _isr33
+_isr33:
+    cli
+    pushad
+    pushfd
+    call fin_intr_pic1
+
+    in al, 0x60
+    push eax
+    call game_atender_teclado
+    pop eax
+
+fin33:
+    popfd
+    popad
+    sti
+    iret
 
 ;;
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
-
-
+global _isr0x46
+_isr0x46:
+    cli
+    
+    mov eax, 0x42
+    xchg bx, bx
+    sti
+    iret

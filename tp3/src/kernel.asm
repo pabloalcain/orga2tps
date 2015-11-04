@@ -133,10 +133,10 @@ start:
 
 
     ; Configurar controlador de interrupciones
-    ; call deshabilitar_pic
-    ; call resetear_pic
-    ; call habilitar_pic
-    
+    call deshabilitar_pic
+    call resetear_pic
+    call habilitar_pic
+    sti    
     ; Cargar tarea inicial
 
     
@@ -144,17 +144,18 @@ start:
     ; mov eax, 1 
     ; mov edx, 0
     ; div edx
-    xchg bx, bx
+
     ; EJERCICIO 4) f): Desmapear la ultima pag del kernel
-    mov eax,[0x3FF000]
-    mov eax, 0x27000
-    push eax
-    mov eax, 0x3FF000
-    push eax
-    call mmu_unmapear_pagina
-    pop eax
-    pop eax
-    mov eax,[0x3FF000]
+    ; mov eax,[0x3FF000]
+    ; mov eax, 0x27000
+    ; push eax
+    ; mov eax, 0x3FF000
+    ; push eax
+    ; call mmu_unmapear_pagina
+    ; pop eax
+    ; pop eax
+    ; mov eax,[0x3FF000]
+
     ; ; Habilitar interrupciones
     ; sti
     

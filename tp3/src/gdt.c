@@ -115,8 +115,39 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x01,           /* db           */
         (unsigned char)     0x01,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
+    },
+    {
+        /* TSS Tarea Inicial */
+        (unsigned short)    0x0000,         /* limit[0:15]  */
+        (unsigned short)    0x0000,         /* base[0:15]   */
+        (unsigned char)     0x00,           /* base[23:16]  */
+        (unsigned char)     0x09,           /* type         */
+        (unsigned char)     0x00,           /* s            */
+        (unsigned char)     0x00,           /* dpl          */
+        (unsigned char)     0x01,           /* p            */
+        (unsigned char)     0x00,           /* limit[16:19] */
+        (unsigned char)     0x00,           /* avl          */
+        (unsigned char)     0x00,           /* l            */
+        (unsigned char)     0x00,           /* db           */
+        (unsigned char)     0x00,           /* g            */
+        (unsigned char)     0x00,           /* base[31:24]  */
+    },  
+    {
+        /*TSS Tarea Idle*/
+        (unsigned short)    0x00,           /* limit[0:15]  */              // se inicializa en tss.c
+        (unsigned short)    0x00,           /* base[0:15]   */              // se inicializa en tss.c
+        (unsigned char)     0x00,           /* base[23:16]  */              // se inicializa en tss.c
+        (unsigned char)     0x09,           /* type         */
+        (unsigned char)     0x0,            /* s            */
+        (unsigned char)     0x0,            /* dpl          */
+        (unsigned char)     0x1,            /* p            */
+        (unsigned char)     0x0,            /* limit[16:19] */              // estamos seguros que 16 bits nos alcanzan para cubrir sizeof(tss)
+        (unsigned char)     0x00,           /* avl          */
+        (unsigned char)     0x00,           /* l            */
+        (unsigned char)     0x0,            /* db           */
+        (unsigned char)     0x0,            /* g            */
+        (unsigned char)     0x00,           /* base[31:24]  */              // se inicializa en tss.c
     }
-
 };
 
 gdt_descriptor GDT_DESC = {

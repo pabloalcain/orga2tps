@@ -42,7 +42,12 @@ idt_descriptor IDT_DESC = {
     idt[numero].attr = (unsigned short) 0x8E00 | (((unsigned short)(dpl & 0x3)) << 13);                          \
     idt[numero].offset_16_31 = (unsigned short) ((unsigned int)(&_isr ## numero) >> 16 & (unsigned int) 0xFFFF);
 
-
+/*Ejercicio 5*/
+#define IDT_ENTRY2(numero, dpl) \
+    idt[numero].offset_0_15 = (unsigned short) ((unsigned int)(&_isr ## numero) & (unsigned int) 0xFFFF); \
+    idt[numero].segsel = (unsigned short) 0x08; \
+    idt[numero].attr = (unsigned short) 0xEE00 | (((unsigned short)(dpl & 0x3)) << 13); \
+    idt[numero].offset_16_31 = (unsigned short) ((unsigned int)(&_isr ## numero) >> 16 & (unsigned int) 0xFFFF);
 
 void idt_inicializar() {
     // Excepciones
@@ -66,5 +71,9 @@ void idt_inicializar() {
     IDT_ENTRY(17, 00);
     IDT_ENTRY(18, 00);
     IDT_ENTRY(19, 00);
+/*Ejercicio 5*/
+    IDT_ENTRY(32, 00); // Reloj
+    IDT_ENTRY(33, 00); // Teclado
+    IDT_ENTRY2(0x46, 0x3);
 	// llamar a IDT_ENTRY una vez por cada entrada a configurar (es una macro que no soporta loops)
 }

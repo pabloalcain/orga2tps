@@ -40,6 +40,8 @@ typedef unsigned int   uint;
 #define GDT_IDX_DATA_LVL3           11
 #define GDT_IDX_VIDEO	            12
 
+#define GDT_IDX_TAREA_INICIAL       13
+
 /* Offsets en la gdt */
 /* -------------------------------------------------------------------------- */
 #define GDT_OFF_NULL_DESC           (GDT_IDX_NULL_DESC      << 3)
@@ -51,6 +53,9 @@ typedef unsigned int   uint;
 // Direccion del Directorio de Paginas
 #define PAGE_DIR				0x27000		/* direccion del page directory */
 #define PAGE_TABLE				0x28000		/* direccion de la primera page table */
+
+// Direcciones fisicas de stacks
+#define KERNEL_STACK_DIR		0x28000		/* direccion de la pila del kernel */
 
 
 /* Definicion de la pantalla */
