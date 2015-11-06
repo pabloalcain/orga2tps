@@ -40,7 +40,10 @@ typedef unsigned int   uint;
 #define GDT_IDX_DATA_LVL3           11
 #define GDT_IDX_VIDEO	            12
 
-#define GDT_IDX_TAREA_INICIAL       13
+#define GDT_IDX_TSS_TAREA_INICIAL   13
+#define GDT_IDX_TSS_TAREA_IDLE      14
+#define GDT_IDX_TSS_BASE_PERROS_A   15
+#define GDT_IDX_TSS_BASE_PERROS_B   23
 
 /* Offsets en la gdt */
 /* -------------------------------------------------------------------------- */
@@ -57,6 +60,8 @@ typedef unsigned int   uint;
 // Direcciones fisicas de stacks
 #define KERNEL_STACK_DIR		0x28000		/* direccion de la pila del kernel */
 
+// Direcciones fisicas de codigo
+#define COD_TAREA_IDLE_DIR		0x16000
 
 /* Definicion de la pantalla */
 #define VIDEO_FILS 50

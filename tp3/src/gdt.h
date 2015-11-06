@@ -33,6 +33,8 @@ typedef struct str_gdt_entry {
     unsigned char   base_31_24;
 } __attribute__((__packed__, aligned (8))) gdt_entry;
 
+void gdt_agregarSegmento(int indice,int base,int limit,char type,char s,char dpl,char p,char l,char db,char g);
+
 /* Tabla GDT */
 extern gdt_entry gdt[];
 extern gdt_descriptor GDT_DESC;

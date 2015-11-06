@@ -17,6 +17,8 @@ extern resetear_pic
 extern habilitar_pic 
 extern game_inicializar
 extern mmu_unmapear_pagina
+extern tss_inicializar
+
 
 global start
 
@@ -120,7 +122,9 @@ start:
 
     ; Inicializar tss
 
+    xchg bx, bx
     ; Inicializar tss de la tarea Idle
+    call tss_inicializar
 
     ; Inicializar el scheduler
 
@@ -136,9 +140,12 @@ start:
     call deshabilitar_pic
     call resetear_pic
     call habilitar_pic
-    sti    
-    ; Cargar tarea inicial
 
+    ; ; Habilitar interrupciones
+    sti    
+
+    ; Cargar tarea inicial
+    ; (se hace en game_inicializar() )
     
     ; EJERCICIO 2: Generar interrupcion
     ; mov eax, 1 
@@ -156,10 +163,8 @@ start:
     ; pop eax
     ; mov eax,[0x3FF000]
 
-    ; ; Habilitar interrupciones
-    ; sti
-    
     ; Saltar a la primera tarea: Idle
+    jmp (0x14*8):0          ; salto a tarea IDLE, 14 = GDT_IDX_TSS_TAREA_IDLE
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF

@@ -154,3 +154,26 @@ gdt_descriptor GDT_DESC = {
     sizeof(gdt) - 1,
     (unsigned int) &gdt
 };
+
+void gdt_agregarSegmento(int indice,int base,int limit,char type,char s,char dpl,char p,char l,char db,char g){
+    short limit_0_15 = limit & 0xFFFF;
+    char limit_16_19 = (limit >> 16) & 0xFF;
+    short base_0_15 = base & 0xFFFF;
+    char base_16_23 = (base >> 16) & 0xFF;
+    char base_24_31 = (base >> 24) & 0xFF;
+    gdt[indice] = (gdt_entry){
+        (unsigned short)    limit_0_15,     /* limit[0:15]  */
+        (unsigned short)    base_0_15,      /* base[15:0]   */
+        (unsigned char)     base_16_23,     /* base[23:16]  */
+        (unsigned char)     type,           /* type         */
+        (unsigned char)     s   ,           /* s            */
+        (unsigned char)     dpl,            /* dpl          */
+        (unsigned char)     p,              /* p            */
+        (unsigned char)     limit_16_19,    /* limit[16:19] */
+        (unsigned char)     0x00,           /* avl          */
+        (unsigned char)     l,              /* l            */
+        (unsigned char)     db,             /* db           */
+        (unsigned char)     g,              /* g            */
+        (unsigned char)     base_24_31      /* base[31:24]  */
+    };
+}

@@ -13,6 +13,10 @@ sched_t scheduler;
 
 void sched_inicializar()
 {
+	scheduler.tasks[0].gdt_index = COD_TAREA_IDLE_DIR; // tarea idle
+	scheduler.tasks[0].perro = NULL; // tarea idle
+
+	scheduler.current = 0; // se comienza a ejecutar la tarea idle
 }
 
 
@@ -23,9 +27,14 @@ int sched_buscar_indice_tarea(uint gdt_index) {
 
 int sched_buscar_tarea_libre()
 {
-	int i = 0;
+	int i = 1;
 
-    return i;
+	while ((scheduler.tasks[i].perro != NULL) || (i < MAX_CANT_TAREAS_VIVAS+1)) {
+		i++;
+	}
+
+    return (i % (MAX_CANT_TAREAS_VIVAS + 1)); // devuelve un indice de una tarea que esta libre o si recorre
+    										  // todas las posiciones, devuelvo el indice de la tarea idle
 }
 
 
