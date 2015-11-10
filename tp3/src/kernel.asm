@@ -122,7 +122,7 @@ start:
 
     ; Inicializar tss
 
-    xchg bx, bx
+    ;xchg bx, bx
     ; Inicializar tss de la tarea Idle
     call tss_inicializar
 
@@ -164,7 +164,10 @@ start:
     ; mov eax,[0x3FF000]
 
     ; Saltar a la primera tarea: Idle
-    jmp (0x14*8):0          ; salto a tarea IDLE, 14 = GDT_IDX_TSS_TAREA_IDLE
+    xchg bx, bx
+    mov ax, (13*8)
+    ltr ax
+    jmp (14*8):0          ; salto a tarea IDLE, 14 = GDT_IDX_TSS_TAREA_IDLE
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF

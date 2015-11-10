@@ -181,7 +181,7 @@ void tss_inicializar_gdt_perros(){
 
 void tss_inicializar()
 {
-	tss_inicializar_tarea_inicial();
+//	breakpoint();
     gdt_agregarSegmento(
         GDT_IDX_TSS_TAREA_INICIAL,/* indice */
         (int)&tss_inicial,       /* base */
@@ -194,6 +194,7 @@ void tss_inicializar()
         0,                       /* db */
         0                        /* g */
     );
+  //  breakpoint();
     gdt_agregarSegmento(
         GDT_IDX_TSS_TAREA_IDLE,   /* indice */
         (int)&tss_idle,          /* base */
@@ -206,5 +207,9 @@ void tss_inicializar()
         0,                       /* db */
         0                        /* g */ //modificado
     );
+   // breakpoint();
+    tss_inicializar_tarea_inicial();
+  //  breakpoint();
     tss_initializar_tarea_idle();
+   // breakpoint();
 }
