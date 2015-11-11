@@ -1,0 +1,33 @@
+\indent El trabajo práctico consiste en la implementación de un pequeño Sistema Operativo que de soporte
+para que corra una version del juego \textbf{Jaurías}. El desarrollo se basó en una serie de ejercicios que
+sirvieron como pautas de ordenamiento para la implementación del sistema. \\
+Los ejercicios estaban enfocados en la implementación del SO a través de ciertas etapas específicas
+para el funcionamiento del sistema.
+
+Las etapas desarrolladas son:
+
+\begin{itemize}
+	\item Tabla de Descriptores Globales (GDT): Armamos la tabla GDT con los segmentos especificados,
+dos segmentos de codigo nivel 0 y 3 y dos segmentos de datos nivel 0 y 3; que direccionan
+los primeros 500 MB de memoria. También completamos el código necesario para pasar a modo
+protegido y setear la pila del kernel en la dirección 0x27000. Implementamos una rutina que
+limpie la pantalla e imprima en pantalla usando un segmento adicional que describa el área de
+memoria.
+	\item Tabla de IDT: Armamos la tabla correspondiente a IDT, y posteriormente las rutinas de atención
+de interrupciones.
+	\item Inicialización de Directorio: Creamos e inicializamos el directorio páginas y las tablas de pagina
+para el Kernel, se utilizo \textit{identity mapping} para el mapeo de las paginas. Y activamos paginación.
+	\item MMU: Escribimos una rutina para iniciar la MMU, y las funciones necesarias para limpiar el mapa
+de memoria. Ademas de la rutina para inicializar el directorio y tabla de paginas y las rutinas
+encargadas del mapeo/desmapeo de paginas.
+	\item Completar IDT: Escribimos las rutinas de atención de interrupciones del reloj, teclado y servicio
+0x46. Además se cambió el handler de las otras interrupciones para que si la tarea asociada
+a un jugador genera una excepción, esta sea eliminada.
+	\item TSS: Armamos la tabla y completamos las entradas del arreglo de la TSS, y completamos en la
+GDT los selectores de todas las táreas (en total definimos 18 entradas, 8 perros de cada jugador, la tarea Idle y la tarea inicial); además de escribir la rutina
+encargada de su ejecución.
+	\item Scheduler: Inicializamos el scheduler y las rutinas necesarias para el intercambio de tareas. Ademas modificamos la rutina de atencion de interrupciones 0x46 para que implemente los servicios
+del sistema y las otras rutinas del procesador para que impriman la excepcion por pantalla y
+desalojen la tarea que las generó.
+	\item Modo Debug: se implementó una característica del juego, \textit{Modo Debug}, el cual muestra el estado de los registros del procesador al momento que se produce una excepción producida por una de las tareas, el sistema entra en un estado de pausa hasta que se presione una tecla que restaura el juego a su ejecución normal.
+\end{itemize}

@@ -1,0 +1,34 @@
+\subsection{Implementación}
+\subsubsection{Ejercicio 1: }
+
+Este ejercicio consiste en armar la GDT, preparar el kernel para saltar a modo protegido e imprimir
+cosas en pantalla.
+La primera entrada de la GDT es una entrada nula, luego, cargamos los descriptores correspondientes a cada nivel (0 y 3) para código y datos respectivamente. Notar que la diferencia entre cada par
+de segmentos en el mismo nivel es únicamente el campo tipo. Por ejemplo, un descriptor de segmento
+de código de nivel 0 es de la forma:
+\begin{itemize}
+	\item \textbf{límite} = \texttt{0x001F3FF}, es decir, completamos los campos limit(0:15) con \texttt{0xF3FF} y limit(16:19) con \texttt{0x1} y activamos granularidad para que direccione a 500 MB, es decir, que extienda el límite ingresado.
+	\item \textbf{base} = \texttt{0x00000000}, es decir, completamos los campos base(0:15) con \texttt{0x0000}, base(23:16) con
+\texttt{0x00} y base(31:24) con \texttt{0x00}.
+	\item En el tipo le pusimos 0xA para indicar que es de código y permitir que se pueda leer y ejecutar.
+	\item En el bit de sistema le pusimos 1 para indicar que no es de sistema.
+	\item Le asignamos privilegio de kernel (DPL = 0).
+	\item Lo marcamos como presente.
+	\item En el campo AVL pusimos 0 al igual que en el campo \textit{l} pues trabajamos con la arquitectura de 32 bits y como trabajamos con segmentos de 32 bits marcamos el bit DB como uno.
+\end{itemize}
+Para definir el segmento de datos nivel 0 la inizialización es muy similar, solo difiere en el campo tipo, donde vez de ser \textbf{0xA} es \textbf{0x2}:
+Para definir el segmento de código nivel 3 la inicialización tambien es muy parecida, excepto por el
+campo DPL, que ahora es \textbf{0x3} (pues es otro nivel de privilegio) en vez de \textbf{0x0}.
+El resto de las definiciones es análoga. \\
+Una vez hecho esto, debíamos preparar todo lo necesario para pasar a modo protegido y setear la pila del kernel en la posición \textbf{0x27000}.
+Para pasar a modo protegido, lo que realizamos fue:
+\begin{itemize}
+	\item Deshabilitar las interrupciones, usando \textbf{cli}.
+	\item Habilitamos A20 (llamando a la rutina habilitar\_ A20).
+	\item Cargamos la GDT utilizando la instrucción \texttt{lgdt[GDT\_ DESC]}, donde GDT\_DESC es la base de la GDT.
+	\item Seteamos el bit PE del registro CR0 realizando un OR entre lo que contiene este registro y \textbf{0x1}
+	\item Finalmente realizamos el salto a \textbf{(0x8*8):modo\_rotegido}, pues en la posición \textbf{0x8} de la GDT se encuentra el selector de código de nivel 0 y \textbf{modo\_protegido} es la etiqueta donde empezamos a definir el código correspondiente al modo protegido.
+\end{itemize}
+Estando en modo protegido, seteamos los correspondientes registros de segmento de datos y el segmento
+extra para video (en \texttt{fs}). Además para setear la pila en la dirección \textbf{0x27000}, una vez en modo protegido, cargamos los registros \texttt{ebp} y \texttt{esp} con el valor \textbf{0x27000}.
+Finalmente, para terminar el ejercicio, inicializamos la pantalla llamando a la función proporcionada por la cátedra \texttt{screen\_inicializar()} la cual pinta el área de la pantalla con los colores que se muestran en el enunciado.
