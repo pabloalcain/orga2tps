@@ -52,8 +52,6 @@ void game_inicializar()
 	game_jugador_inicializar(&jugadorB);
 
     screen_pintar_puntajes();
-
-    ltr((GDT_IDX_TSS_TAREA_IDLE << 3) + 0); // (GDT_IDX_TSS_TAREA_IDLE << 3) + DPL (kernel)
 }
 
 

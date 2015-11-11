@@ -29,11 +29,17 @@ void game_jugador_inicializar(jugador_t *j)
 	j->x_cucha = j->x;
 	j->y_cucha = j->y;
 
+	uint gdt_index;
 
 	int i;
+
 	for (i = 0; i < MAX_CANT_PERROS_VIVOS; i++)
 	{
-		uint gdt_index = 0; // CAMBIAR POR ALGO VALIDO (Descriptor de la tarea en la gdt)
+		if (j->index == JUGADOR_A) {
+			gdt_index = (GDT_IDX_TSS_BASE_PERROS_A + i);
+		} else {
+			gdt_index = (GDT_IDX_TSS_BASE_PERROS_B + i);
+		}
 		game_perro_inicializar(&j->perros[i], j, i, gdt_index + i*8);
 	}
 

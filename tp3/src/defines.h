@@ -31,7 +31,7 @@ typedef unsigned int   uint;
 
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */
-#define GDT_COUNT 16
+#define GDT_COUNT 32
 
 #define GDT_IDX_NULL_DESC           0
 #define GDT_IDX_COD_LVL0            8
