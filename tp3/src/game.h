@@ -37,14 +37,14 @@ typedef struct perro_t
     uint index;  // indice de 0 a 15
     struct jugador_t *jugador;
 
-	uint id;     // id unica tarea
-	uint tipo;   // raza del perro
+	  uint id;     // id unica tarea
+	  uint tipo;   // raza del perro
     uint libre;  // libre: -true- slot disponible para lanzar perro  / -false- ya hay un perro vivo
 
     uint x;
     uint y;
 
-	uint huesos;
+  	uint huesos; // perro.huesos vale a lo sumo 10
     uint indice_reloj;
 
 } perro_t;
@@ -65,6 +65,7 @@ typedef struct jugador_t
   uint cant_perros_restantes;
   uint tipo_perro_a_lanzar;
   ushort indice_perro_actual;
+  ushort ultima_orden;
 } jugador_t;
 
 extern jugador_t jugadorA, jugadorB;

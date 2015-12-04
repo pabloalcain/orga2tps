@@ -18,9 +18,28 @@ void wait(int pseudosecs)
 }
 
 
+#define MOVERSE        0x1
+#define CAVAR          0x2
+#define OLFATEAR       0x3
+#define RECIBIR_ORDEN  0x4
+
 uint game_syscall_manejar(uint syscall, uint param1)
 {
+	perro_t * perro_actual = scheduler.task[scheduler.current].perro;
     // ~ completar llamando a las funciones que haga falta ~
+	switch (tecla)
+	{
+
+		case MOVERSE: game_perro_mover(perro_actual, param1); break;
+
+		case CAVAR: game_perro_cavar(perro_actual); break;
+
+		case OLFATEAR: game_perro_olfatear(perro_actual); break;
+
+		case RECIBIR_ORDEN: game_perro_recibir_orden(perro_actual); break;
+		default: break;
+	}
+
     return 0;
 }
 
@@ -68,40 +87,40 @@ void game_atender_teclado(unsigned char tecla)
 	{
 		
 		/* Ejercicio 5 c)*/
-		case KB_q: screen_pintar('q',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
+		// case KB_q: screen_pintar('q',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
 
-		case KB_a: screen_pintar('a',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
+		// case KB_a: screen_pintar('a',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
 
 
-		case KB_k: screen_pintar('k',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
+		// case KB_k: screen_pintar('k',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
 
-		case KB_z: screen_pintar('z',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
-		case KB_x: screen_pintar('x',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
-		case KB_c: screen_pintar('c',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
+		// case KB_z: screen_pintar('z',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
+		// case KB_x: screen_pintar('x',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
+		// case KB_c: screen_pintar('c',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
 
-		case KB_b: screen_pintar('b',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
-		case KB_n: screen_pintar('n',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
-		case KB_m: screen_pintar('m',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
-		default: break;
+		// case KB_b: screen_pintar('b',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
+		// case KB_n: screen_pintar('n',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
+		// case KB_m: screen_pintar('m',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
+		// default: break;
 
 		// ~~~ completar ~~~
 
 
-		// case KB_q: game_jugador_lanzar_perro(&jugadorA, TIPO_1, 0, 0); break;
+		case KB_q: game_jugador_lanzar_perro(&jugadorA, TIPO_1, 0, 0); break;
 
-		// case KB_a: game_jugador_moverse(&jugadorA, -1,  0); break;
+		case KB_a: game_jugador_moverse(&jugadorA, -1,  0); break;
 
 
-		// case KB_k: game_jugador_moverse(&jugadorB,  0, -1); break;
+		case KB_k: game_jugador_moverse(&jugadorB,  0, -1); break;
 
-		// case KB_z: game_jugador_dar_orden(&jugadorA, 0); break;
-		// case KB_x: game_jugador_dar_orden(&jugadorA, 1); break;
-		// case KB_c: game_jugador_dar_orden(&jugadorA, 2); break;
+		case KB_z: game_jugador_dar_orden(&jugadorA, 0); break;
+		case KB_x: game_jugador_dar_orden(&jugadorA, 1); break;
+		case KB_c: game_jugador_dar_orden(&jugadorA, 2); break;
 
-		// case KB_b: game_jugador_dar_orden(&jugadorB, 0); break;
-		// case KB_n: game_jugador_dar_orden(&jugadorB, 1); break;
-		// case KB_m: game_jugador_dar_orden(&jugadorB, 2); break;
-		// default: break;
+		case KB_b: game_jugador_dar_orden(&jugadorB, 0); break;
+		case KB_n: game_jugador_dar_orden(&jugadorB, 1); break;
+		case KB_m: game_jugador_dar_orden(&jugadorB, 2); break;
+		default: break;
 	}
 
 }

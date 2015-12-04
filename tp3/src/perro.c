@@ -4,6 +4,12 @@
 #include "screen.h"
 #include "tss.h"
 
+typedef struct posicion_x_y
+{
+    unsigned int x;
+	unsigned int y;
+	unsigned int id_orden;
+} posicion_x_y;
 
 // realiza inicialización básica de un perro. El perro aun no está vivo ni por lanzarse. Setea jugador, indice, etc
 void game_perro_inicializar(perro_t *perro, jugador_t *j, uint index, uint id)
@@ -77,6 +83,11 @@ uint game_perro_mover(perro_t *perro, direccion dir)
 uint game_perro_cavar(perro_t *perro)
 {
 	// ~~~ completar ~~~
+	uint huesos_aqui = game_huesos_en_posicion(perro->x, perro->y);
+	if (huesos_aqui > 0 && perro->huesos <= 10) {
+		perro->huesos += 1;
+		
+	}
 	return 0;
 }
 
@@ -133,3 +144,11 @@ void game_perro_ver_si_en_cucha(perro_t *perro)
 		game_perro_termino(perro);
 }
 
+uint game_perro_recibir_orden(perro_t *perro) {
+	ushort orden = (perro->jugador).ultima_orden;
+	posicion_x_y resultado;
+	resultado.x = perro->x;
+	resultado.y = perro->y;
+	resultado.id_orden = orden;
+	return (resultado.id_orden << 16 | resultado.y << 8 | resultado.x);
+}

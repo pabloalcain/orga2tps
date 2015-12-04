@@ -122,12 +122,11 @@ _isr32:
     ; ax tiene el indice en la gdt
     mov bx, ax
     str ax
-
-    mov word [sched_tarea_selector], ax
-
-
     cmp bx, ax
     je .fin
+
+    mov word [sched_tarea_selector], ax
+    jmp far [sched_tarea_offset]
 
     .fin:
     popfd
@@ -162,7 +161,7 @@ global _isr0x46
 _isr0x46:
     cli
     
-    mov eax, 0x42
-    xchg bx, bx
+    ; en eax esta el codigo de la accion
+
     sti
     iret
