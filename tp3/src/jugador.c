@@ -105,4 +105,23 @@ void game_jugador_dar_orden(jugador_t *jugador, int orden)
 }
 
 
-
+int jugador_obtener_proximo_perro_a_ejecutar(unsigned int jugador_actual) {
+	if (jugador_actual == JUGADOR_A) {
+		int i;
+		for (i = 0; i < MAX_CANT_PERROS_VIVOS; i++) {
+			int posicion = (jugadorA.indice_perro_actual + i + 1) % MAX_CANT_PERROS_VIVOS;
+			if (jugadorA.perros[posicion].vivo != FALSE) {
+				return posicion;
+			}
+		}
+	} else {
+		int i;
+		for (i = 0; i < MAX_CANT_PERROS_VIVOS; i++) {
+			int posicion = (jugadorB.indice_perro_actual + i + 1) % MAX_CANT_PERROS_VIVOS;
+			if (jugadorB.perros[posicion].vivo != FALSE) {
+				return posicion;
+			}
+		}
+	}
+	return PERRO_NOT_FOUND;
+}

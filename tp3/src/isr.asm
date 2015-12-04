@@ -17,8 +17,9 @@ extern fin_intr_pic1
 ;; Sched
 extern sched_atender_tick
 extern sched_tarea_actual
-extern game_atender_tick
+extern sched_atender_tick
 extern game_atender_teclado
+extern get_cant_perros_activos
 
 
 ;;
@@ -114,8 +115,19 @@ _isr32:
     cli
     pushad
     pushfd
-    call game_atender_tick
-    call fin_intr_pic1
+
+    call fin_intr_pic1  
+
+    call sched_proxima_a_ejecutar
+    ; ax tiene el indice en la gdt
+    mov bx, ax
+    str ax
+
+    mov word [sched_tarea_selector], ax
+
+
+    cmp bx, ax
+    je .fin
 
     .fin:
     popfd

@@ -25,6 +25,8 @@ void sched_inicializar()
 	}
 
 	scheduler.current = 0; // se comienza a ejecutar la tarea idle
+	scheduler.indice_ultimo_jugador_A = 1;
+	scheduler.indice_ultimo_jugador_B = 9;
 }
 
 
@@ -63,26 +65,36 @@ void sched_remover_tarea(unsigned int gdt_index)
 
 uint sched_proxima_a_ejecutar()
 {
-	// busca el indice de la tarea a ejecutar segun scheduler.current y el turno del jugador
-	perro_actual * = sched_tarea_actual;
-	if (scheduler.indice_jugador_actual == JUGADOR_B) { // en este caso devuelvo el próximo perro a ejecutar del jugador A
-		int i = scheduler.current + 1; // para revisar los indices siguientes, ya sé que el actual es del jugador actual
-		while (i < MAX_CANT_PERROS_VIVOS) { // " + 1" porque el primer indice corresponde a la tarea idle
-			if (scheduler.tasks[i].perro.index == i && i != 0) { // busco los primeros 8 (8 == MAX_CANT_PERROS_VIVOS) porque los primeros 8 perros son del jugador A
-				return i;
-			} 
-		} 
-		i = 1;
-		while ()
-	} else { // devuelvo el proximo del jugador B
-
-	}
+	if (jugador_actual == JUGADOR_B) {
+		ultimo_jugador = JUGADOR_A;
+		int indice_perro = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_A);
+		if (indice_perro == PERRO_NOT_FOUND) {
+			ultimo_jugador = JUGADOR_B;
+			jugadorB.indice_perro_actual = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_B); /* Caso cuando solo un jugador tiene perroes activos */
+			return GDT_IDX_TSS_BASE_PERROS_B + jugadorB.indice_perro_actual;
+		}
+		jugadorA.indice_perro_actual = indice_perro;
+		return 1 + indice_perro;
+	} else {
+		ultimo_jugador = JUGADOR_B;
+		int indice_perro = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_B);
+		if (indice_perro == PERRO_NOT_FOUND) {
+			ultimo_jugador = JUGADOR_A;
+			jugadorA.indice_perro_actual = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_A); /* Caso cuando solo un jugador tiene zombies activos */
+			return GDT_IDX_TSS_BASE_PERROS_A + jugadorA.indice_perro_actual; 
+		}
+		jugadorB.indice_perro_actual = indice_perro;
+		return GDT_IDX_TSS_BASE_PERROS_B + indice_perro;
 }
 
 
 ushort sched_atender_tick()
 {
-    return scheduler.tasks[scheduler.current].gdt_index;
+	perro_t* perro_actual = sched_tarea_actual();
+	game_atender_tick(perro_actual);
+    return sched_proxima_a_ejecutar();
 }
 
-
+unsigned int get_cant_perros_activos(){
+	return jugadorB.cant_perros_vivos + jugadorA.cant_perros_vivos;
+}

@@ -14,6 +14,7 @@
 #define ESCONDITES_CANTIDAD               8
 #define MAX_SIN_CAMBIOS                 999
 
+#define PERRO_NOT_FOUND                 404
 
 #define JUGADOR_A                         0
 #define JUGADOR_B                         1
@@ -59,12 +60,11 @@ typedef struct jugador_t
     uint index;    // 0 o 1
     perro_t perros[MAX_CANT_PERROS_VIVOS];   // los perros del jugador
     uint x_cucha, y_cucha;
-
-    // posicion, puntos, ordenes, etc.
-	// completar si es necesario.
 	int x, y;  // posicion
     uint puntos;
-
+  uint cant_perros_restantes;
+  uint tipo_perro_a_lanzar;
+  ushort indice_perro_actual;
 } jugador_t;
 
 extern jugador_t jugadorA, jugadorB;

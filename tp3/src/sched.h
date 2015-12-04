@@ -32,7 +32,10 @@ typedef struct sched_t
 {
     sched_task_t tasks[MAX_CANT_TAREAS_VIVAS+1];
     ushort current;
+    ushort jugador_actual; // indica el jugador (JUGADOR_A o JUGADOR_B)
     uint indice_jugador_actual;
+    uint indice_ultimo_jugador_A; // valores válidos: de 1 a 8 inclusive
+    uint indice_ultimo_jugador_B; // valores válidos: de 9 a 16 inclusive
 } sched_t;
 
 extern sched_t scheduler;
