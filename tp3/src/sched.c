@@ -56,35 +56,57 @@ perro_t* sched_tarea_actual()
 
 void sched_agregar_tarea(perro_t *perro)
 {
+
 }
 
-void sched_remover_tarea(unsigned int gdt_index)
+void sched_remover_tarea(unsigned int jugador, tss* debug_tss_dir)
 {
+	   unsigned int debug_jugador_actual;
+	   unsigned int debug_tipo_perro;
+	   tss debug_tss = *debug_tss_dir;;
+	   screen_guardar_estado_actual_pantalla();
+	if(jugador == JUGADOR_A){
+		debug_tipo_perro = jugadorA.perros[jugadorA.indice_perro_actual].tipo;
+		jugadorA.cant_perros_vivos--;
+		unsigned char indice_aux = jugadorA.indice_perro_actual;
+		jugadorA.perros[indice_aux].libre = TRUE;
+	 	debug_jugador_actual = JUGADOR_A;
+	 } else{
+	 	debug_tipo_perro = jugadorB.perros[jugadorB.indice_perro_actual].tipo;
+		jugadorB.cant_perros_vivos--;
+		jugadorB.perros[jugadorB.indice_perro_actual].libre = TRUE;
+	 	debug_jugador_actual = JUGADOR_B;
+	}
+	if(modo_debug == TRUE){
+		screen_mostrar_cartel(debug_jugador_actual, debug_tipo_perro, debug_tss);
+		pausa = TRUE;
+	}
 }
 
 
 uint sched_proxima_a_ejecutar()
 {
-	if (jugador_actual == JUGADOR_B) {
-		ultimo_jugador = JUGADOR_A;
+	if (scheduler.jugador_actual == JUGADOR_B) {
+		scheduler.ultimo_jugador = JUGADOR_A;
 		int indice_perro = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_A);
 		if (indice_perro == PERRO_NOT_FOUND) {
-			ultimo_jugador = JUGADOR_B;
-			jugadorB.indice_perro_actual = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_B); /* Caso cuando solo un jugador tiene perroes activos */
+			scheduler.ultimo_jugador = JUGADOR_B;
+			jugadorB.indice_perro_actual = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_B); /* Caso cuando solo un jugador tiene perros activos */
 			return GDT_IDX_TSS_BASE_PERROS_B + jugadorB.indice_perro_actual;
 		}
 		jugadorA.indice_perro_actual = indice_perro;
 		return 1 + indice_perro;
 	} else {
-		ultimo_jugador = JUGADOR_B;
+		scheduler.ultimo_jugador = JUGADOR_B;
 		int indice_perro = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_B);
 		if (indice_perro == PERRO_NOT_FOUND) {
-			ultimo_jugador = JUGADOR_A;
-			jugadorA.indice_perro_actual = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_A); /* Caso cuando solo un jugador tiene zombies activos */
+			scheduler.ultimo_jugador = JUGADOR_A;
+			jugadorA.indice_perro_actual = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_A); /* Caso cuando solo un jugador tiene perros activos */
 			return GDT_IDX_TSS_BASE_PERROS_A + jugadorA.indice_perro_actual; 
 		}
 		jugadorB.indice_perro_actual = indice_perro;
 		return GDT_IDX_TSS_BASE_PERROS_B + indice_perro;
+	}
 }
 
 
@@ -97,4 +119,12 @@ ushort sched_atender_tick()
 
 unsigned int get_cant_perros_activos(){
 	return jugadorB.cant_perros_vivos + jugadorA.cant_perros_vivos;
+}
+
+uint sched_jugador_actual() {
+	return scheduler.jugador_actual;
+}
+
+uint sched_idle() {
+	return GDT_IDX_TSS_TAREA_IDLE;
 }

@@ -10,6 +10,9 @@
 
 #include "game.h"
 #include "gdt.h"
+#include "tss.h"
+
+
 
 #define MAX_CANT_TAREAS_VIVAS   (MAX_CANT_PERROS_VIVOS * 2)
 
@@ -32,7 +35,8 @@ typedef struct sched_t
 {
     sched_task_t tasks[MAX_CANT_TAREAS_VIVAS+1];
     ushort current;
-    ushort jugador_actual; // indica el jugador (JUGADOR_A o JUGADOR_B)
+    ushort jugador_actual; // indica el jugador actual (JUGADOR_A o JUGADOR_B)
+    ushort ultimo_jugador; // indica el ultimo jugador jugador (JUGADOR_A o JUGADOR_B)
     uint indice_jugador_actual;
     uint indice_ultimo_jugador_A; // valores válidos: de 1 a 8 inclusive
     uint indice_ultimo_jugador_B; // valores válidos: de 9 a 16 inclusive
@@ -50,7 +54,7 @@ extern sched_t scheduler;
 void sched_agregar_tarea(perro_t *perro);
 
 // debe remover tareas del scheduler
-void sched_remover_tarea(unsigned int gdt_index);
+void sched_remover_tarea(unsigned int jugador, tss* debug_tss_dir);
 
 // debe devolver el perro correspondiente a la tarea que está corriendo actualmente
 perro_t* sched_tarea_actual();
@@ -58,5 +62,7 @@ perro_t* sched_tarea_actual();
 // debe avisar al juego que hubo un tick (para que haga cosas del juego) y luego configurarse
 // para pasar a la siguiente tarea (devuelve su indice en la gdt)
 ushort sched_atender_tick();
+
+uint sched_jugador_actual();
 
 #endif	/* !__SCHED_H__ */

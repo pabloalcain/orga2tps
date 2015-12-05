@@ -12,6 +12,7 @@ TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 #include <stdarg.h>
 
 
+
 int escondites[ESCONDITES_CANTIDAD][3] = { // TRIPLAS DE LA FORMA (X, Y, HUESOS)
                                         {76,  25, 50}, {12, 15, 50}, {9, 10, 100}, {47, 21, 100} ,
                                         {34,  11, 50}, {75, 38, 50}, {40, 21, 100}, {72, 17, 100}
@@ -19,6 +20,16 @@ int escondites[ESCONDITES_CANTIDAD][3] = { // TRIPLAS DE LA FORMA (X, Y, HUESOS)
 
 jugador_t jugadorA;
 jugador_t jugadorB;
+
+typedef struct posicion_x_y
+{
+
+    uint x;
+    uint y;
+
+  	uint id_orden;
+
+} posicion_x_y;
 
 perro_t *game_perro_actual = NULL;
 int ultimo_cambio = MAX_SIN_CAMBIOS;
@@ -56,8 +67,7 @@ void game_inicializar()
 
 
 // devuelve la cantidad de huesos que hay en la posición pasada como parametro
-uint game_huesos_en_posicion(uint x, uint y)
-{
+uint game_huesos_en_posicion(uint x, uint y) {
 	int i;
 	for (i = 0; i < ESCONDITES_CANTIDAD; i++)
 	{
@@ -67,7 +77,14 @@ uint game_huesos_en_posicion(uint x, uint y)
 	return 0;
 }
 
-
+void game_restar_hueso_en_posicion(uint x, uint y) {
+	int i;
+	for (i = 0; i < ESCONDITES_CANTIDAD; i++)
+	{
+		if (escondites[i][0] == x && escondites[i][1] == y)
+			escondites[i][2]--;
+	}
+}
 
 
 // devuelve algun perro que esté en la posicion pasada (hay max 2, uno por jugador)
@@ -91,7 +108,33 @@ void game_terminar_si_es_hora()
 {
 }
 
+int jugador_obtener_proximo_perro_a_ejecutar(unsigned int jugador_actual) {
+	if (jugador_actual == JUGADOR_A) {
+		int i;
+		for (i = 0; i < MAX_CANT_PERROS_VIVOS; i++) {
+			int posicion = (jugadorA.indice_perro_actual + i + 1) % MAX_CANT_PERROS_VIVOS;
+			if (jugadorA.perros[posicion].libre != TRUE) {
+				return posicion;
+			}
+		}
+	} else {
+		int i;
+		for (i = 0; i < MAX_CANT_PERROS_VIVOS; i++) {
+			int posicion = (jugadorB.indice_perro_actual + i + 1) % MAX_CANT_PERROS_VIVOS;
+			if (jugadorB.perros[posicion].libre != TRUE) {
+				return posicion;
+			}
+		}
+	}
+	return PERRO_NOT_FOUND;
+}
 
-
-
-
+uint game_perro_recibir_orden(perro_t *perro) {
+	jugador_t* jugador = perro->jugador;
+	ushort orden = jugador->ultima_orden;
+	posicion_x_y resultado;
+	resultado.x = perro->x;
+	resultado.y = perro->y;
+	resultado.id_orden = orden;
+	return (resultado.id_orden << 16 | resultado.y << 8 | resultado.x);
+}

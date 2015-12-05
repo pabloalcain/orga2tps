@@ -12,10 +12,9 @@
 
 
 #include "colors.h"
-#include "defines.h"
 #include "i386.h"
-#include "sched.h"
 #include "game.h"
+#include "tss.h"
 
 /* Estructura de para acceder a memoria de video */
 typedef struct ca_s {
@@ -80,6 +79,7 @@ void screen_pintar_relojes();
 
 void screen_actualizar_posicion_mapa(uint x, uint y);
 void screen_stop_game_show_winner(jugador_t *j);
-
+void screen_guardar_estado_actual_pantalla();
+void screen_mostrar_cartel(unsigned int jugador, int tipo_perro_desalojado, tss debug_tss);
 
 #endif  /* !__SCREEN_H__ */

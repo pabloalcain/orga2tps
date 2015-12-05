@@ -25,6 +25,8 @@
 #define TIPO_1                            0
 #define TIPO_2                            1
 
+unsigned int modo_debug = FALSE;
+unsigned int pausa = FALSE;
 
 typedef enum direccion_e { ARR = 0x4, ABA = 0x7, DER = 0xA, IZQ = 0xD, AQUI = 0x10} direccion;
 
@@ -63,6 +65,7 @@ typedef struct jugador_t
 	int x, y;  // posicion
     uint puntos;
   uint cant_perros_restantes;
+  uint cant_perros_vivos;
   uint tipo_perro_a_lanzar;
   ushort indice_perro_actual;
   ushort ultima_orden;
@@ -157,4 +160,9 @@ perro_t* game_perro_en_posicion(uint x, uint y);
 // termina si se agotaron los huesos o si hace tiempo que no hay ningun cambio
 void game_terminar_si_es_hora();
 
+int jugador_obtener_proximo_perro_a_ejecutar(unsigned int jugador_actual);
+
+uint game_perro_recibir_orden(perro_t *perro);
+
+void game_restar_hueso_en_posicion(uint x, uint y);
 #endif  /* !__GAME_H__ */

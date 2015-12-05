@@ -85,8 +85,8 @@ uint game_perro_cavar(perro_t *perro)
 	// ~~~ completar ~~~
 	uint huesos_aqui = game_huesos_en_posicion(perro->x, perro->y);
 	if (huesos_aqui > 0 && perro->huesos <= 10) {
-		perro->huesos += 1;
-		
+		perro->huesos ++;
+		game_restar_hueso_en_posicion(perro->x, perro->y);
 	}
 	return 0;
 }
@@ -144,11 +144,3 @@ void game_perro_ver_si_en_cucha(perro_t *perro)
 		game_perro_termino(perro);
 }
 
-uint game_perro_recibir_orden(perro_t *perro) {
-	ushort orden = (perro->jugador).ultima_orden;
-	posicion_x_y resultado;
-	resultado.x = perro->x;
-	resultado.y = perro->y;
-	resultado.id_orden = orden;
-	return (resultado.id_orden << 16 | resultado.y << 8 | resultado.x);
-}

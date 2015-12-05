@@ -15,6 +15,7 @@ extern int ultimo_cambio;
 
 extern jugador_t jugadorA, jugadorB;
 
+unsigned short screen_backup[VIDEO_COLS*VIDEO_FILS];
 
 static ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
 
@@ -281,3 +282,109 @@ void screen_stop_game_show_winner(jugador_t *j) {
     while(1){}
 }
 
+void screen_guardar_estado_actual_pantalla() {
+    unsigned short *p = (unsigned short *)VIDEO;
+    int i;
+    for (i = 0; i < VIDEO_COLS*VIDEO_FILS; i++) {
+        screen_backup[i] = p[i];
+    }
+}
+
+void screen_mostrar_cartel(unsigned int jugador, int tipo_perro_desalojado, tss debug_tss) {
+
+// TODO!!!!!!!!!!!!!!!!!!!!!!11
+
+    // screen_guardar_estado_actual_pantalla();
+    // char *char_jugador = "";
+    // char *char_tipo_zombi = "";
+    // unsigned int color_char = C_FG_WHITE;
+    // unsigned int color_bg_jugador_y_zombi;
+    // int i, j;
+    // /* Elegir string jugador */
+    // if (jugador == JUGADOR_ROJO) {
+    //     char_jugador = debug_jugador_rojo;
+    //     color_char = C_BG_RED | color_char;
+    //     color_bg_jugador_y_zombi = C_BG_RED;
+    // } else {
+    //     char_jugador = debug_jugador_azul;
+    //     color_char = C_BG_BLUE | color_char;
+    //     color_bg_jugador_y_zombi = C_BG_BLUE;
+    // }
+    // /* Elegir string tipo zombi */
+    // if (tipo_zombi_desalojado == ZOMBI_G) {
+    //     char_tipo_zombi = debug_zombie_azul_G;
+    // } else if (tipo_zombi_desalojado == ZOMBI_M){
+    //     char_tipo_zombi = debug_zombie_azul_M;
+    // } else {
+    //     char_tipo_zombi = debug_zombie_azul_C;
+    // }
+
+    // /* Imprimir cartel */
+    // for (i = DEBUG_SCREEN_FILA_INICIO; i < DEBUG_SCREEN_FILA_FIN; i++) {
+    //     for (j = DEBUG_SCREEN_COL_INICIO; j < DEBUG_SCREEN_COL_FIN; j++) {
+    //         if ((i == DEBUG_SCREEN_FILA_INICIO) || (i == (DEBUG_SCREEN_FILA_FIN -1)) 
+    //                 || (j == DEBUG_SCREEN_COL_INICIO) || (j == DEBUG_SCREEN_COL_FIN - 1)) {
+    //             print(" ", j, i, C_BG_BLACK);
+    //         } else if ((i == DEBUG_SCREEN_FILA_INICIO + 1) 
+    //                 && (j > DEBUG_SCREEN_COL_INICIO) && (j < DEBUG_SCREEN_COL_FIN - 1)) {
+    //             print(" ", j, i, color_bg_jugador_y_zombi);
+    //         } else {
+    //             print(" ", j, i, C_BG_LIGHT_GREY);
+    //         }
+    //         print(char_jugador, DEBUG_SCREEN_COL_INICIO + 1, DEBUG_SCREEN_FILA_INICIO + 1, color_char);
+    //         print(char_tipo_zombi, DEBUG_SCREEN_COL_INICIO + 11, DEBUG_SCREEN_FILA_INICIO + 1, color_char);
+    //     }
+    // }
+
+    // /* Imprimir valores de los Registros */
+    // print("eax", DEBUG_SCREEN_COL_INICIO + 2, DEBUG_SCREEN_FILA_INICIO + 3, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(debug_tss.eax, 8, DEBUG_SCREEN_COL_INICIO + 6, DEBUG_SCREEN_FILA_INICIO + 3, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print("ebx", DEBUG_SCREEN_COL_INICIO + 2, DEBUG_SCREEN_FILA_INICIO + 5, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(debug_tss.ebx, 8, DEBUG_SCREEN_COL_INICIO + 6, DEBUG_SCREEN_FILA_INICIO + 5, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print("ecx", DEBUG_SCREEN_COL_INICIO + 2, DEBUG_SCREEN_FILA_INICIO + 7, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(debug_tss.ecx, 8, DEBUG_SCREEN_COL_INICIO + 6, DEBUG_SCREEN_FILA_INICIO + 7, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print("edx", DEBUG_SCREEN_COL_INICIO + 2, DEBUG_SCREEN_FILA_INICIO + 9, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(debug_tss.edx, 8, DEBUG_SCREEN_COL_INICIO + 6, DEBUG_SCREEN_FILA_INICIO + 9, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print("esi", DEBUG_SCREEN_COL_INICIO + 2, DEBUG_SCREEN_FILA_INICIO + 11, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(debug_tss.esi, 8, DEBUG_SCREEN_COL_INICIO + 6, DEBUG_SCREEN_FILA_INICIO + 11, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print("edi", DEBUG_SCREEN_COL_INICIO + 2, DEBUG_SCREEN_FILA_INICIO + 13, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(debug_tss.edi, 8, DEBUG_SCREEN_COL_INICIO + 6, DEBUG_SCREEN_FILA_INICIO + 13, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print("ebp", DEBUG_SCREEN_COL_INICIO + 2, DEBUG_SCREEN_FILA_INICIO + 15, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(debug_tss.ebp, 8, DEBUG_SCREEN_COL_INICIO + 6, DEBUG_SCREEN_FILA_INICIO + 15, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print("esp", DEBUG_SCREEN_COL_INICIO + 2, DEBUG_SCREEN_FILA_INICIO + 17, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(debug_tss.esp0, 8, DEBUG_SCREEN_COL_INICIO + 6, DEBUG_SCREEN_FILA_INICIO + 17, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print("eip", DEBUG_SCREEN_COL_INICIO + 2, DEBUG_SCREEN_FILA_INICIO + 19, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(debug_tss.eip, 8, DEBUG_SCREEN_COL_INICIO + 6, DEBUG_SCREEN_FILA_INICIO + 19, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print(" cs", DEBUG_SCREEN_COL_INICIO + 2, DEBUG_SCREEN_FILA_INICIO + 21, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(debug_tss.cs, 4, DEBUG_SCREEN_COL_INICIO + 6, DEBUG_SCREEN_FILA_INICIO + 21, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print(" ds", DEBUG_SCREEN_COL_INICIO + 2, DEBUG_SCREEN_FILA_INICIO + 23, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(debug_tss.ds, 4, DEBUG_SCREEN_COL_INICIO + 6, DEBUG_SCREEN_FILA_INICIO + 23, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print(" es", DEBUG_SCREEN_COL_INICIO + 2, DEBUG_SCREEN_FILA_INICIO + 25, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(debug_tss.es, 4, DEBUG_SCREEN_COL_INICIO + 6, DEBUG_SCREEN_FILA_INICIO + 25, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print(" fs", DEBUG_SCREEN_COL_INICIO + 2, DEBUG_SCREEN_FILA_INICIO + 27, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(debug_tss.fs, 4, DEBUG_SCREEN_COL_INICIO + 6, DEBUG_SCREEN_FILA_INICIO + 27, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print(" gs", DEBUG_SCREEN_COL_INICIO + 2, DEBUG_SCREEN_FILA_INICIO + 29, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(debug_tss.gs, 4, DEBUG_SCREEN_COL_INICIO + 6, DEBUG_SCREEN_FILA_INICIO + 29, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print(" ss", DEBUG_SCREEN_COL_INICIO + 2, DEBUG_SCREEN_FILA_INICIO + 31, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(debug_tss.ss0, 4, DEBUG_SCREEN_COL_INICIO + 6, DEBUG_SCREEN_FILA_INICIO + 31, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print("eflags", DEBUG_SCREEN_COL_INICIO + 2, DEBUG_SCREEN_FILA_INICIO + 33, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(debug_tss.eflags, 8, DEBUG_SCREEN_COL_INICIO + 9, DEBUG_SCREEN_FILA_INICIO + 33, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print("cr0", DEBUG_SCREEN_COL_INICIO + 16, DEBUG_SCREEN_FILA_INICIO + 3, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(rcr0(), 8, DEBUG_SCREEN_COL_INICIO + 20, DEBUG_SCREEN_FILA_INICIO + 3, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print("cr2", DEBUG_SCREEN_COL_INICIO + 16, DEBUG_SCREEN_FILA_INICIO + 5, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(rcr2(), 8, DEBUG_SCREEN_COL_INICIO + 20, DEBUG_SCREEN_FILA_INICIO + 5, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print("cr3", DEBUG_SCREEN_COL_INICIO + 16, DEBUG_SCREEN_FILA_INICIO + 7, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(rcr3(), 8, DEBUG_SCREEN_COL_INICIO + 20, DEBUG_SCREEN_FILA_INICIO + 7, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print("cr4", DEBUG_SCREEN_COL_INICIO + 16, DEBUG_SCREEN_FILA_INICIO + 9, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex(rcr4(), 8, DEBUG_SCREEN_COL_INICIO + 20, DEBUG_SCREEN_FILA_INICIO + 9, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print("stack", DEBUG_SCREEN_COL_INICIO + 16, DEBUG_SCREEN_FILA_INICIO + 20, C_BG_LIGHT_GREY | C_FG_BLACK);
+    // print_hex((*(unsigned int*)debug_tss.esp0), 8, DEBUG_SCREEN_COL_INICIO + 16, DEBUG_SCREEN_FILA_INICIO + 23, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print_hex((*(unsigned int*)(debug_tss.esp0+4)), 8, DEBUG_SCREEN_COL_INICIO + 16, DEBUG_SCREEN_FILA_INICIO + 24, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print_hex((*(unsigned int*)(debug_tss.esp0+8)), 8, DEBUG_SCREEN_COL_INICIO + 16, DEBUG_SCREEN_FILA_INICIO + 25, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print_hex((*(unsigned int*)(debug_tss.esp0+12)), 8, DEBUG_SCREEN_COL_INICIO + 16, DEBUG_SCREEN_FILA_INICIO + 26, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print_hex((*(unsigned int*)(debug_tss.esp0+16)), 8, DEBUG_SCREEN_COL_INICIO + 16, DEBUG_SCREEN_FILA_INICIO + 27, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print_hex((*(unsigned int*)(debug_tss.esp0+20)), 8, DEBUG_SCREEN_COL_INICIO + 16, DEBUG_SCREEN_FILA_INICIO + 28, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // print_hex((*(unsigned int*)(debug_tss.esp0+24)), 8, DEBUG_SCREEN_COL_INICIO + 16, DEBUG_SCREEN_FILA_INICIO + 29, C_BG_LIGHT_GREY | C_FG_WHITE);
+    // /* Falta valores stack */
+
+}

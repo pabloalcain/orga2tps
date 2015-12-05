@@ -20,7 +20,11 @@ extern sched_tarea_actual
 extern sched_atender_tick
 extern game_atender_teclado
 extern get_cant_perros_activos
-
+extern game_syscall_manejar
+extern sched_idle
+extern sched_jugador_actual
+extern sched_remover_tarea
+extern sched_proxima_a_ejecutar
 
 ;;
 ;; Definición de MACROS
@@ -51,8 +55,59 @@ MSG_ISR19 db 'SIMD FP Exception',0
 global _isr%1
 
 _isr%1:
-    mov eax, %1
-	imprimir_texto_mp %2, %3, 0x07, 0, 0
+   push %2
+    pushad
+    pushfd
+    pop eax
+    mov [guardo_eflags], eax
+    popad
+    mov dword [guardo_debug_tss + 0], 0
+    mov dword [guardo_debug_tss + 4], esp
+    mov word [guardo_debug_tss + 8], ss
+    mov word [guardo_debug_tss + 10], 0
+    mov dword [guardo_debug_tss + 12], 0
+    mov dword [guardo_debug_tss + 16], 0
+    mov dword [guardo_debug_tss + 20], 0
+    mov dword [guardo_debug_tss + 24], 0
+    mov dword [guardo_debug_tss + 40], eax
+    mov eax, cr3
+    mov dword [guardo_debug_tss + 28], eax
+    mov eax, _isr%1
+    mov dword [guardo_debug_tss + 32], eax
+    mov eax, [guardo_eflags]
+    mov dword [guardo_debug_tss + 36], eax
+    mov dword [guardo_debug_tss + 44], ecx
+    mov dword [guardo_debug_tss + 48], edx
+    mov dword [guardo_debug_tss + 52], ebx
+    mov dword [guardo_debug_tss + 56], 0
+    mov dword [guardo_debug_tss + 60], ebp
+    mov dword [guardo_debug_tss + 64], esi
+    mov dword [guardo_debug_tss + 68], edi
+    mov word [guardo_debug_tss + 72], es
+    mov word [guardo_debug_tss + 74], 0
+    mov word [guardo_debug_tss + 76], cs
+    mov word [guardo_debug_tss + 78], 0
+    mov word [guardo_debug_tss + 80], 0
+    mov word [guardo_debug_tss + 82], 0
+    mov word [guardo_debug_tss + 84], ds
+    mov word [guardo_debug_tss + 86], 0
+    mov word [guardo_debug_tss + 88], fs
+    mov word [guardo_debug_tss + 90], 0
+    mov word [guardo_debug_tss + 92], gs
+    mov word [guardo_debug_tss + 94], 0
+    mov dword [guardo_debug_tss + 96], 0
+    mov dword [guardo_debug_tss + 100], 0
+    mov eax, guardo_debug_tss
+    push eax
+
+    call sched_jugador_actual
+    push eax
+    call sched_remover_tarea
+    add esp, 12
+    
+    call sched_idle
+    call sched_jmp
+
     jmp $
 
 %endmacro
@@ -162,6 +217,52 @@ _isr0x46:
     cli
     
     ; en eax esta el codigo de la accion
+    push eax
+    push ecx
+    call game_syscall_manejar
 
+    add esp, 8
     sti
     iret
+
+; salta a la tarea indicada en AX
+sched_jmp:  
+    shl ax, 3
+    mov word [sched_tarea_selector], ax
+    
+    ;tlbflush
+    mov eax, cr3
+    mov cr3, eax
+    
+    jmp far [sched_tarea_offset]
+    ret
+
+guardo_eflags:
+    dd 0
+guardo_debug_tss:
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0
+    dd 0

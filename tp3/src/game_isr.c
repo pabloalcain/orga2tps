@@ -1,5 +1,5 @@
 
-#include "game.h"
+#include "sched.h"
 #include "mmu.h"
 #include "tss.h"
 #include "screen.h"
@@ -25,9 +25,9 @@ void wait(int pseudosecs)
 
 uint game_syscall_manejar(uint syscall, uint param1)
 {
-	perro_t * perro_actual = scheduler.task[scheduler.current].perro;
-    // ~ completar llamando a las funciones que haga falta ~
-	switch (tecla)
+	perro_t * perro_actual = scheduler.tasks[scheduler.current].perro;
+    
+	switch (syscall)
 	{
 
 		case MOVERSE: game_perro_mover(perro_actual, param1); break;
