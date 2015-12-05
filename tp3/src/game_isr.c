@@ -1,8 +1,8 @@
 
-#include "sched.h"
-#include "mmu.h"
-#include "tss.h"
-#include "screen.h"
+// #include "sched.h"
+// #include "mmu.h"
+// #include "tss.h"
+// #include "screen.h"
 
 /// ************** RUTINAS DE ATENCION DE INTERRUPCIONES DE ************** ///
 ///                              ALTO NIVEL                                ///

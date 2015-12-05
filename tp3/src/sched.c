@@ -6,8 +6,8 @@ definicion de funciones del scheduler
 */
 
 #include "sched.h"
-#include "i386.h"
-#include "screen.h"
+// #include "i386.h"
+// #include "screen.h"
 
 sched_t scheduler;
 
@@ -59,28 +59,17 @@ void sched_agregar_tarea(perro_t *perro)
 
 }
 
-void sched_remover_tarea(unsigned int jugador, tss* debug_tss_dir)
+void sched_remover_tarea(unsigned int jugador)
 {
-	   unsigned int debug_jugador_actual;
-	   unsigned int debug_tipo_perro;
-	   tss debug_tss = *debug_tss_dir;;
-	   screen_guardar_estado_actual_pantalla();
 	if(jugador == JUGADOR_A){
-		debug_tipo_perro = jugadorA.perros[jugadorA.indice_perro_actual].tipo;
 		jugadorA.cant_perros_vivos--;
 		unsigned char indice_aux = jugadorA.indice_perro_actual;
 		jugadorA.perros[indice_aux].libre = TRUE;
-	 	debug_jugador_actual = JUGADOR_A;
 	 } else{
-	 	debug_tipo_perro = jugadorB.perros[jugadorB.indice_perro_actual].tipo;
 		jugadorB.cant_perros_vivos--;
 		jugadorB.perros[jugadorB.indice_perro_actual].libre = TRUE;
-	 	debug_jugador_actual = JUGADOR_B;
 	}
-	if(modo_debug == TRUE){
-		screen_mostrar_cartel(debug_jugador_actual, debug_tipo_perro, debug_tss);
-		pausa = TRUE;
-	}
+
 }
 
 

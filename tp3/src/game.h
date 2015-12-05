@@ -8,6 +8,7 @@
 #define __GAME_H__
 
 #include "defines.h"
+#include "screen.h"
 
 
 #define MAX_CANT_PERROS_VIVOS             8
@@ -31,6 +32,7 @@ unsigned int pausa = FALSE;
 typedef enum direccion_e { ARR = 0x4, ABA = 0x7, DER = 0xA, IZQ = 0xD, AQUI = 0x10} direccion;
 
 struct jugador_t;
+struct perro_t;
 
 typedef struct perro_t
 {
@@ -165,4 +167,8 @@ int jugador_obtener_proximo_perro_a_ejecutar(unsigned int jugador_actual);
 uint game_perro_recibir_orden(perro_t *perro);
 
 void game_restar_hueso_en_posicion(uint x, uint y);
+
+void set_pausa();
+
+unsigned int game_get_is_modo_debug();
 #endif  /* !__GAME_H__ */

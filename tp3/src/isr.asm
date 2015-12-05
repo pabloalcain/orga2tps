@@ -25,6 +25,12 @@ extern sched_idle
 extern sched_jugador_actual
 extern sched_remover_tarea
 extern sched_proxima_a_ejecutar
+extern set_pausa
+extern screen_mostrar_cartel
+extern game_get_is_modo_debug
+extern game_get_jugador_from_perro
+extern game_get_tipo_perro
+extern screen_guardar_estado_actual_pantalla
 
 ;;
 ;; Definición de MACROS
@@ -58,57 +64,116 @@ _isr%1:
    push %2
     pushad
     pushfd
+
     pop eax
-    mov [guardo_eflags], eax
-    popad
-    mov dword [guardo_debug_tss + 0], 0
-    mov dword [guardo_debug_tss + 4], esp
-    mov word [guardo_debug_tss + 8], ss
-    mov word [guardo_debug_tss + 10], 0
-    mov dword [guardo_debug_tss + 12], 0
-    mov dword [guardo_debug_tss + 16], 0
-    mov dword [guardo_debug_tss + 20], 0
-    mov dword [guardo_debug_tss + 24], 0
-    mov dword [guardo_debug_tss + 40], eax
-    mov eax, cr3
-    mov dword [guardo_debug_tss + 28], eax
-    mov eax, _isr%1
-    mov dword [guardo_debug_tss + 32], eax
-    mov eax, [guardo_eflags]
-    mov dword [guardo_debug_tss + 36], eax
-    mov dword [guardo_debug_tss + 44], ecx
-    mov dword [guardo_debug_tss + 48], edx
-    mov dword [guardo_debug_tss + 52], ebx
-    mov dword [guardo_debug_tss + 56], 0
-    mov dword [guardo_debug_tss + 60], ebp
-    mov dword [guardo_debug_tss + 64], esi
-    mov dword [guardo_debug_tss + 68], edi
-    mov word [guardo_debug_tss + 72], es
-    mov word [guardo_debug_tss + 74], 0
-    mov word [guardo_debug_tss + 76], cs
-    mov word [guardo_debug_tss + 78], 0
-    mov word [guardo_debug_tss + 80], 0
-    mov word [guardo_debug_tss + 82], 0
-    mov word [guardo_debug_tss + 84], ds
-    mov word [guardo_debug_tss + 86], 0
-    mov word [guardo_debug_tss + 88], fs
-    mov word [guardo_debug_tss + 90], 0
-    mov word [guardo_debug_tss + 92], gs
-    mov word [guardo_debug_tss + 94], 0
-    mov dword [guardo_debug_tss + 96], 0
-    mov dword [guardo_debug_tss + 100], 0
-    mov eax, guardo_debug_tss
-    push eax
+    push ebx
+    mov ebx, eax
+    call screen_guardar_estado_actual_pantalla
+    mov eax, ebx
+    pop ebx
+    ; asumo que modo_debug recibe como parametro lo que hay en eax
+    ; MODO DEBUG
+
+        mov [guardo_eflags], eax
+        popad
+        mov dword [guardo_debug_tss + 0], 0
+        mov dword [guardo_debug_tss + 4], esp
+        mov word [guardo_debug_tss + 8], ss
+        mov word [guardo_debug_tss + 10], 0
+        mov dword [guardo_debug_tss + 12], 0
+        mov dword [guardo_debug_tss + 16], 0
+        mov dword [guardo_debug_tss + 20], 0
+        mov dword [guardo_debug_tss + 24], 0
+        mov dword [guardo_debug_tss + 40], eax
+        mov eax, cr3
+        mov dword [guardo_debug_tss + 28], eax
+        mov eax, _isr%1
+        mov dword [guardo_debug_tss + 32], eax
+        mov eax, [guardo_eflags]
+        mov dword [guardo_debug_tss + 36], eax
+        mov dword [guardo_debug_tss + 44], ecx
+        mov dword [guardo_debug_tss + 48], edx
+        mov dword [guardo_debug_tss + 52], ebx
+        mov dword [guardo_debug_tss + 56], 0
+        mov dword [guardo_debug_tss + 60], ebp
+        mov dword [guardo_debug_tss + 64], esi
+        mov dword [guardo_debug_tss + 68], edi
+        mov word [guardo_debug_tss + 72], es
+        mov word [guardo_debug_tss + 74], 0
+        mov word [guardo_debug_tss + 76], cs
+        mov word [guardo_debug_tss + 78], 0
+        mov word [guardo_debug_tss + 80], 0
+        mov word [guardo_debug_tss + 82], 0
+        mov word [guardo_debug_tss + 84], ds
+        mov word [guardo_debug_tss + 86], 0
+        mov word [guardo_debug_tss + 88], fs
+        mov word [guardo_debug_tss + 90], 0
+        mov word [guardo_debug_tss + 92], gs
+        mov word [guardo_debug_tss + 94], 0
+        mov dword [guardo_debug_tss + 96], 0
+        mov dword [guardo_debug_tss + 100], 0
+
+        ; preservo ebx, edi, esi
+        push ebx 
+        push edi
+        push esi
+
+        mov ebx, guardo_debug_tss
+
+        ;push eax
+        ; if(modo_debug == TRUE){
+        ;     screen_mostrar_cartel(debug_jugador_actual, debug_tipo_perro, debug_tss);
+        ;     pausa = TRUE;
+        ; }
+        call game_get_is_modo_debug
+        ;en eax esta el booleano modo_debug
+        cmp eax, 0 ; FALSE
+        je .no_imprimir_cartel
+
+        call sched_tarea_actual
+        ; en eax tengo el perro actual
+        mov edi, eax            ; salvo perro en edi
+
+        push eax
+        call game_get_tipo_perro
+        add esp, 4
+
+        mov esi, eax            ;salvo tipo perro
+
+        mov eax, edi            ; vuelvo a traer perro de edi
+        push eax
+        call game_get_jugador_from_perro
+
+        add esp, 4
+
+        push ebx
+        push esi
+        push eax
+        call screen_mostrar_cartel
+        add esp, 12
+
+        call set_pausa      ; pausa = TRUE
+        .no_imprimir_cartel:
+
+        ; popeo ebx, edi, esi
+        pop esi
+        pop edi
+        pop ebx 
+    ;FIN MODO DEBUG
 
     call sched_jugador_actual
+    
     push eax
     call sched_remover_tarea
-    add esp, 12
+    add esp, 4
     
     call sched_idle
     call sched_jmp
 
     jmp $
+
+
+
 
 %endmacro
 
@@ -236,6 +301,7 @@ sched_jmp:
     
     jmp far [sched_tarea_offset]
     ret
+
 
 guardo_eflags:
     dd 0

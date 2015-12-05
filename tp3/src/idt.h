@@ -8,6 +8,7 @@
 #ifndef __IDT_H__
 #define __IDT_H__
 
+#include "isr.h"
 
 /* Struct de descriptor de IDT */
 typedef struct str_idt_descriptor {

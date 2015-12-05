@@ -5,9 +5,9 @@ TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 */
 
 #include "game.h"
-#include "mmu.h"
-#include "tss.h"
-#include "screen.h"
+// #include "mmu.h"
+// #include "tss.h"
+// #include "screen.h"
 
 #include <stdarg.h>
 
@@ -34,13 +34,13 @@ typedef struct posicion_x_y
 perro_t *game_perro_actual = NULL;
 int ultimo_cambio = MAX_SIN_CAMBIOS;
 
-void ASSERT_OR_ERROR(uint value, char* error_msg)
-{
-	if (!value) {
-		print(error_msg, 5, 5, C_BG_LIGHT_GREY | C_FG_BLACK);
-		breakpoint();
-	}
-}
+// void ASSERT_OR_ERROR(uint value, char* error_msg)
+// {
+// 	if (!value) {
+// 		print(error_msg, 5, 5, C_BG_LIGHT_GREY | C_FG_BLACK);
+// 		breakpoint();
+// 	}
+// }
 
 void* error()
 {
@@ -137,4 +137,20 @@ uint game_perro_recibir_orden(perro_t *perro) {
 	resultado.y = perro->y;
 	resultado.id_orden = orden;
 	return (resultado.id_orden << 16 | resultado.y << 8 | resultado.x);
+}
+
+unsigned int game_get_is_modo_debug() {
+	return modo_debug;
+}
+
+void set_pausa() {
+	pausa = TRUE;	
+}
+
+jugador_t game_get_jugador_from_perro(perro_t *perro) {
+	return perro->jugador;
+}
+
+uint game_get_tipo_perro(perro_t *perro) {
+	return perro->tipo;
 }

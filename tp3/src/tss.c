@@ -6,9 +6,9 @@
 */
 
 #include "tss.h"
-#include "mmu.h"
-#include "gdt.h"
-#include "i386.h"
+//#include "mmu.h"
+//#include "gdt.h"
+//#include "i386.h"
 
 tss tss_inicial;
 tss tss_idle;

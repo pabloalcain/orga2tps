@@ -9,12 +9,31 @@
 #define __MMU_H__
 
 #include "defines.h"
-#include "game.h"
+//#include "game.h"
 
 #define CODIGO_BASE       0X401000
 
 #define MAPA_BASE_FISICA  0x500000
 #define MAPA_BASE_VIRTUAL 0x800000
+
+typedef struct perro_t
+{
+
+    // ~~~ para ser completado ~~~
+    uint index;  // indice de 0 a 15
+    struct jugador_t *jugador;
+
+      uint id;     // id unica tarea
+      uint tipo;   // raza del perro
+    uint libre;  // libre: -true- slot disponible para lanzar perro  / -false- ya hay un perro vivo
+
+    uint x;
+    uint y;
+
+    uint huesos; // perro.huesos vale a lo sumo 10
+    uint indice_reloj;
+
+} perro_t;
 
 typedef struct str_page_directory_entry {
     unsigned char present:1;

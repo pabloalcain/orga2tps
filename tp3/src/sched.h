@@ -9,7 +9,7 @@
 #define __SCHED_H__
 
 #include "game.h"
-#include "gdt.h"
+// #include "gdt.h"
 #include "tss.h"
 
 
@@ -54,7 +54,7 @@ extern sched_t scheduler;
 void sched_agregar_tarea(perro_t *perro);
 
 // debe remover tareas del scheduler
-void sched_remover_tarea(unsigned int jugador, tss* debug_tss_dir);
+void sched_remover_tarea(unsigned int jugador);
 
 // debe devolver el perro correspondiente a la tarea que está corriendo actualmente
 perro_t* sched_tarea_actual();
@@ -64,5 +64,6 @@ perro_t* sched_tarea_actual();
 ushort sched_atender_tick();
 
 uint sched_jugador_actual();
+
 
 #endif	/* !__SCHED_H__ */

@@ -13,7 +13,7 @@
 
 #include "colors.h"
 #include "i386.h"
-#include "game.h"
+// #include "game.h"
 #include "tss.h"
 
 /* Estructura de para acceder a memoria de video */

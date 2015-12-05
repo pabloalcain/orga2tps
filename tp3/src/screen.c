@@ -6,7 +6,7 @@ definicion de funciones del scheduler
 */
 
 #include "screen.h"
-#include "game.h"
+// #include "game.h"
 
 #define POSICION_RELOJES_F   46
 #define POSICION_RELOJES_C_A 4
