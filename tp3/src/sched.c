@@ -75,6 +75,15 @@ void sched_remover_tarea(unsigned int jugador)
 
 uint sched_proxima_a_ejecutar()
 {
+
+if (scheduler.jugador_actual == NULL){
+//breakpoint();
+return 	GDT_IDX_TSS_TAREA_IDLE;
+}
+
+///home/diego/bochs-2.6.2/bin/bochs
+
+
 	if (scheduler.jugador_actual == JUGADOR_B) {
 		scheduler.ultimo_jugador = JUGADOR_A;
 		int indice_perro = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_A);
@@ -89,8 +98,13 @@ uint sched_proxima_a_ejecutar()
 		scheduler.ultimo_jugador = JUGADOR_B;
 		int indice_perro = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_B);
 		if (indice_perro == PERRO_NOT_FOUND) {
+
 			scheduler.ultimo_jugador = JUGADOR_A;
-			jugadorA.indice_perro_actual = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_A); /* Caso cuando solo un jugador tiene perros activos */
+			jugadorA.indice_perro_actual = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_A);
+			if (indice_perro == PERRO_NOT_FOUND) {
+					
+			}
+ /* Caso cuando solo un jugador tiene perros activos */
 			return GDT_IDX_TSS_BASE_PERROS_A + jugadorA.indice_perro_actual; 
 		}
 		jugadorB.indice_perro_actual = indice_perro;

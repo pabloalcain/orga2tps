@@ -10,7 +10,8 @@ TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 // #include "screen.h"
 
 #include <stdarg.h>
-
+unsigned int modo_debug = FALSE;
+unsigned int pausa = FALSE;
 
 unsigned int modo_debug = FALSE;
 unsigned int pausa = FALSE;

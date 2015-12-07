@@ -283,11 +283,12 @@ void screen_stop_game_show_winner(jugador_t *j) {
 }
 
 void screen_guardar_estado_actual_pantalla() {
-    unsigned short *p = (unsigned short *)VIDEO;
-    int i;
-    for (i = 0; i < VIDEO_COLS*VIDEO_FILS; i++) {
-        screen_backup[i] = p[i];
-    }
+  //  unsigned short *p = (unsigned short *)VIDEO;
+   // int i;
+   // for (i = 0; i < VIDEO_COLS*VIDEO_FILS; i++) {
+   //     screen_backup[i] = p[i];
+  //  }
+   // breakpoint();
 }
 
 void screen_mostrar_cartel(unsigned int jugador, int tipo_perro_desalojado, tss debug_tss) {
