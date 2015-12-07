@@ -90,6 +90,7 @@ void game_restar_hueso_en_posicion(uint x, uint y) {
 // devuelve algun perro que esté en la posicion pasada (hay max 2, uno por jugador)
 perro_t* game_perro_en_posicion(uint x, uint y)
 {
+//	breakpoint();
 	int i;
 	for (i = 0; i < MAX_CANT_PERROS_VIVOS; i++)
 	{
