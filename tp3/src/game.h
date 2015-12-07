@@ -8,14 +8,10 @@
 #define __GAME_H__
 
 #include "defines.h"
+#include "tss.h"
 #include "screen.h"
+#include "perro.h"
 
-
-#define MAX_CANT_PERROS_VIVOS             8
-#define ESCONDITES_CANTIDAD               8
-#define MAX_SIN_CAMBIOS                 999
-
-#define PERRO_NOT_FOUND                 404
 
 #define JUGADOR_A                         0
 #define JUGADOR_B                         1
@@ -26,52 +22,56 @@
 #define TIPO_1                            0
 #define TIPO_2                            1
 
-unsigned int modo_debug = FALSE;
-unsigned int pausa = FALSE;
+#define MAX_CANT_PERROS_VIVOS             8
+#define ESCONDITES_CANTIDAD               8
+#define MAX_SIN_CAMBIOS                 999
+
+#define PERRO_NOT_FOUND                 404
+
+unsigned int modo_debug;// = FALSE;
+unsigned int pausa;// = FALSE;
 
 typedef enum direccion_e { ARR = 0x4, ABA = 0x7, DER = 0xA, IZQ = 0xD, AQUI = 0x10} direccion;
 
 struct jugador_t;
-struct perro_t;
+
+extern int escondites[ESCONDITES_CANTIDAD][3];
 
 typedef struct perro_t
 {
 
-	// ~~~ para ser completado ~~~
+  // ~~~ para ser completado ~~~
     uint index;  // indice de 0 a 15
     struct jugador_t *jugador;
 
-	  uint id;     // id unica tarea
-	  uint tipo;   // raza del perro
+    uint id;     // id unica tarea
+    uint tipo;   // raza del perro
     uint libre;  // libre: -true- slot disponible para lanzar perro  / -false- ya hay un perro vivo
 
     uint x;
     uint y;
 
-  	uint huesos; // perro.huesos vale a lo sumo 10
+    uint huesos; // perro.huesos vale a lo sumo 10
     uint indice_reloj;
 
 } perro_t;
 
-
-extern int escondites[ESCONDITES_CANTIDAD][3];
-extern int ultimo_cambio;
-extern perro_t *game_perro_actual;
-
-
 typedef struct jugador_t
 {
-    uint index;    // 0 o 1
-    perro_t perros[MAX_CANT_PERROS_VIVOS];   // los perros del jugador
-    uint x_cucha, y_cucha;
-	int x, y;  // posicion
-    uint puntos;
+  uint index;    // 0 o 1
+  struct perro_t perros[MAX_CANT_PERROS_VIVOS];   // los perros del jugador
+  uint x_cucha, y_cucha;
+  int x, y;  // posicion
+  uint puntos;
   uint cant_perros_restantes;
   uint cant_perros_vivos;
   uint tipo_perro_a_lanzar;
   ushort indice_perro_actual;
   ushort ultima_orden;
 } jugador_t;
+
+extern int ultimo_cambio;
+extern perro_t *game_perro_actual;
 
 extern jugador_t jugadorA, jugadorB;
 

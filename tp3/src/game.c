@@ -148,7 +148,7 @@ void set_pausa() {
 }
 
 jugador_t game_get_jugador_from_perro(perro_t *perro) {
-	return perro->jugador;
+	return *(perro->jugador);
 }
 
 uint game_get_tipo_perro(perro_t *perro) {

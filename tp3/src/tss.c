@@ -6,7 +6,7 @@
 */
 
 #include "tss.h"
-//#include "mmu.h"
+#include "mmu.h"
 //#include "gdt.h"
 //#include "i386.h"
 

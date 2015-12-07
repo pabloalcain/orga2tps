@@ -1,8 +1,9 @@
-
+#include "game.h"
 // #include "game.h"
 // #include "mmu.h"
 // #include "screen.h"
 // #include "tss.h"
+
 
 typedef struct posicion_x_y
 {

@@ -11,8 +11,9 @@
 #include "defines.h"
 #include "i386.h"
 #include "gdt.h"
-#include "game.h"
-#include "mmu.h"
+//#include "game.h"
+//#include "mmu.h"
+//#include "screen.h"
 
 typedef struct str_tss {
     unsigned short  ptl;

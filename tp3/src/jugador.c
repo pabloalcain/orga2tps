@@ -1,5 +1,5 @@
 
-// #include "game.h"
+#include "game.h"
 // #include "mmu.h"
 // #include "screen.h"
 

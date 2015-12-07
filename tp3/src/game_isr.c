@@ -1,5 +1,6 @@
-
-// #include "sched.h"
+#include "defines.h"
+#include "game.h"
+#include "sched.h"
 // #include "mmu.h"
 // #include "tss.h"
 // #include "screen.h"
