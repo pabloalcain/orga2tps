@@ -68,7 +68,7 @@ _isr%1:
     pop eax
     push ebx
     mov ebx, eax
-    call screen_guardar_estado_actual_pantalla
+;    call screen_guardar_estado_actual_pantalla
     mov eax, ebx
     pop ebx
     ; asumo que modo_debug recibe como parametro lo que hay en eax
@@ -298,7 +298,6 @@ sched_jmp:
     ;tlbflush
     mov eax, cr3
     mov cr3, eax
-    
     jmp far [sched_tarea_offset]
     ret
 

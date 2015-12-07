@@ -28,8 +28,7 @@
 
 #define PERRO_NOT_FOUND                 404
 
-unsigned int modo_debug;// = FALSE;
-unsigned int pausa;// = FALSE;
+
 
 typedef enum direccion_e { ARR = 0x4, ABA = 0x7, DER = 0xA, IZQ = 0xD, AQUI = 0x10} direccion;
 
