@@ -10,7 +10,7 @@
 
 #include "defines.h"
 #include "game.h"
-#include "perro.h"
+//#include "perro.h"
 
 #define CODIGO_BASE       0X401000
 

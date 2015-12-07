@@ -18,6 +18,7 @@ extern habilitar_pic
 extern game_inicializar
 extern mmu_unmapear_pagina
 extern tss_inicializar
+extern sched_inicializar
 
 
 global start
@@ -127,7 +128,9 @@ start:
     call tss_inicializar
 
     ; Inicializar el scheduler
-
+ ;   xchg bx, bx
+    call sched_inicializar
+ ;   xchg bx, bx
     ; Inicializar la IDT
     call idt_inicializar
 
@@ -164,7 +167,7 @@ start:
     ; mov eax,[0x3FF000]
 
     ; Saltar a la primera tarea: Idle
-    xchg bx, bx
+  ;  xchg bx, bx
     mov ax, (13*8)
     ltr ax
     jmp (14*8):0          ; salto a tarea IDLE, 14 = GDT_IDX_TSS_TAREA_IDLE
