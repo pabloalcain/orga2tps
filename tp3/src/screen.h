@@ -14,7 +14,7 @@
 #include "tss.h"
 #include "colors.h"
 #include "i386.h"
-#include "perro.h"
+//#include "perro.h"
 #include "game.h"
 
 /* Estructura de para acceder a memoria de video */
