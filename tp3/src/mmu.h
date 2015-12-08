@@ -72,9 +72,13 @@ uint mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_
 // debe remapear y copiar el codigo
 void mmu_mover_perro(perro_t *perro, int viejo_x, int viejo_y);
 
+void* mmu_solicitar_pagina_nueva();
 
-void mmu_mapear_pagina  (uint virtual, uint cr3, uint fisica, uint attrs);
+void mmu_mapear_pagina(
+    unsigned int virtual,
+    unsigned int cr3, 
+    unsigned int fisica);
 void mmu_unmapear_pagina(uint virtual, uint cr3);
-
+void* mmu_solicitar_cr3_nuevo(unsigned int jugador);
 
 #endif	/* !__MMU_H__ */

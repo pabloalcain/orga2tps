@@ -46,7 +46,7 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 	// lo scheduleen y finalmente lo pinten en pantalla
 
 	// ~~~ completar ~~~
-	breakpoint();
+	
 	mmu_inicializar_memoria_perro(perro,perro->jugador->index, tipo);
 	sched_agregar_tarea(perro);
 

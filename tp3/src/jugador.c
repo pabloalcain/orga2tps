@@ -64,6 +64,7 @@ perro_t* game_jugador_dame_perro_libre(jugador_t *j)
 // debe encargarse de buscar un perro libre, configurarlo, y inicializar su mapeo de memoria, tss, y lugar en el sched
 void game_jugador_lanzar_perro(jugador_t *j, uint tipo, int x, int y)
 {
+	breakpoint();
 	if (game_perro_en_posicion(x,y) != NULL)
 		return;
 
