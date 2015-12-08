@@ -1,6 +1,6 @@
 // #include "game.h"
 #include "mmu.h"
-// #include "screen.h"
+ #include "screen.h"
 #include "tss.h"
 #include "sched.h"
 
@@ -60,6 +60,8 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 	int task_gdt_index = jugador_get_indice_perro_nuevo(j->perros);	
 	tss_inicializar_tarea_perro(perro->jugador->index, task_gdt_index, perro->index, cr3);
 	sched_agregar_tarea(perro);
+	screen_pintar_perro(perro);
+
 
 
 }
@@ -97,6 +99,7 @@ uint game_perro_mover(perro_t *perro, direccion dir)
     int viejo_y = perro->y;
 
     // ~~~ completar ~~~
+    screen_pintar_perro(perro);
     return nuevo_x + nuevo_y + viejo_x + viejo_y + res; // uso todas las variables para que no tire warning->error.
 }
 
