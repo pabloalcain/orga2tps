@@ -23,7 +23,10 @@ void game_perro_inicializar(perro_t *perro, jugador_t *j, uint index, uint id)
     perro->jugador = j;
 	perro->libre = TRUE;
 
-//	~~~ completar si es necesario ~~~
+    perro->x = j->x_cucha;
+    perro->y = j->y_cucha;
+
+    perro->huesos = 0; // perro.huesos vale a lo sumo 10
 
 }
 
@@ -46,9 +49,6 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 	breakpoint();
 	mmu_inicializar_memoria_perro(perro,perro->jugador->index, tipo);
 	sched_agregar_tarea(perro);
-	breakpoint();
- 	mmu_inicializar_memoria_perro(perro,perro->jugador->index, tipo);
-
 
 
 }

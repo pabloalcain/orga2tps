@@ -106,7 +106,6 @@ void game_atender_teclado(unsigned char tecla)
 
 		// ~~~ completar ~~~
 
-
 		case KB_q: game_jugador_lanzar_perro(&jugadorA, TIPO_1, 0, 0); break;
 
 		case KB_a: game_jugador_moverse(&jugadorA, -1,  0); break;
