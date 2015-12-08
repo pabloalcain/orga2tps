@@ -107,11 +107,21 @@ void game_atender_teclado(unsigned char tecla)
 		// ~~~ completar ~~~
 
 		case KB_q: game_jugador_lanzar_perro(&jugadorA, TIPO_1, 0, 0); break;
+		case KB_e: game_jugador_lanzar_perro(&jugadorA, TIPO_2, 0, 0); break;
 
-		case KB_a: game_jugador_moverse(&jugadorA, -1,  0); break;
+		case KB_u: game_jugador_lanzar_perro(&jugadorB, TIPO_1, 0, 0); break;
+		case KB_o: game_jugador_lanzar_perro(&jugadorB, TIPO_2, 0, 0); break;
 
 
-		case KB_k: game_jugador_moverse(&jugadorB,  0, -1); break;
+		case KB_w: game_jugador_moverse(&jugadorA, 0, -1); break;
+		case KB_s: game_jugador_moverse(&jugadorA, 0, 1); break;
+		case KB_a: game_jugador_moverse(&jugadorA, -1, 0); break;
+		case KB_d: game_jugador_moverse(&jugadorA, 1, 0); break;
+
+		case KB_i: game_jugador_moverse(&jugadorB,  0, -1); break;
+		case KB_k: game_jugador_moverse(&jugadorB,  0, 1); break;
+		case KB_j: game_jugador_moverse(&jugadorB,  -1, 0); break;
+		case KB_l: game_jugador_moverse(&jugadorB,  1, 0); break;
 
 		case KB_z: game_jugador_dar_orden(&jugadorA, 0); break;
 		case KB_x: game_jugador_dar_orden(&jugadorA, 1); break;
