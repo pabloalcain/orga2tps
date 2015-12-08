@@ -61,7 +61,7 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 	tss_inicializar_tarea_perro(perro->jugador->index, task_gdt_index, perro->index, cr3);
 	sched_agregar_tarea(perro);
 	screen_pintar_perro(perro);
-
+	screen_actualizar_reloj_perro(perro);
 
 
 }

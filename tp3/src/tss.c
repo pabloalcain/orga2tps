@@ -106,8 +106,6 @@ void tss_inicializar_tarea_perro(unsigned int jugador,
         tss_jugadorA[indice_tss].dtrap = 0x0; // para indicar que no tiene que ser una interrupcion de tipo trap 
 
 
-        
-        breakpoint();
         gdt[task_gdt_index].base_0_15   = (( (unsigned int) &tss_jugadorA[indice_tss]) & 0xffff);
 	    gdt[task_gdt_index].base_23_16	= (( (unsigned int) &tss_jugadorA[indice_tss]) >> 16) & 0xff;
 	    gdt[task_gdt_index].base_31_24 	= (( (unsigned int) &tss_jugadorA[indice_tss]) >> 24) & 0xff;

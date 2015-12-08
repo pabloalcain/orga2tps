@@ -64,4 +64,6 @@ void tss_inicializar_tarea_perro(unsigned int jugador,
                             unsigned int numero_tarea,
                             unsigned int task_gdt_index,
                             unsigned int cr3);
+
+void tss_inicializar_gdt_perros();
 #endif  /* !__TSS_H__ */
