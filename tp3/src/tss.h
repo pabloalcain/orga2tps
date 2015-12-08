@@ -57,5 +57,6 @@ typedef struct str_tss {
 } __attribute__((__packed__, aligned (8))) tss;
 
 void tss_inicializar();
+void tss_inicializar_tarea_perro();
 
 #endif  /* !__TSS_H__ */

@@ -2,10 +2,10 @@
 // #include "game.h"
  #include "mmu.h"
 // #include "screen.h"
-// #include "tss.h"
+#include "tss.h"
 #include "sched.h"
 
-
+#define PERROS_LIMIT_REACHED   -1;
 
 
 typedef struct posicion_x_y
@@ -30,6 +30,16 @@ void game_perro_inicializar(perro_t *perro, jugador_t *j, uint index, uint id)
 
 }
 
+
+int jugador_get_indice_perro_nuevo(perro_t *perro){
+	int i;
+	for (i = 0; i < MAX_CANT_PERROS_VIVOS; i++) {
+		if (perro[i].libre == TRUE) return i;
+	}
+	return PERROS_LIMIT_REACHED;
+}
+
+
 // toma un perro ya existente libre y lo recicla seteando x e y a la cucha.
 // luego inicializa su mapeo de memoria, tss, lo agrega al sched y pinta la pantalla
 void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
@@ -48,7 +58,8 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 	// ~~~ completar ~~~
 	
 	uint cr3 = mmu_inicializar_memoria_perro(perro,perro->jugador->index, tipo);
-	tss_inicializar_tarea_perro(perro->jugador->index, )
+	int task_gdt_index = jugador_get_indice_perro_nuevo(j->perros);	
+	tss_inicializar_tarea_perro(perro->jugador->index, task_gdt_index, cr3);
 	sched_agregar_tarea(perro);
 
 
