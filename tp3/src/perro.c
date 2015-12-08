@@ -1,7 +1,7 @@
 // #include "game.h"
 #include "mmu.h"
 // #include "screen.h"
-// #include "tss.h"
+#include "tss.h"
 #include "sched.h"
 
 #define PERROS_LIMIT_REACHED   -1;
@@ -56,7 +56,7 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 
 	// ~~~ completar ~~~
 	
-	uint cr3 = mmu_inicializar_memoria_perro(perro,perro->jugador->index, tipo);
+	uint cr3 = mmu_inicializar_memoria_perro(perro->jugador->index);
 	int task_gdt_index = jugador_get_indice_perro_nuevo(j->perros);	
 	tss_inicializar_tarea_perro(perro->jugador->index, task_gdt_index, cr3);
 	sched_agregar_tarea(perro);
