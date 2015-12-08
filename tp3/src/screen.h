@@ -28,7 +28,6 @@ typedef struct ca_s {
 typedef struct perro_t perro_t;
 
 typedef struct jugador_t jugador_t;
-struct tss_t;
 
 int ee_printf(const char *fmt, ...);
 
