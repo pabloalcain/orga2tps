@@ -1,8 +1,11 @@
 #include "game.h"
 // #include "game.h"
-// #include "mmu.h"
+ #include "mmu.h"
 // #include "screen.h"
 // #include "tss.h"
+#include "sched.h"
+
+
 
 
 typedef struct posicion_x_y
@@ -40,6 +43,12 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 	// lo scheduleen y finalmente lo pinten en pantalla
 
 	// ~~~ completar ~~~
+
+	mmu_inicializar_memoria_perro(perro,perro->jugador->index, tipo);
+	sched_agregar_tarea(perro);
+//	tss_completar(perro->jugador->index, perro->index, perro);
+
+
 
 }
 
