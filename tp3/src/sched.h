@@ -42,7 +42,7 @@ typedef struct sched_t
     uint indice_ultimo_jugador_B; // valores válidos: de 9 a 16 inclusive
 } sched_t;
 
-extern sched_t scheduler;
+sched_t scheduler;
 
 /*
 ================================================================================

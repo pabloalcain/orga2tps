@@ -17,7 +17,6 @@ extern fin_intr_pic1
 ;; Sched
 extern sched_atender_tick
 extern sched_tarea_actual
-extern sched_atender_tick
 extern game_atender_teclado
 extern get_cant_perros_activos
 extern game_syscall_manejar
@@ -147,6 +146,7 @@ _isr32:
     call fin_intr_pic1  
 
     xor eax, eax
+    ;xchg bx, bx
     call sched_proxima_a_ejecutar
     ; ax tiene el indice en la gdt
     xor ebx, ebx
@@ -159,6 +159,7 @@ _isr32:
     je .fin
 
     mov eax, ebx
+    xchg bx, bx
     mov word [sched_tarea_selector], ax
     jmp far [sched_tarea_offset]
 

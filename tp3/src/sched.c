@@ -6,10 +6,10 @@ definicion de funciones del scheduler
 */
 
 #include "sched.h"
-// #include "i386.h"
+#include "i386.h"
 // #include "screen.h"
 
-sched_t scheduler;
+//sched_t scheduler;
 
 void sched_inicializar()
 {
@@ -106,35 +106,34 @@ void sched_remover_tarea(unsigned int jugador)
 
 uint sched_proxima_a_ejecutar()
 {
+	if (scheduler.jugador_actual == NULL){
+		return 	GDT_IDX_TSS_TAREA_IDLE;
+	}
 
-if (scheduler.jugador_actual == NULL){
-return 	GDT_IDX_TSS_TAREA_IDLE;
-}
-///home/diego/bochs-2.6.2/bin/bochs
 	if (scheduler.jugador_actual == JUGADOR_B) {
 		scheduler.ultimo_jugador = JUGADOR_A;
 		int indice_perro = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_A);
 		if (indice_perro == PERRO_NOT_FOUND) {
 			scheduler.ultimo_jugador = JUGADOR_B;
 			jugadorB.indice_perro_actual = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_B); /* Caso cuando solo un jugador tiene perros activos */
+			scheduler.current = jugadorB.indice_perro_actual;
 			return GDT_IDX_TSS_BASE_PERROS_B + jugadorB.indice_perro_actual;
 		}
 		jugadorA.indice_perro_actual = indice_perro;
-		return 1 + indice_perro;
+		scheduler.current = indice_perro;
+		return GDT_IDX_TSS_BASE_PERROS_A + indice_perro;
 	} else {
 		scheduler.ultimo_jugador = JUGADOR_B;
 		int indice_perro = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_B);
 		if (indice_perro == PERRO_NOT_FOUND) {
 
 			scheduler.ultimo_jugador = JUGADOR_A;
-			jugadorA.indice_perro_actual = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_A);
-			if (indice_perro == PERRO_NOT_FOUND) {
-					
-			}
- /* Caso cuando solo un jugador tiene perros activos */
+			jugadorA.indice_perro_actual = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_A);  /* Caso cuando solo un jugador tiene perros activos */
+			scheduler.current = jugadorA.indice_perro_actual;
 			return GDT_IDX_TSS_BASE_PERROS_A + jugadorA.indice_perro_actual; 
 		}
 		jugadorB.indice_perro_actual = indice_perro;
+		scheduler.current = indice_perro;
 		return GDT_IDX_TSS_BASE_PERROS_B + indice_perro;
 	}
 }

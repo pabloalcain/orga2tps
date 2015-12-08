@@ -102,7 +102,7 @@ void tss_inicializar_tarea_perro(unsigned int jugador,
         tss_jugadorA[indice_tss].eip = 0x401000; // direccion virtual del codigo de la tarea 
         tss_jugadorA[indice_tss].ebp = 0x00402000 - 12;  // direccion 401000 + 1000 - 2 porque van los parametros que dice en el enunciado
         tss_jugadorA[indice_tss].esp = 0x00402000 - 12;
-        tss_jugadorA[indice_tss].esp0 = (unsigned int)mmu_solicitar_pagina_nueva() + 0x1000; // ultima direccion de la pagina, la pila crece a direcciones inferiores
+        tss_jugadorA[indice_tss].esp0 = (unsigned int)mmu_solicitar_pagina_nueva() + 0x1000 - 4; // ultima direccion de la pagina, la pila crece a direcciones inferiores
         tss_jugadorA[indice_tss].dtrap = 0x0; // para indicar que no tiene que ser una interrupcion de tipo trap 
 
 
@@ -135,7 +135,7 @@ void tss_inicializar_tarea_perro(unsigned int jugador,
 	    tss_jugadorB[indice_tss].eip = 0x401000; // direccion virtual del codigo de la tarea 
 	    tss_jugadorB[indice_tss].ebp = 0x00402000 - 12;  // direccion 401000 + 1000 - 2 porque van los parametros que dice en el enunciado
 	    tss_jugadorB[indice_tss].esp = 0x00402000 - 12;
-	    tss_jugadorB[indice_tss].esp0 = (unsigned int)mmu_solicitar_pagina_nueva() + 0x1000; // ultima direccion de la pagina, la pila crece a direcciones inferiores
+	    tss_jugadorB[indice_tss].esp0 = (unsigned int)mmu_solicitar_pagina_nueva() + 0x1000 - 4; // ultima direccion de la pagina, la pila crece a direcciones inferiores
 	    tss_jugadorB[indice_tss].dtrap = 0x0; // para indicar que no tiene que ser una interrupcion de tipo trap 
 	    
 	    gdt[task_gdt_index].base_0_15 	= (( (unsigned int) &tss_jugadorB[indice_tss]) & 0xffff);

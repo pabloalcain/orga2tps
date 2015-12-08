@@ -2,7 +2,7 @@
 #include "game.h"
 // #include "mmu.h"
  #include "screen.h"
-
+#include "sched.h"
 
 #define POS_INIT_A_X                      1
 #define POS_INIT_A_Y                      1
@@ -73,6 +73,16 @@ void game_jugador_lanzar_perro(jugador_t *j, uint tipo, int x, int y)
 		return;
 
 	game_perro_reciclar_y_lanzar(perro, tipo);
+	if (scheduler.jugador_actual == NULL) {
+		if (j->index == JUGADOR_A)
+		{
+			scheduler.jugador_actual = JUGADOR_B; // para que el scheduler busque el a
+		} else 
+		{
+			scheduler.jugador_actual = JUGADOR_A;
+		}
+		
+	}
 }
 
 // recibe un par (x, y) y un jugador, al cual debe mover en esa dirección

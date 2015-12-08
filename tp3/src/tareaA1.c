@@ -17,7 +17,7 @@ void actualizar(int *x, int *y, int direccion);
 
 void task(int x_origen, int y_origen) {
     /* Tarea */
- 
+ 	breakpoint();
 
 	int x_actual = x_origen;
 	int y_actual = y_origen;
