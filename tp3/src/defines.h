@@ -28,6 +28,10 @@ typedef unsigned int   uint;
 #define BOOTSECTOR              0x00001000 /* direccion fisica de comienzo del bootsector (copiado) */
 #define KERNEL                  0x00001200 /* direccion fisica de comienzo del kernel */
 
+#define MAX_CANT_PERROS_VIVOS             8
+
+#define JUGADOR_A                         0
+#define JUGADOR_B                         1
 
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */

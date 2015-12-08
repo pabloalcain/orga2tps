@@ -8,7 +8,7 @@
 #ifndef __SCHED_H__
 #define __SCHED_H__
 
-#include "game.h"
+//#include "game.h"
 // #include "gdt.h"
 #include "tss.h"
 

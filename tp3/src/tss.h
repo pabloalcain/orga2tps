@@ -11,7 +11,7 @@
 #include "defines.h"
 #include "i386.h"
 #include "gdt.h"
-//#include "game.h"
+#include "game.h"
 //#include "mmu.h"
 //#include "screen.h"
 

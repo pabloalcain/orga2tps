@@ -11,11 +11,12 @@
 #define VIDEO                   0x000B8000 /* direccion fisica del buffer de video */
 
 
-#include "tss.h"
+
 #include "colors.h"
 #include "i386.h"
 //#include "perro.h"
-#include "game.h"
+//#include "game.h"
+#include "tss.h"
 
 /* Estructura de para acceder a memoria de video */
 typedef struct ca_s {

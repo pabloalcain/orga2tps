@@ -8,13 +8,12 @@
 #define __GAME_H__
 
 #include "defines.h"
-#include "tss.h"
+//#include "tss.h"
+
 #include "screen.h"
 //#include "perro.h"
 
 
-#define JUGADOR_A                         0
-#define JUGADOR_B                         1
 
 #define MAPA_ANCHO                       80
 #define MAPA_ALTO                        44
@@ -22,7 +21,6 @@
 #define TIPO_1                            0
 #define TIPO_2                            1
 
-#define MAX_CANT_PERROS_VIVOS             8
 #define ESCONDITES_CANTIDAD               8
 #define MAX_SIN_CAMBIOS                 999
 
