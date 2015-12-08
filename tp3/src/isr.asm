@@ -146,13 +146,19 @@ _isr32:
 
     call fin_intr_pic1  
 
+    xor eax, eax
     call sched_proxima_a_ejecutar
     ; ax tiene el indice en la gdt
+    xor ebx, ebx
     mov bx, ax
     str ax
-    cmp bx, ax
+
+    ; bx tiene el indice, lo multiplico por 8
+    shl bx, 3
+    cmp bx, ax    ; si la proxima tarea a saltar es la misma, no salto 
     je .fin
 
+    mov eax, ebx
     mov word [sched_tarea_selector], ax
     jmp far [sched_tarea_offset]
 

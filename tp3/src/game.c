@@ -13,9 +13,6 @@ TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 unsigned int modo_debug = FALSE;
 unsigned int pausa = FALSE;
 
-unsigned int modo_debug = FALSE;
-unsigned int pausa = FALSE;
-
 
 int escondites[ESCONDITES_CANTIDAD][3] = { // TRIPLAS DE LA FORMA (X, Y, HUESOS)
                                         {76,  25, 50}, {12, 15, 50}, {9, 10, 100}, {47, 21, 100} ,

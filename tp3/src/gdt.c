@@ -116,7 +116,7 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x01,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
     },
-    {
+    [GDT_IDX_TSS_TAREA_INICIAL] = (gdt_entry) {
         /* TSS Tarea Inicial */
         (unsigned short)    0x0000,         /* limit[0:15]  */
         (unsigned short)    0x0000,         /* base[0:15]   */
@@ -132,7 +132,7 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x00,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
     },  
-    {
+    [GDT_IDX_TSS_TAREA_IDLE] = (gdt_entry) {
         /*TSS Tarea Idle*/
         (unsigned short)    0x0000,           /* limit[0:15]  */         
         (unsigned short)    0x0000,           /* base[0:15]   */              
