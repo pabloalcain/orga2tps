@@ -178,7 +178,7 @@ _isr33:
     call fin_intr_pic1
 
     in al, 0x60
-    xchg bx, bx
+    push eax
     call game_atender_teclado
     pop eax
 
