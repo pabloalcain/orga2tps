@@ -11,6 +11,7 @@
 #include "defines.h"
 #include "i386.h"
 #include "gdt.h"
+#include "mmu.h"
 //#include "mmu.h"
 //#include "screen.h"
 
@@ -58,6 +59,9 @@ typedef struct str_tss {
 #include "game.h"
 
 void tss_inicializar();
-void tss_inicializar_tarea_perro();
 
+void tss_inicializar_tarea_perro(unsigned int jugador, 
+                            unsigned int numero_tarea,
+                            unsigned int task_gdt_index,
+                            unsigned int cr3);
 #endif  /* !__TSS_H__ */

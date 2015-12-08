@@ -6,7 +6,7 @@
 */
 
 #include "tss.h"
-#include "mmu.h"
+
 //#include "gdt.h"
 //#include "i386.h"
 
@@ -75,40 +75,40 @@ void tss_inicializar_tarea_perro(unsigned int jugador,
                             unsigned int cr3) // recibo como parametro el cr3 cuando llamo a mmu_inicializar_perro
 {
     int indice_tss = numero_tarea;
-breakpoint();
-	if (jugador == JUGADOR_A) {
+    if (jugador == JUGADOR_A) {
 
-		tss_jugadorA[indice_tss].cr3 = cr3; 			
-	    tss_jugadorA[indice_tss].cs = (0xA << 3) | 0x3;   // segmento y permiso de nivel usuario
-	    tss_jugadorA[indice_tss].ds = (0xB << 3) | 0x3;   // segmento y permiso de nivel usuario
-	    tss_jugadorA[indice_tss].ss = (0xB << 3) | 0x3;   // segmento y permiso de nivel usuario
-	    tss_jugadorA[indice_tss].fs = (0xB << 3) | 0x3;   // segmento y permiso de nivel usuario
-	    tss_jugadorA[indice_tss].gs = (0xB << 3) | 0x3;   // segmento y permiso de nivel usuario
-	    tss_jugadorA[indice_tss].es = (0xB << 3) | 0x3;   // segmento y permiso de nivel usuario
-	    tss_jugadorA[indice_tss].iomap = 0xFFFF;
-	    
-	    tss_jugadorA[indice_tss].ss0 = 0x10;
-	    
-	    tss_jugadorA[indice_tss].eflags = 0x202;
+        tss_jugadorA[indice_tss].cr3 = cr3;             
+        tss_jugadorA[indice_tss].cs = (0xA << 3) | 0x3;   // segmento y permiso de nivel usuario
+        tss_jugadorA[indice_tss].ds = (0xB << 3) | 0x3;   // segmento y permiso de nivel usuario
+        tss_jugadorA[indice_tss].ss = (0xB << 3) | 0x3;   // segmento y permiso de nivel usuario
+        tss_jugadorA[indice_tss].fs = (0xB << 3) | 0x3;   // segmento y permiso de nivel usuario
+        tss_jugadorA[indice_tss].gs = (0xB << 3) | 0x3;   // segmento y permiso de nivel usuario
+        tss_jugadorA[indice_tss].es = (0xB << 3) | 0x3;   // segmento y permiso de nivel usuario
+        tss_jugadorA[indice_tss].iomap = 0xFFFF;
+        
+        tss_jugadorA[indice_tss].ss0 = 0x10;
+        
+        tss_jugadorA[indice_tss].eflags = 0x202;
 
-		tss_jugadorA[indice_tss].eax = 0x0;
-		tss_jugadorA[indice_tss].ecx = 0x0;
-		tss_jugadorA[indice_tss].edx = 0x0;
-		tss_jugadorA[indice_tss].ebx = 0x0;
-		
-		
-		tss_jugadorA[indice_tss].esi = 0x0;
-		tss_jugadorA[indice_tss].edi = 0x0;
+        tss_jugadorA[indice_tss].eax = 0x0;
+        tss_jugadorA[indice_tss].ecx = 0x0;
+        tss_jugadorA[indice_tss].edx = 0x0;
+        tss_jugadorA[indice_tss].ebx = 0x0;
+        
+        
+        tss_jugadorA[indice_tss].esi = 0x0;
+        tss_jugadorA[indice_tss].edi = 0x0;
 
-	    tss_jugadorA[indice_tss].eip = 0x401000; // direccion virtual del codigo de la tarea 
-	    tss_jugadorA[indice_tss].ebp = 0x00402000 - 12;  // direccion 401000 + 1000 - 2 porque van los parametros que dice en el enunciado
-	    tss_jugadorA[indice_tss].esp = 0x00402000 - 12;
-	    tss_jugadorA[indice_tss].esp0 = (unsigned int)mmu_solicitar_pagina_nueva() + 0x1000; // ultima direccion de la pagina, la pila crece a direcciones inferiores
-	    tss_jugadorA[indice_tss].dtrap = 0x0; // para indicar que no tiene que ser una interrupcion de tipo trap 
+        tss_jugadorA[indice_tss].eip = 0x401000; // direccion virtual del codigo de la tarea 
+        tss_jugadorA[indice_tss].ebp = 0x00402000 - 12;  // direccion 401000 + 1000 - 2 porque van los parametros que dice en el enunciado
+        tss_jugadorA[indice_tss].esp = 0x00402000 - 12;
+        tss_jugadorA[indice_tss].esp0 = (unsigned int)mmu_solicitar_pagina_nueva() + 0x1000; // ultima direccion de la pagina, la pila crece a direcciones inferiores
+        tss_jugadorA[indice_tss].dtrap = 0x0; // para indicar que no tiene que ser una interrupcion de tipo trap 
 
 
-	    
-	    gdt[task_gdt_index].base_0_15 	= (( (unsigned int) &tss_jugadorA[indice_tss]) & 0xffff);
+        
+        breakpoint();
+        gdt[task_gdt_index].base_0_15   = (( (unsigned int) &tss_jugadorA[indice_tss]) & 0xffff);
 	    gdt[task_gdt_index].base_23_16	= (( (unsigned int) &tss_jugadorA[indice_tss]) >> 16) & 0xff;
 	    gdt[task_gdt_index].base_31_24 	= (( (unsigned int) &tss_jugadorA[indice_tss]) >> 24) & 0xff;
 	    
