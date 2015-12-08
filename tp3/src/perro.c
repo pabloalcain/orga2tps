@@ -47,7 +47,8 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 
 	// ~~~ completar ~~~
 	
-	mmu_inicializar_memoria_perro(perro,perro->jugador->index, tipo);
+	uint cr3 = mmu_inicializar_memoria_perro(perro,perro->jugador->index, tipo);
+	tss_inicializar_tarea_perro(perro->jugador->index, )
 	sched_agregar_tarea(perro);
 
 

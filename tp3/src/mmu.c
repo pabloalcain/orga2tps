@@ -170,33 +170,33 @@ void copiar_codigo(unsigned int* codigo, unsigned int* dst, unsigned int cr3){
 	lcr3(cr3_anterior);
 }
 
-/* Funcion para inicializar un zombi en particular*/
-unsigned int mmu_inicializar_dir_zombi(unsigned int jugador) {
+/* Funcion para inicializar un perro en particular*/
+unsigned int mmu_inicializar_dir_perro(unsigned int jugador) {
 	unsigned int cr3 = (unsigned int)mmu_solicitar_cr3_nuevo(jugador);
 	mmu_mapear_areas_de_kernel_y_libre(cr3);
 	unsigned int pos_perro;
-	unsigned int cod_zombi_addr;
+	unsigned int cod_perro_addr;
 	if (jugador == JUGADOR_A
 	) {
 		pos_perro = (EL_MAPA_FISICA + (0x1000 * SIZE_W * (jugadorA.x-1)) + 0x1000);
 		mmu_mapear_pagina_jugador_A(cr3, pos_perro, (jugadorA.x)-1);
 		mmu_mapear_pagina((unsigned int)pos_perro, PAGE_DIR, pos_perro);
 		if (jugadorA.tipo_perro_a_lanzar == TIPO_1) {
-			cod_zombi_addr =  ADDR_COD_TAREA_A1;
+			cod_perro_addr =  ADDR_COD_TAREA_A1;
 		} else {
-			cod_zombi_addr =  ADDR_COD_TAREA_A2;
+			cod_perro_addr =  ADDR_COD_TAREA_A2;
 		}
 	} else {
 		pos_perro = (EL_MAPA_FISICA + (0x1000 * SIZE_W * (jugadorB.x-1)) + 0x1000 * SIZE_W - 0x2000);
 		mmu_mapear_pagina_jugador_B(cr3, pos_perro, (jugadorB.x)-1);
 		mmu_mapear_pagina((unsigned int)pos_perro, PAGE_DIR, pos_perro);
 		if (jugadorB.tipo_perro_a_lanzar == TIPO_1) {
-			cod_zombi_addr =  ADDR_COD_TAREA_B1;
+			cod_perro_addr =  ADDR_COD_TAREA_B1;
 		} else {
-			cod_zombi_addr =  ADDR_COD_TAREA_B2;
+			cod_perro_addr =  ADDR_COD_TAREA_B2;
 		}
 	}
-	copiar_codigo((unsigned int*)cod_zombi_addr, (unsigned int*)pos_perro, 0x27000);
+	copiar_codigo((unsigned int*)cod_perro_addr, (unsigned int*)pos_perro, 0x27000);
 	return cr3;
 }
 
