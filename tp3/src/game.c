@@ -7,7 +7,7 @@ TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 #include "game.h"
 // #include "mmu.h"
 // #include "tss.h"
-// #include "screen.h"
+#include "screen.h"
 
 #include <stdarg.h>
 unsigned int modo_debug = FALSE;

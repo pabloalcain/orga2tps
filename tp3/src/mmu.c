@@ -171,7 +171,7 @@ void copiar_codigo(unsigned int* codigo, unsigned int* dst, unsigned int cr3){
 }
 
 /* Funcion para inicializar un perro en particular*/
-unsigned int mmu_inicializar_dir_perro(unsigned int jugador) {
+unsigned int mmu_inicializar_memoria_perro(unsigned int jugador) {
 	unsigned int cr3 = (unsigned int)mmu_solicitar_cr3_nuevo(jugador);
 	mmu_mapear_areas_de_kernel_y_libre(cr3);
 	unsigned int pos_perro;

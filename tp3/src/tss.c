@@ -75,7 +75,7 @@ void tss_inicializar_tarea_perro(unsigned int jugador,
                             unsigned int cr3) // recibo como parametro el cr3 cuando llamo a mmu_inicializar_perro
 {
     int indice_tss = numero_tarea;
-
+breakpoint();
 	if (jugador == JUGADOR_A) {
 
 		tss_jugadorA[indice_tss].cr3 = cr3; 			

@@ -10,7 +10,7 @@
 #include "defines.h"
 //#include "tss.h"
 
-#include "screen.h"
+//#include "screen.h"
 //#include "perro.h"
 
 
