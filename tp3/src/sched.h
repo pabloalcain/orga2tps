@@ -65,5 +65,6 @@ ushort sched_atender_tick();
 
 uint sched_jugador_actual();
 
+int sched_buscar_tarea_libre2(uint jugador);
 
 #endif	/* !__SCHED_H__ */

@@ -56,8 +56,39 @@ perro_t* sched_tarea_actual()
 
 void sched_agregar_tarea(perro_t *perro)
 {
-
+	int i = sched_buscar_tarea_libre2(perro->jugador->index);
+	//breakpoint();
+	if(i != 0){
+	scheduler.tasks[i].perro = perro;
+	}
 }
+
+
+
+int sched_buscar_tarea_libre2(uint jugador)
+{
+	int i;
+	if(jugador == JUGADOR_A){
+		i = 1;
+	}else{
+		i = 9;
+	}
+	int j = 0;
+	while(j<8){
+		if(scheduler.tasks[i].perro == NULL){
+			return i;
+		}
+	i++;
+	j++;
+	}
+	return 0;
+}
+
+
+
+
+
+
 
 void sched_remover_tarea(unsigned int jugador)
 {
@@ -77,13 +108,9 @@ uint sched_proxima_a_ejecutar()
 {
 
 if (scheduler.jugador_actual == NULL){
-//breakpoint();
 return 	GDT_IDX_TSS_TAREA_IDLE;
 }
-
 ///home/diego/bochs-2.6.2/bin/bochs
-
-
 	if (scheduler.jugador_actual == JUGADOR_B) {
 		scheduler.ultimo_jugador = JUGADOR_A;
 		int indice_perro = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_A);
