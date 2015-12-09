@@ -194,7 +194,6 @@ void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3){
 }
 
 void copiar_codigo(unsigned int* codigo, unsigned int* dst){
-	tlbflush();
 	int i;
 	for (i = 0; i < 1024; i++) {
 		dst[i] = codigo[i];
@@ -277,4 +276,15 @@ void* mmu_solicitar_cr3_nuevo(unsigned int jugador){
 	if(jugador == JUGADOR_B) dir_pag_nueva += 0x20000;
 	*PRIMER_PAG_LIBRE = (void*)((*PRIMER_PAG_LIBRE)+0x1000);		
 	return dir_pag_nueva;
+}
+
+void mmu_mover_perro(perro_t *perro, uint viejo_x, uint viejo_y){
+	
+	//mmu_mapear_pagina(mmu_xy2fisica(perro->x,perro->y), rcr3(), mmu_xy2fisica(perro->x,perro->y),0x007);
+	mmu_mapear_pagina(0x401000, rcr3(), mmu_xy2fisica(perro->x,perro->y),0x007);
+	copiar_codigo((uint *)mmu_xy2virtual(viejo_x,viejo_y),(uint *)0x401000); 
+
+	mmu_mapear_pagina(mmu_xy2fisica(perro->x,perro->y), rcr3(), mmu_xy2virtual(perro->x,perro->y),0x007);
+	//breakpoint();
+
 }

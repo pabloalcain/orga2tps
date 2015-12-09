@@ -193,16 +193,32 @@ fin33:
 ;; -------------------------------------------------------------------------- ;;
 global _isr0x46
 _isr0x46:
-    cli
-    
-    ; en eax esta el codigo de la accion
-    push eax
-    push ecx
-    call game_syscall_manejar
+  push ecx
+  push edx
+  push ebx
+  push esp
+  push ebp
+  push esi
+  push edi
+  pushfd
+  
+  push ecx
+  push eax
+  call game_syscall_manejar
+  add esp, 8
 
-    add esp, 8
-    sti
-    iret
+  jmp 0x70:0 ;voy a idle
+ 
+  popfd
+  pop edi
+  pop esi
+  pop ebp
+  pop esp
+  pop ebx
+  pop edx
+  pop ecx
+  
+  iret
 
 ; salta a la tarea indicada en AX
 sched_jmp:  

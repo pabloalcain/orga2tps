@@ -95,6 +95,9 @@ uint game_dir2xy(/* in */ direccion dir, /* out */ int *x, /* out */ int *y)
 // *** viene del syscall mover ***
 uint game_perro_mover(perro_t *perro, direccion dir)
 {
+
+   	//breakpoint();
+
 	int x, y;
 	uint res = game_dir2xy(dir, &x, &y);
 	int nuevo_x = perro->x + x;
@@ -103,10 +106,34 @@ uint game_perro_mover(perro_t *perro, direccion dir)
     int viejo_y = perro->y;
 
     // ~~~ completar ~~~
-    screen_pintar_perro(perro);
+
+   	if (game_perro_en_posicion(nuevo_x,nuevo_y) != NULL){ 			
+   		if (game_perro_en_posicion(nuevo_x,nuevo_y)->jugador == perro->jugador){ 		// PARA QUE NO PISE EL PERRO, SI TIENEN EL MISMO DUEÑO
+   			// CUIDADO, SE PODRIAN TRABAR
+   		} else { 			// QUE PISE EL PERRO SI EL DUEÑO ES DISTINTO
+   			perro->x = nuevo_x;
+   			perro->y = nuevo_y;
+   			mmu_mover_perro(perro, viejo_x, viejo_y);
+   			screen_actualizar_posicion_mapa(perro->x, perro->y);
+   			if((nuevo_x>79 || nuevo_y>49) || (nuevo_x == perro->jugador->x_cucha && nuevo_y == perro->jugador->y_cucha)){
+   				game_perro_termino(perro);
+   			}
+
+   		}
+   	} else {
+   		perro->x = nuevo_x;
+		perro->y = nuevo_y;
+		mmu_mover_perro(perro, viejo_x, viejo_y);		
+		screen_actualizar_posicion_mapa(perro->x, perro->y);
+		if((nuevo_x>79 || nuevo_y>49) || (nuevo_x == perro->jugador->x_cucha && nuevo_y == perro->jugador->y_cucha)){
+			game_perro_termino(perro);
+		}
+   	}
+    
+    
+
     return nuevo_x + nuevo_y + viejo_x + viejo_y + res; // uso todas las variables para que no tire warning->error.
 }
-
 // recibe un perro, el cual debe cavar en su posición
 // *** viene del syscall cavar ***
 uint game_perro_cavar(perro_t *perro)

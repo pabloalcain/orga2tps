@@ -68,7 +68,7 @@ uint mmu_xy2virtual(uint x, uint y);
 uint mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_tipo);
 
 // debe remapear y copiar el codigo
-void mmu_mover_perro(perro_t *perro, int viejo_x, int viejo_y);
+void mmu_mover_perro(perro_t *perro, uint viejo_x, uint viejo_y);
 
 void* mmu_solicitar_pagina_nueva();
 
