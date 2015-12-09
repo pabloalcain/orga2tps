@@ -27,6 +27,7 @@
 #define PERRO_NOT_FOUND                 404
 
 typedef enum direccion_e { ARR = 0x4, ABA = 0x7, DER = 0xA, IZQ = 0xD, AQUI = 0x10} direccion;
+typedef enum {A, B} jugador_tipo;
 
 struct jugador_t;
 

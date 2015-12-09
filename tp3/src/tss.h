@@ -11,9 +11,8 @@
 #include "defines.h"
 #include "i386.h"
 #include "gdt.h"
+#include "game.h"
 #include "mmu.h"
-//#include "mmu.h"
-//#include "screen.h"
 
 typedef struct str_tss {
     unsigned short  ptl;
@@ -56,14 +55,8 @@ typedef struct str_tss {
     unsigned short  iomap;
 } __attribute__((__packed__, aligned (8))) tss;
 
-#include "game.h"
-
 void tss_inicializar();
-
-void tss_inicializar_tarea_perro(unsigned int jugador, 
-                            unsigned int numero_tarea,
-                            unsigned int task_gdt_index,
-                            unsigned int cr3);
-
-void tss_inicializar_gdt_perros();
+void tss_inicializar_idle();
+void tss_inicializar_tarea_inicial();
+void tss_inicializar_tarea_perro(uint indice_tarea, jugador_tipo jugador, page_directory_entry * cr3_nuevo);
 #endif  /* !__TSS_H__ */

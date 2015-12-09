@@ -169,6 +169,7 @@ start:
     ; Saltar a la primera tarea: Idle
     mov ax, (13*8)
     ltr ax
+    ;jmp (14*8):0          ; salto a tarea IDLE, 14 = GDT_IDX_TSS_TAREA_IDLE
     jmp (14*8):0          ; salto a tarea IDLE, 14 = GDT_IDX_TSS_TAREA_IDLE
 
     ; Ciclar infinitamente (por si algo sale mal...)

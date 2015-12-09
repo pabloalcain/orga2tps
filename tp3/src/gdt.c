@@ -8,8 +8,6 @@
 #include "gdt.h"
 
 
-
-
 /* Definicion de la GDT */
 /* -------------------------------------------------------------------------- */
 
@@ -31,14 +29,13 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x00,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
     },
-    /* Descriptor Codigo Nivel 0*/
-    /* Offset = 0x08 */
+
     [GDT_IDX_COD_LVL0] = (gdt_entry) {
-        (unsigned short)    0xF3FF,         /* limit[0:15]  */
+        (unsigned short)    0xf3ff,         /* limit[0:15]  */
         (unsigned short)    0x0000,         /* base[0:15]   */
         (unsigned char)     0x00,           /* base[23:16]  */
-        (unsigned char)     0x0A,           /* type         */
-        (unsigned char)     0x01,           /* s            */
+        (unsigned char)     0x0a,           /* type = exec/r*/
+        (unsigned char)     0x01,           /* system       */
         (unsigned char)     0x00,           /* dpl          */
         (unsigned char)     0x01,           /* p            */
         (unsigned char)     0x01,           /* limit[16:19] */
@@ -48,14 +45,14 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x01,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
     },
-    /* Descriptor Datos Nivel 0*/
-    /* Offset = 0x10 */
+
+    
     [GDT_IDX_DATA_LVL0] = (gdt_entry) {
-        (unsigned short)    0xF3FF,         /* limit[0:15]  */
+        (unsigned short)    0xf3ff,         /* limit[0:15]  */
         (unsigned short)    0x0000,         /* base[0:15]   */
         (unsigned char)     0x00,           /* base[23:16]  */
-        (unsigned char)     0x02,           /* type         */
-        (unsigned char)     0x01,           /* s            */
+        (unsigned char)     0x02,           /* type = r/w   */
+        (unsigned char)     0x01,           /* system       */
         (unsigned char)     0x00,           /* dpl          */
         (unsigned char)     0x01,           /* p            */
         (unsigned char)     0x01,           /* limit[16:19] */
@@ -65,14 +62,15 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x01,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
     },
-    /* Descriptor Codigo Nivel 3*/
-    /* Offset = 0x18 */
+
+    
+
     [GDT_IDX_COD_LVL3] = (gdt_entry) {
-        (unsigned short)    0xF3FF,         /* limit[0:15]  */
+        (unsigned short)    0xf3ff,         /* limit[0:15]  */
         (unsigned short)    0x0000,         /* base[0:15]   */
         (unsigned char)     0x00,           /* base[23:16]  */
-        (unsigned char)     0x0A,           /* type         */
-        (unsigned char)     0x01,           /* s            */
+        (unsigned char)     0x0a,           /* type = exec/r*/
+        (unsigned char)     0x01,           /* system       */
         (unsigned char)     0x03,           /* dpl          */
         (unsigned char)     0x01,           /* p            */
         (unsigned char)     0x01,           /* limit[16:19] */
@@ -82,14 +80,15 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x01,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
     },
-    /* Descriptor Datos Nivel 3*/
-    /* Offset = 0x20 */
+
+
+
     [GDT_IDX_DATA_LVL3] = (gdt_entry) {
-        (unsigned short)    0xF3FF,         /* limit[0:15]  */
+        (unsigned short)    0xf3ff,         /* limit[0:15]  */
         (unsigned short)    0x0000,         /* base[0:15]   */
         (unsigned char)     0x00,           /* base[23:16]  */
-        (unsigned char)     0x02,           /* type         */
-        (unsigned char)     0x01,           /* s            */
+        (unsigned char)     0x02,           /* type = r/w   */
+        (unsigned char)     0x01,           /* system       */
         (unsigned char)     0x03,           /* dpl          */
         (unsigned char)     0x01,           /* p            */
         (unsigned char)     0x01,           /* limit[16:19] */
@@ -99,55 +98,38 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x01,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
     },
-    /* Descriptor Video*/
-    /* Offset = 0x28 */
+
     [GDT_IDX_VIDEO] = (gdt_entry) {
-        (unsigned short)    0x0F9F,         /* limit[0:15]  */
-        (unsigned short)    0x8000,         /* base[0:15]   */
-        (unsigned char)     0x0B,           /* base[23:16]  */
-        (unsigned char)     0x02,           /* type         */
-        (unsigned char)     0x01,           /* s            */
-        (unsigned char)     0x00,           /* dpl          */
-        (unsigned char)     0x01,           /* p            */
-        (unsigned char)     0x01,           /* limit[16:19] */
-        (unsigned char)     0x00,           /* avl          */
-        (unsigned char)     0x00,           /* l            */
-        (unsigned char)     0x01,           /* db           */
-        (unsigned char)     0x01,           /* g            */
-        (unsigned char)     0x00,           /* base[31:24]  */
-    },
-    [GDT_IDX_TSS_TAREA_INICIAL] = (gdt_entry) {
-        /* TSS Tarea Inicial */
-        (unsigned short)    0x0000,         /* limit[0:15]  */
-        (unsigned short)    0x0000,         /* base[0:15]   */
+        (unsigned short)    0x0f9f,         /* limit[0:15]  */
+        (unsigned short)    0xb800,         /* base[0:15]   */
         (unsigned char)     0x00,           /* base[23:16]  */
-        (unsigned char)     0x09,           /* type         */
-        (unsigned char)     0x00,           /* s            */
+        (unsigned char)     0x02,           /* type = r/w   */
+        (unsigned char)     0x01,           /* system       */
         (unsigned char)     0x00,           /* dpl          */
         (unsigned char)     0x01,           /* p            */
         (unsigned char)     0x00,           /* limit[16:19] */
         (unsigned char)     0x00,           /* avl          */
         (unsigned char)     0x00,           /* l            */
-        (unsigned char)     0x00,           /* db           */
+        (unsigned char)     0x01,           /* db           */
         (unsigned char)     0x00,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
-    },  
-    [GDT_IDX_TSS_TAREA_IDLE] = (gdt_entry) {
-        /*TSS Tarea Idle*/
-        (unsigned short)    0x0000,           /* limit[0:15]  */         
-        (unsigned short)    0x0000,           /* base[0:15]   */              
-        (unsigned char)     0x00,           /* base[23:16]  */              
-        (unsigned char)     0x09,           /* type         */
-        (unsigned char)     0x0,            /* s            */
-        (unsigned char)     0x0,            /* dpl          */
-        (unsigned char)     0x1,            /* p            */
-        (unsigned char)     0x0,            /* limit[16:19] */              
+    },
+    
+    [GDT_IDX_TSS_TAREA_INICIAL] = (gdt_entry) { // le ponemos fruta
+        (unsigned short)    0x0068,         /* limit[0:15]  */
+        (unsigned short)    0x0000,         /* base[0:15]   */
+        (unsigned char)     0x00,           /* base[23:16]  */
+        (unsigned char)     0x09,           /* type = r/w   */
+        (unsigned char)     0x00,           /* system       */
+        (unsigned char)     0x00,           /* dpl          */
+        (unsigned char)     0x01,           /* p            */
+        (unsigned char)     0x00,           /* limit[16:19] */
         (unsigned char)     0x00,           /* avl          */
         (unsigned char)     0x00,           /* l            */
-        (unsigned char)     0x0,            /* db           */
-        (unsigned char)     0x0,            /* g            */
-        (unsigned char)     0x00,           /* base[31:24]  */             
-    }             
+        (unsigned char)     0x01,           /* db           */
+        (unsigned char)     0x00,           /* g            */
+        (unsigned char)     0x00,           /* base[31:24]  */
+    },
 };
 
 gdt_descriptor GDT_DESC = {
@@ -155,25 +137,4 @@ gdt_descriptor GDT_DESC = {
     (unsigned int) &gdt
 };
 
-void gdt_agregarSegmento(int indice,int base,int limit,char type,char s,char dpl,char p,char l,char db,char g){
-    short limit_0_15 = limit & 0xFFFF;
-    char limit_16_19 = (limit >> 16) & 0xFF;
-    short base_0_15 = base & 0xFFFF;
-    char base_16_23 = (base >> 16) & 0xFF;
-    char base_24_31 = (base >> 24) & 0xFF;
-    gdt[indice] = (gdt_entry){
-        (unsigned short)    limit_0_15,     /* limit[0:15]  */
-        (unsigned short)    base_0_15,      /* base[15:0]   */
-        (unsigned char)     base_16_23,     /* base[23:16]  */
-        (unsigned char)     type,           /* type         */
-        (unsigned char)     s   ,           /* s            */
-        (unsigned char)     dpl,            /* dpl          */
-        (unsigned char)     p,              /* p            */
-        (unsigned char)     limit_16_19,    /* limit[16:19] */
-        (unsigned char)     0x00,           /* avl          */
-        (unsigned char)     l,              /* l            */
-        (unsigned char)     db,             /* db           */
-        (unsigned char)     g,              /* g            */
-        (unsigned char)     base_24_31      /* base[31:24]  */
-    };
-}
+

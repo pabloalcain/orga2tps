@@ -62,7 +62,7 @@ void game_inicializar()
 {
 	game_jugador_inicializar(&jugadorA);
 	game_jugador_inicializar(&jugadorB);
-	tss_inicializar_gdt_perros();
+	
     screen_pintar_puntajes();
 }
 

@@ -54,8 +54,6 @@ uint mmu_proxima_pagina_fisica_libre();
 // setea en cero todos los bytes
 void mmu_inicializar_pagina(uint * pagina);
 
-// copia los bytes
-void mmu_copiar_pagina    (uint src, uint dst);
 
 // pide una pagina para usar de directorio. Luego inicializa las entradas que iran con identity mapping.
 uint mmu_inicializar_dir_kernel();
@@ -67,17 +65,15 @@ uint mmu_xy2fisica(uint x, uint y);
 uint mmu_xy2virtual(uint x, uint y);
 
 // crea el directorio, las paginas, copia el codigo e inicializa el stack
-unsigned int mmu_inicializar_memoria_perro(unsigned int jugador);
+uint mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_tipo);
 
 // debe remapear y copiar el codigo
 void mmu_mover_perro(perro_t *perro, int viejo_x, int viejo_y);
 
 void* mmu_solicitar_pagina_nueva();
 
-void mmu_mapear_pagina(
-    unsigned int virtual,
-    unsigned int cr3, 
-    unsigned int fisica);
+void mmu_mapear_pagina(uint virtual, uint cr3, uint fisica, uint attrs);
+
 void mmu_unmapear_pagina(uint virtual, uint cr3);
 void* mmu_solicitar_cr3_nuevo(unsigned int jugador);
 

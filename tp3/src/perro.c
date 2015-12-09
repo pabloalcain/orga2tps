@@ -56,9 +56,14 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 
 	// ~~~ completar ~~~
 	
-	uint cr3 = mmu_inicializar_memoria_perro(perro->jugador->index);
-	int task_gdt_index = jugador_get_indice_perro_nuevo(j->perros);	
-	tss_inicializar_tarea_perro(perro->jugador->index, task_gdt_index, perro->index, cr3);
+	if ((perro->jugador->index) == JUGADOR_A) {
+		uint cr3 = mmu_inicializar_memoria_perro(perro, JUGADOR_A, tipo);
+		tss_inicializar_tarea_perro(perro->index, A,(page_directory_entry *) cr3);
+	} else {
+		uint cr3 = mmu_inicializar_memoria_perro(perro, JUGADOR_B, tipo);
+		tss_inicializar_tarea_perro(perro->index, B,(page_directory_entry *) cr3);
+	}
+	breakpoint();
 	sched_agregar_tarea(perro);
 	screen_pintar_perro(perro);
 	screen_actualizar_reloj_perro(perro);
