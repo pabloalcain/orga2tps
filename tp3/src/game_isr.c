@@ -27,7 +27,6 @@ void wait(int pseudosecs)
 uint game_syscall_manejar(uint syscall, uint param1)
 {
 	perro_t * perro_actual = scheduler.tasks[scheduler.current].perro;
-    
 	switch (syscall)
 	{
 

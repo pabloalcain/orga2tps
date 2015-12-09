@@ -96,7 +96,7 @@ uint game_dir2xy(/* in */ direccion dir, /* out */ int *x, /* out */ int *y)
 uint game_perro_mover(perro_t *perro, direccion dir)
 {
 
-   	//breakpoint();
+   	breakpoint();
 
 	int x, y;
 	uint res = game_dir2xy(dir, &x, &y);
@@ -131,6 +131,7 @@ uint game_perro_mover(perro_t *perro, direccion dir)
    	}
     
     
+	breakpoint();
 
     return nuevo_x + nuevo_y + viejo_x + viejo_y + res; // uso todas las variables para que no tire warning->error.
 }

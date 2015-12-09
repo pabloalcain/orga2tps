@@ -201,7 +201,7 @@ _isr0x46:
   push esi
   push edi
   pushfd
-  
+
   push ecx
   push eax
   call game_syscall_manejar
