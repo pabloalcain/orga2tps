@@ -184,10 +184,10 @@ void tss_inicializar_tarea_perro(uint indice_tarea, jugador_tipo jugador, page_d
         tss_jugadorA[i].ecx = 0x0;
         tss_jugadorA[i].eax = 0x0;
 
-        tss_jugadorA[i].esp = 0x0401000 - 12; // por los parametros que le paso
-        tss_jugadorA[i].ebp = 0x0401000 - 12; //  igual
+        tss_jugadorA[i].esp = 0x0402000 - 12; // por los parametros que le paso
+        tss_jugadorA[i].ebp = 0x0402000 - 12; //  igual
 
-        tss_jugadorA[i].eip = 0x00400000;
+        tss_jugadorA[i].eip = 0x00401000;
         tss_jugadorA[i].esp0 = (unsigned int) dar_siguiente() + 0x1000;
         tss_jugadorA[i].ss0 = 0x48;  //ver kernel.asm
 
@@ -212,10 +212,10 @@ void tss_inicializar_tarea_perro(uint indice_tarea, jugador_tipo jugador, page_d
         tss_jugadorB[i].ecx = 0x0;
         tss_jugadorB[i].eax = 0x0;
 
-        tss_jugadorB[i].esp = 0x0401000 - 12; // por los parametros que le paso
-        tss_jugadorB[i].ebp = 0x0401000 - 12; //  igual
+        tss_jugadorB[i].esp = 0x0402000 - 12; // por los parametros que le paso
+        tss_jugadorB[i].ebp = 0x0402000 - 12; //  igual
 
-        tss_jugadorB[i].eip = 0x00400000;
+        tss_jugadorB[i].eip = 0x004010000;
         tss_jugadorB[i].esp0 = (unsigned int) dar_siguiente() + 0x1000;
         tss_jugadorB[i].ss0 = 0x48;  //ver kernel.asm
 

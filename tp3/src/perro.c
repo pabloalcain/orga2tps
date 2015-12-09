@@ -63,7 +63,6 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 		uint cr3 = mmu_inicializar_memoria_perro(perro, JUGADOR_B, tipo);
 		tss_inicializar_tarea_perro(perro->index, B,(page_directory_entry *) cr3);
 	}
-	breakpoint();
 	sched_agregar_tarea(perro);
 	screen_pintar_perro(perro);
 	screen_actualizar_reloj_perro(perro);
