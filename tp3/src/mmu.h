@@ -65,16 +65,16 @@ uint mmu_xy2fisica(uint x, uint y);
 uint mmu_xy2virtual(uint x, uint y);
 
 // crea el directorio, las paginas, copia el codigo e inicializa el stack
-uint mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_tipo);
+page_directory_entry * mmu_inicializar_memoria_perro(jugador_t * jugador, perro_t * perro, uint xparam, uint yparam);
 
 // debe remapear y copiar el codigo
 void mmu_mover_perro(perro_t *perro, uint viejo_x, uint viejo_y);
 
 void* mmu_solicitar_pagina_nueva();
 
-void mmu_mapear_pagina(uint virtual, uint cr3, uint fisica, uint attrs);
+void mmu_mapear_pagina(uint virtual, page_directory_entry * cr3, uint fisica, uchar rw, uchar user_supervisor);
 
-void mmu_unmapear_pagina(uint virtual, uint cr3);
+void mmu_unmapear_pagina(uint virtual, page_directory_entry * cr3);
 void* mmu_solicitar_cr3_nuevo(unsigned int jugador);
 
 #endif	/* !__MMU_H__ */

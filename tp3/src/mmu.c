@@ -21,7 +21,7 @@
 #define ADDR_COD_TAREA_B1 		0x12000
 #define ADDR_COD_TAREA_B2 		0x13000
 #define ADDR_COD_TAREA_IDLE 	0x16000
-#define SIZE_W					78
+#define SIZE_W					80
 #define SIZE_H					44
 
 #define EL_MAPA_VIRTUAL                   0x8000000
@@ -70,7 +70,7 @@ void * dar_siguiente()
 void mmu_mapear_areas_de_kernel_y_libre(unsigned int cr3){
 	int i = 0;
 	for(; i < 0x400; i++){
-		mmu_mapear_pagina(i*0x1000, cr3, i*0x1000, 0x2);
+		mmu_mapear_pagina(i*0x1000, (page_directory_entry *)cr3, i*0x1000, 1, 0);
 	}
 }
 
@@ -132,73 +132,62 @@ void mmu_inicializar_pagina(uint * pagina){
 	
 }
 
-void mmu_mapear_pagina(uint virtual, uint cr3, uint fisica, uint attrs){
-	uint *pagDir = (uint *) ((cr3 & 0xFFFFF000) + ((virtual >> 22 )*4));
+void mmu_mapear_pagina(uint virtual, page_directory_entry * cr3, uint fisica, uchar rw, uchar user_supervisor)
+{
 
-	uint *pageTable;
-	uint *pageTableEntry;
-	if ( *pagDir % 2 == 1){ 				// ESTA PRESENTE?
-		
-		
-		pageTableEntry = (uint *) ((*pagDir & 0xFFFFF000) + ((virtual >> 12) & 0x000003FF)*4);
-		uint pageDirAux = *pagDir;
-		pageDirAux = pageDirAux & 0xFFFFFFFE;
-		uint atr_aux = attrs;
-		atr_aux = atr_aux >> 1;
-		if (pageDirAux % 4 == 0 && atr_aux % 2 == 1){ 			// si r/w == 0 y attrs es de r/w
-			*pagDir = *pagDir | 2;
+    uint directorio = (virtual >> 22) & 0x3ff;
+    uint tabla = (virtual >> 12) & 0x3ff;
 
-		}
-		atr_aux = atr_aux >> 1;		
-		pageDirAux = pageDirAux & 0xFFFFFFFC;
-		if (pageDirAux % 8 != 0 && atr_aux % 2 == 0){ 			// si u/s == 1 y attrs es de supervisor
-			*pagDir = *pagDir & 0xFFFFFFFB;
-		}
-	} else {
-		pageTable = (uint *) mmu_solicitar_pagina_nueva();
-		*pagDir = ((uint )pageTable & 0xFFFFF000) | 0x00000007;			// LE PASAMOS LA DIRECCION DE LA TABLA Y EL PRESENTE
-		
-		pageTableEntry = pageTable + ((virtual >> 12) & 0x000003FF);
-		mmu_inicializar_pagina(pageTable);
-	}
+    page_table_entry * page_table;
+
+    if(!cr3[directorio].present)
+    {
+        page_table = dar_siguiente();
+
+        cr3[directorio].present = 1;
+        cr3[directorio].rw = rw;
+        cr3[directorio].user_supervisor = user_supervisor;
+        cr3[directorio].base_dir = ((uint) page_table) >> 12;
+        cr3[directorio].ignored = 0;
+    }
+    else
+    {
+        page_table = (page_table_entry *) (cr3[directorio].base_dir << 12);
+    }
+
+    page_table[tabla].user_supervisor = user_supervisor;
+    page_table[tabla].rw = rw;
+    page_table[tabla].base_dir = fisica >> 12;
+    page_table[tabla].present = 1;	
+
+    tlbflush();
 	
-
-
-	*pageTableEntry = 0x00000000 | fisica;
-	*pageTableEntry = (*pageTableEntry & 0xFFFFF000) | attrs;
-
 }
 
 
+void mmu_unmapear_pagina(uint virtual, page_directory_entry * cr3)
+{
+    uint directorio = (virtual >> 22) & 0x3ff;
+    uint tabla = (virtual >> 12) & 0x3ff;
 
+    page_table_entry * page_table = (page_table_entry *) (cr3[directorio].base_dir << 12);
 
-void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3){
-	unsigned int index_page_dir = (virtual >> 22) & 0x3FF;
-	unsigned int index_page_table = (virtual << 10);
-	index_page_table = index_page_table >> 22;
+    page_table[tabla].present = 0;
 
-	page_directory_entry *pd = (page_directory_entry *) cr3;
-	page_directory_entry *entry_page_dir = &(pd[index_page_dir]);     /* Ir a la entrada dentro del page directory*/
+    tlbflush();
+}
 
-	if (! entry_page_dir->present) {
-		return;
-	}
+void copiar_codigo(uint src, uint dst){
 
-	page_table_entry *pt = (page_table_entry *) (entry_page_dir->base_dir >> 12);
-	page_table_entry *entry_page_table = &(pt[index_page_table]);
-	if (entry_page_table->present) {
-		/* Si la entrada buscada estÃ¡ en el page directory */
-		entry_page_table->present = 0;
-		tlbflush();	
+	uint *sr = (uint *) src;
+	uint *ds = (uint *) dst;
+	int i = 0;
+	while(i<1024){
+		ds[i] = sr[i];
+		i++;
 	}
 }
 
-void copiar_codigo(unsigned int* codigo, unsigned int* dst){
-	int i;
-	for (i = 0; i < 1024; i++) {
-		dst[i] = codigo[i];
-	}
-}
 
 
 uint mmu_xy2fisica(uint x, uint y){
@@ -210,60 +199,70 @@ uint mmu_xy2virtual(uint x, uint y){
 }
 
 
-/* Funcion para inicializar un perro en particular*/
-uint mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_tipo){
-	
-	uint *pagDir = (uint *) mmu_solicitar_pagina_nueva(); 	// PIDO UNA PAGINA LIBRE
-
-	mmu_inicializar_pagina(pagDir); 	// LIMPIO PAGINA
-	
-	int i = 0x00000000;
-	while (i<1024){ 				
-		mmu_mapear_pagina(i*4096,(uint )pagDir,i*4096,0x007);
-		i++;
-	}
-	
-	uint aCopiar;
-	if (index_jugador == 0){
-		if (perro->tipo == 0){ 			// TAREA A1
-			aCopiar = 0x10000;
-		} else {		 				// TAREA A2
-			aCopiar = 0x11000;
-		}
-		mmu_mapear_pagina(0x400000, (uint) pagDir, paginaJugadorA, 0x007);
-
-	} else{
-		if (perro->tipo == 0){ 			// TAREA B1
-			aCopiar = 0x12000;
-		} else {				 		// TAREA B2
-			aCopiar = 0x13000;
-		}
-		mmu_mapear_pagina(0x400000, (uint) pagDir, paginaJugadorB, 0x007);
-
-	}
-	
-	
-	int j = 0;						// ESTO NO DEBERIA ESTAR, PERO SI LO SACO DEJA DE ANDAR
-	while (j<3520){ 				// MAPEO CON EL MAPA
-		mmu_mapear_pagina(0x800000+j*4096,(uint )pagDir,j*4096+0x500000,0x007);
-		j++;
-	}
-
-	mmu_mapear_pagina(0x800000,(uint )pagDir, mmu_xy2fisica(perro->jugador->x_cucha,perro->jugador->y_cucha),0x007); 	// Y ESTO RESULTA AHORA IRRELEVANTE
-
-	mmu_mapear_pagina(0x401000, (uint) pagDir, mmu_xy2fisica(perro->jugador->x_cucha,perro->jugador->y_cucha), 0x007);
-    uint viejo_cr3 = rcr3();
-	mmu_mapear_pagina(0x401000, (uint) 0x27000, mmu_xy2fisica(perro->jugador->x_cucha,perro->jugador->y_cucha), 0x007);
-    lcr3(0x27000);
-	copiar_codigo((unsigned int *)aCopiar,(unsigned int *)0x401000);
-    lcr3(viejo_cr3);
-
-   
-
-
-	tlbflush();
-	return (uint ) pagDir;
+void mmu_inicializar_tabla_kernel_para_perro(page_table_entry * tabla)
+{
+    uint i;
+    for(i = 0; i<1024; i++)
+    {
+        tabla[i].base_dir = i;
+        tabla[i].present = 1;
+        tabla[i].rw = 0;  
+        tabla[i].user_supervisor = 1; 
+    }
 }
+
+/* Funcion para inicializar un perro en particular*/
+page_directory_entry * mmu_inicializar_memoria_perro(jugador_t * jugador, perro_t * perro, uint xparam, uint yparam)
+{
+    //obtengo la siguiente libre
+    page_directory_entry * resultado = (page_directory_entry *) dar_siguiente();
+    // dar_siguiente lo devuelve en 0
+
+    // me armo la tabla del kernel
+    page_table_entry * tabla_kernel = dar_siguiente();
+    mmu_inicializar_tabla_kernel_para_perro(tabla_kernel);
+
+
+    resultado[0].base_dir = ((uint) tabla_kernel)>>12;
+    resultado[0].rw = 0;
+    resultado[0].present = 1;
+    resultado[0].user_supervisor = 0; 
+    resultado[0].ignored = 0;
+
+
+    uint codigo_tarea;
+    if(jugador->index == JUGADOR_A)
+    {
+        if(perro->tipo == TIPO_1) codigo_tarea =  ADDR_COD_TAREA_A1;
+        else codigo_tarea = ADDR_COD_TAREA_A2;
+    }
+    else
+    {
+        if(perro->tipo == TIPO_2) codigo_tarea = ADDR_COD_TAREA_B1;
+        else codigo_tarea = ADDR_COD_TAREA_B2;
+    }
+
+    uint x;
+    uint y;
+    x = jugador->x;
+    y = jugador->y;
+    //mapeo paginas
+    mmu_mapear_pagina(0x400000, resultado, game_xy2lineal(x,y)*0x1000+0x500000, 1, 1);
+
+
+
+    //copio el codigo
+    mmu_mapear_pagina(0x400000, (page_directory_entry *) 0x27000, game_xy2lineal(x,y)*0x1000+0x500000, 1, 0);
+    copiar_codigo(codigo_tarea, 0x400000);
+    *((uint *) 0x400ffc) = yparam;  // parametros que toma
+    *((uint *) 0x400ff8) = xparam;  // la tarea
+    *((uint *) 0x400ff4) = 0;       //direccion de retorno, es fruta
+    mmu_unmapear_pagina(0x400000, (page_directory_entry *) 0x27000);
+
+
+    return resultado;
+}
+
 /*Reserva una pÃ¡gina en blanco del Ãrea de PÃ¡ginas de AsignaciÃ³n DinÃ¡mica, y devuelve su direcciÃ³n*/
 void* mmu_solicitar_pagina_nueva(){
 	void* dir_pag_nueva = *ULTIMA_PAG_LIBRE;
@@ -281,10 +280,11 @@ void* mmu_solicitar_cr3_nuevo(unsigned int jugador){
 void mmu_mover_perro(perro_t *perro, uint viejo_x, uint viejo_y){
 	
 	//mmu_mapear_pagina(mmu_xy2fisica(perro->x,perro->y), rcr3(), mmu_xy2fisica(perro->x,perro->y),0x007);
-	mmu_mapear_pagina(0x401000, rcr3(), mmu_xy2fisica(perro->x,perro->y),0x007);
-	copiar_codigo((uint *)mmu_xy2virtual(viejo_x,viejo_y),(uint *)0x401000); 
-
-	mmu_mapear_pagina(mmu_xy2fisica(perro->x,perro->y), rcr3(), mmu_xy2virtual(perro->x,perro->y),0x007);
+	mmu_mapear_pagina(0x401000, ( page_directory_entry *) rcr3(), mmu_xy2fisica(perro->x,perro->y), 1, 1);
+	breakpoint();
+	copiar_codigo(mmu_xy2virtual(viejo_x,viejo_y),0x401000); 
+	breakpoint();
+	//mmu_mapear_pagina(mmu_xy2fisica(perro->x,perro->y), rcr3(), mmu_xy2virtual(perro->x,perro->y),);
+	mmu_mapear_pagina(mmu_xy2virtual(perro->x,perro->y), ( page_directory_entry *) rcr3(), mmu_xy2fisica(perro->x,perro->y), 0, 1 );
 	//breakpoint();
-
 }

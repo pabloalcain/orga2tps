@@ -55,13 +55,13 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 	// lo scheduleen y finalmente lo pinten en pantalla
 
 	// ~~~ completar ~~~
-	
+	breakpoint();
 	if ((perro->jugador->index) == JUGADOR_A) {
-		uint cr3 = mmu_inicializar_memoria_perro(perro, JUGADOR_A, tipo);
-		tss_inicializar_tarea_perro(perro->index, A,(page_directory_entry *) cr3);
+		page_directory_entry * cr3 = mmu_inicializar_memoria_perro(j, perro, j->y, j->y);
+		tss_inicializar_tarea_perro(perro->index, A, cr3);
 	} else {
-		uint cr3 = mmu_inicializar_memoria_perro(perro, JUGADOR_B, tipo);
-		tss_inicializar_tarea_perro(perro->index, B,(page_directory_entry *) cr3);
+		page_directory_entry * cr3 = mmu_inicializar_memoria_perro(j, perro, j->y, j->y);
+		tss_inicializar_tarea_perro(perro->index, B, cr3);
 	}
 	sched_agregar_tarea(perro);
 	screen_pintar_perro(perro);
@@ -96,7 +96,6 @@ uint game_dir2xy(/* in */ direccion dir, /* out */ int *x, /* out */ int *y)
 uint game_perro_mover(perro_t *perro, direccion dir)
 {
 
-   	breakpoint();
 
 	int x, y;
 	uint res = game_dir2xy(dir, &x, &y);
@@ -106,7 +105,6 @@ uint game_perro_mover(perro_t *perro, direccion dir)
     int viejo_y = perro->y;
 
     // ~~~ completar ~~~
-
    	if (game_perro_en_posicion(nuevo_x,nuevo_y) != NULL){ 			
    		if (game_perro_en_posicion(nuevo_x,nuevo_y)->jugador == perro->jugador){ 		// PARA QUE NO PISE EL PERRO, SI TIENEN EL MISMO DUEÑO
    			// CUIDADO, SE PODRIAN TRABAR

@@ -28,7 +28,7 @@ void task(int x_origen, int y_origen) {
 			break;
 		
 		actualizar(&x_actual, &y_actual, direccion);
-		breakpoint();
+		
 		syscall_moverse(direccion);
 	}
 	while (syscall_cavar() != 0)
