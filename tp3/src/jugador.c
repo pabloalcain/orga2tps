@@ -9,12 +9,10 @@
 #define POS_INIT_B_X         MAPA_ANCHO - 2
 #define POS_INIT_B_Y          MAPA_ALTO - 2
 
-
-void game_jugador_inicializar(jugador_t *j)
+void game_jugador_inicializar(jugador_t *j, uint tipo_jugador)
 {
-	static int index = 0;
 
-	j->index = index++;
+	j->index = tipo_jugador;
 
 	if (j->index == JUGADOR_A) {
 		j->x = POS_INIT_A_X;

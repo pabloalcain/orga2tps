@@ -136,7 +136,7 @@ uchar screen_color_jugador(jugador_t *j)
 {
     if (j == NULL)
         return C_FG_LIGHT_GREY;
-
+    
     if (j->index == JUGADOR_A)
         return C_FG_RED;
     else
@@ -196,7 +196,6 @@ void screen_pintar_perro(perro_t *perro)
 {
     uchar c     = screen_caracter_perro(perro->tipo);
     uchar color = C_MAKE_BG(screen_color_jugador(perro->jugador)) | C_FG_WHITE;
-
     screen_pintar(c, color, perro->y+1, perro->x);
 }
 
@@ -241,7 +240,7 @@ void screen_actualizar_posicion_mapa(uint x, uint y)
         letra = screen_caracter_tesoro(valor);
     } else if ((jugadorA.x_cucha == x && jugadorA.y_cucha == y) || (jugadorB.x_cucha == x && jugadorB.y_cucha == y))
     {
-        letra = 'x';
+      letra = 'x';
     }
     else
     {

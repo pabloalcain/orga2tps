@@ -27,6 +27,8 @@ void game_perro_inicializar(perro_t *perro, jugador_t *j, uint index, uint id)
 
     perro->huesos = 0; // perro.huesos vale a lo sumo 10
 
+  // ~~~ para ser completado ~~~
+
 }
 
 
@@ -55,18 +57,17 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 	// lo scheduleen y finalmente lo pinten en pantalla
 
 	// ~~~ completar ~~~
-	breakpoint();
 	if ((perro->jugador->index) == JUGADOR_A) {
-		page_directory_entry * cr3 = mmu_inicializar_memoria_perro(j, perro, j->y, j->y);
+		page_directory_entry * cr3 = mmu_inicializar_memoria_perro(j, perro, j->x_cucha, j->y_cucha);
 		tss_inicializar_tarea_perro(perro->index, A, cr3);
 	} else {
-		page_directory_entry * cr3 = mmu_inicializar_memoria_perro(j, perro, j->y, j->y);
+		page_directory_entry * cr3 = mmu_inicializar_memoria_perro(j, perro, j->x_cucha, j->y_cucha);
 		tss_inicializar_tarea_perro(perro->index, B, cr3);
 	}
+
 	sched_agregar_tarea(perro);
 	screen_pintar_perro(perro);
 	screen_actualizar_reloj_perro(perro);
-
 
 }
 
@@ -96,40 +97,38 @@ uint game_dir2xy(/* in */ direccion dir, /* out */ int *x, /* out */ int *y)
 uint game_perro_mover(perro_t *perro, direccion dir)
 {
 
-
 	int x, y;
 	uint res = game_dir2xy(dir, &x, &y);
 	int nuevo_x = perro->x + x;
 	int nuevo_y = perro->y + y;
     int viejo_x = perro->x;
     int viejo_y = perro->y;
-
     // ~~~ completar ~~~
    	if (game_perro_en_posicion(nuevo_x,nuevo_y) != NULL){ 			
-   		if (game_perro_en_posicion(nuevo_x,nuevo_y)->jugador == perro->jugador){ 		// PARA QUE NO PISE EL PERRO, SI TIENEN EL MISMO DUEÑO
-   			// CUIDADO, SE PODRIAN TRABAR
-   		} else { 			// QUE PISE EL PERRO SI EL DUEÑO ES DISTINTO
+   		if (!(game_perro_en_posicion(nuevo_x,nuevo_y)->jugador == perro->jugador))
+   		{ 	
    			perro->x = nuevo_x;
    			perro->y = nuevo_y;
    			mmu_mover_perro(perro, viejo_x, viejo_y);
-   			screen_actualizar_posicion_mapa(perro->x, perro->y);
+			screen_pintar_perro(perro);
+			//screen_actualizar_posicion_mapa(perro->x, perro->y);
    			if((nuevo_x>79 || nuevo_y>49) || (nuevo_x == perro->jugador->x_cucha && nuevo_y == perro->jugador->y_cucha)){
    				game_perro_termino(perro);
    			}
-
    		}
    	} else {
    		perro->x = nuevo_x;
 		perro->y = nuevo_y;
 		mmu_mover_perro(perro, viejo_x, viejo_y);		
-		screen_actualizar_posicion_mapa(perro->x, perro->y);
+		
+		screen_pintar_perro(perro);
+		//screen_actualizar_posicion_mapa(perro->x, perro->y);
+		
 		if((nuevo_x>79 || nuevo_y>49) || (nuevo_x == perro->jugador->x_cucha && nuevo_y == perro->jugador->y_cucha)){
 			game_perro_termino(perro);
 		}
    	}
     
-    
-	breakpoint();
 
     return nuevo_x + nuevo_y + viejo_x + viejo_y + res; // uso todas las variables para que no tire warning->error.
 }

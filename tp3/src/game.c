@@ -60,8 +60,8 @@ uint game_es_posicion_valida(int x, int y) {
 
 void game_inicializar()
 {
-	game_jugador_inicializar(&jugadorA);
-	game_jugador_inicializar(&jugadorB);
+	game_jugador_inicializar(&jugadorA, JUGADOR_A );
+	game_jugador_inicializar(&jugadorB, JUGADOR_B );
 	
     screen_pintar_puntajes();
 }

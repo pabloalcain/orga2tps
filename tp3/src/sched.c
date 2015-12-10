@@ -110,17 +110,23 @@ uint sched_proxima_a_ejecutar()
 		return 	GDT_IDX_TSS_TAREA_IDLE;
 	}
 
-	if (scheduler.jugador_actual == JUGADOR_B) {
+	if (scheduler.jugador_actual != JUGADOR_A) {
 		scheduler.ultimo_jugador = JUGADOR_A;
 		int indice_perro = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_A);
 		if (indice_perro == PERRO_NOT_FOUND) {
 			scheduler.ultimo_jugador = JUGADOR_B;
 			jugadorB.indice_perro_actual = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_B); /* Caso cuando solo un jugador tiene perros activos */
 			scheduler.current = jugadorB.indice_perro_actual;
+			scheduler.tasks[scheduler.current].perro = &jugadorB.perros[scheduler.current];
+			game_perro_actual = scheduler.tasks[scheduler.current].perro;
+			scheduler.jugador_actual = JUGADOR_A;
 			return GDT_IDX_TSS_BASE_PERROS_B + jugadorB.indice_perro_actual;
 		}
 		jugadorA.indice_perro_actual = indice_perro;
 		scheduler.current = indice_perro;
+		scheduler.tasks[scheduler.current].perro = &jugadorA.perros[scheduler.current];
+		game_perro_actual = scheduler.tasks[scheduler.current].perro;
+		scheduler.jugador_actual = JUGADOR_B;
 		return GDT_IDX_TSS_BASE_PERROS_A + indice_perro;
 	} else {
 		scheduler.ultimo_jugador = JUGADOR_B;
@@ -130,20 +136,26 @@ uint sched_proxima_a_ejecutar()
 			scheduler.ultimo_jugador = JUGADOR_A;
 			jugadorA.indice_perro_actual = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_A);  /* Caso cuando solo un jugador tiene perros activos */
 			scheduler.current = jugadorA.indice_perro_actual;
+			scheduler.tasks[scheduler.current].perro = &jugadorA.perros[scheduler.current];
+			game_perro_actual = scheduler.tasks[scheduler.current].perro;
+			scheduler.jugador_actual = JUGADOR_B;
 			return GDT_IDX_TSS_BASE_PERROS_A + jugadorA.indice_perro_actual; 
 		}
 		jugadorB.indice_perro_actual = indice_perro;
 		scheduler.current = indice_perro;
+		scheduler.tasks[scheduler.current].perro = &jugadorB.perros[scheduler.current];
+		game_perro_actual = scheduler.tasks[scheduler.current].perro;
+		scheduler.jugador_actual = JUGADOR_A;
 		return GDT_IDX_TSS_BASE_PERROS_B + indice_perro;
 	}
 }
 
 
-ushort sched_atender_tick()
+ushort sched_atender_tick(ushort x)
 {
-	perro_t* perro_actual = sched_tarea_actual();
-	game_atender_tick(perro_actual);
-    return sched_proxima_a_ejecutar();
+	game_atender_tick(game_perro_actual);
+    //return sched_proxima_a_ejecutar();
+    return x;
 }
 
 unsigned int get_cant_perros_activos(){

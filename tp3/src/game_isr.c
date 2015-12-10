@@ -26,7 +26,7 @@ void wait(int pseudosecs)
 
 uint game_syscall_manejar(uint syscall, uint param1)
 {
-	perro_t * perro_actual = scheduler.tasks[scheduler.current].perro;
+	perro_t * perro_actual = game_perro_actual;
 	switch (syscall)
 	{
 
@@ -34,7 +34,7 @@ uint game_syscall_manejar(uint syscall, uint param1)
 
 		case CAVAR: game_perro_cavar(perro_actual); break;
 
-		case OLFATEAR: game_perro_olfatear(perro_actual); break;
+		case OLFATEAR: return game_perro_olfatear(perro_actual); break;
 
 		case RECIBIR_ORDEN: game_perro_recibir_orden(perro_actual); break;
 		default: break;
@@ -47,6 +47,7 @@ uint game_syscall_manejar(uint syscall, uint param1)
 // ~~~ recibe el perro que está corriendo actualmente
 void game_atender_tick(perro_t *perro)
 {
+	screen_actualizar_reloj_perro(perro);
 	screen_actualizar_reloj_global();
 }
 

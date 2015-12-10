@@ -124,7 +124,7 @@ void game_perro_ver_si_en_cucha(perro_t *perro);
 */
 
 // inicialización básica
-void game_jugador_inicializar(jugador_t *j);
+void game_jugador_inicializar(jugador_t *j, uint tipo_jugador);
 
 // debe encargarse de buscar un perro libre y lanzarlo
 void game_jugador_lanzar_perro(jugador_t *j, uint tipo, int x, int y);

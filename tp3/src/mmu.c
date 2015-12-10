@@ -45,28 +45,6 @@ void mmu_inicializar() {
 
 void * siguiente_libre;
 
-void * dar_siguiente()
-{
-    uint i;
-
-    for(i = 0; i<1024; i++)
-    {
-        ((page_directory_entry *) siguiente_libre)[i].present = 0;
-    }
-
-    siguiente_libre += 0x1000;
-    return siguiente_libre - 0x1000;
-}
-
-
-// void mmu_mapear_pagina_jugador_A(unsigned int cr3, unsigned int pos_perro, unsigned int offset_y){
-// 	mmu_mapear_pagina((unsigned int)EL_MAPA_VIRTUAL, cr3, pos_perro);
-// }
-
-// void mmu_mapear_pagina_jugador_B(unsigned int cr3, unsigned int pos_perro, unsigned int offset_y){
-// 	mmu_mapear_pagina((unsigned int)EL_MAPA_VIRTUAL, cr3, pos_perro);
-// }
-
 void mmu_mapear_areas_de_kernel_y_libre(unsigned int cr3){
 	int i = 0;
 	for(; i < 0x400; i++){
@@ -142,7 +120,7 @@ void mmu_mapear_pagina(uint virtual, page_directory_entry * cr3, uint fisica, uc
 
     if(!cr3[directorio].present)
     {
-        page_table = dar_siguiente();
+        page_table = (page_table_entry *) mmu_solicitar_pagina_nueva();
 
         cr3[directorio].present = 1;
         cr3[directorio].rw = rw;
@@ -215,11 +193,11 @@ void mmu_inicializar_tabla_kernel_para_perro(page_table_entry * tabla)
 page_directory_entry * mmu_inicializar_memoria_perro(jugador_t * jugador, perro_t * perro, uint xparam, uint yparam)
 {
     //obtengo la siguiente libre
-    page_directory_entry * resultado = (page_directory_entry *) dar_siguiente();
+    page_directory_entry * resultado = (page_directory_entry *) mmu_solicitar_pagina_nueva();
     // dar_siguiente lo devuelve en 0
 
     // me armo la tabla del kernel
-    page_table_entry * tabla_kernel = dar_siguiente();
+    page_table_entry * tabla_kernel = (page_table_entry *) mmu_solicitar_pagina_nueva();
     mmu_inicializar_tabla_kernel_para_perro(tabla_kernel);
 
 
@@ -247,23 +225,22 @@ page_directory_entry * mmu_inicializar_memoria_perro(jugador_t * jugador, perro_
     x = jugador->x;
     y = jugador->y;
     //mapeo paginas
-    mmu_mapear_pagina(0x400000, resultado, game_xy2lineal(x,y)*0x1000+0x500000, 1, 1);
+    mmu_mapear_pagina(0x401000, resultado, game_xy2lineal(x,y)*0x1000+0x500000, 1, 1);
 
 
 
     //copio el codigo
-    mmu_mapear_pagina(0x400000, (page_directory_entry *) 0x27000, game_xy2lineal(x,y)*0x1000+0x500000, 1, 0);
-    copiar_codigo(codigo_tarea, 0x400000);
-    *((uint *) 0x400ffc) = yparam;  // parametros que toma
-    *((uint *) 0x400ff8) = xparam;  // la tarea
-    *((uint *) 0x400ff4) = 0;       //direccion de retorno, es fruta
-    mmu_unmapear_pagina(0x400000, (page_directory_entry *) 0x27000);
+    mmu_mapear_pagina(0x401000, (page_directory_entry *) 0x27000, game_xy2lineal(x,y)*0x1000+0x500000, 1, 0);
+    copiar_codigo(codigo_tarea, 0x401000);
+    *((uint *) 0x401ffc) = yparam;  // parametros que toma
+    *((uint *) 0x401ff8) = xparam;  // la tarea
+    *((uint *) 0x401ff4) = 0;       //direccion de retorno, es fruta
+    mmu_unmapear_pagina(0x401000, (page_directory_entry *) 0x27000);
 
 
     return resultado;
 }
 
-/*Reserva una pÃ¡gina en blanco del Ãrea de PÃ¡ginas de AsignaciÃ³n DinÃ¡mica, y devuelve su direcciÃ³n*/
 void* mmu_solicitar_pagina_nueva(){
 	void* dir_pag_nueva = *ULTIMA_PAG_LIBRE;
 	*ULTIMA_PAG_LIBRE = (void*)((*ULTIMA_PAG_LIBRE)-0x1000);		
@@ -280,11 +257,12 @@ void* mmu_solicitar_cr3_nuevo(unsigned int jugador){
 void mmu_mover_perro(perro_t *perro, uint viejo_x, uint viejo_y){
 	
 	//mmu_mapear_pagina(mmu_xy2fisica(perro->x,perro->y), rcr3(), mmu_xy2fisica(perro->x,perro->y),0x007);
-	mmu_mapear_pagina(0x401000, ( page_directory_entry *) rcr3(), mmu_xy2fisica(perro->x,perro->y), 1, 1);
-	breakpoint();
-	copiar_codigo(mmu_xy2virtual(viejo_x,viejo_y),0x401000); 
-	breakpoint();
-	//mmu_mapear_pagina(mmu_xy2fisica(perro->x,perro->y), rcr3(), mmu_xy2virtual(perro->x,perro->y),);
-	mmu_mapear_pagina(mmu_xy2virtual(perro->x,perro->y), ( page_directory_entry *) rcr3(), mmu_xy2fisica(perro->x,perro->y), 0, 1 );
+    breakpoint();   
+    mmu_mapear_pagina(mmu_xy2virtual(perro->x,perro->y), ( page_directory_entry *) rcr3(), mmu_xy2fisica(viejo_x,viejo_y), 1, 1);
+    mmu_mapear_pagina(0x401000, ( page_directory_entry *) rcr3(), mmu_xy2fisica(perro->x,perro->y), 1, 1);
+    breakpoint();
+    copiar_codigo(mmu_xy2virtual(perro->x,perro->y), 0x401000); 
+	//mmu_mapear_pagina(mmu_xy2fisica(perro->x,perro->y), ( page_directory_entry *) rcr3(), mmu_xy2virtual(perro->x,perro->y), 0, 1);
+	//mmu_mapear_pagina(mmu_xy2virtual(perro->x,perro->y), ( page_directory_entry *) rcr3(), mmu_xy2fisica(perro->x,perro->y), 0, 1 );
 	//breakpoint();
 }
