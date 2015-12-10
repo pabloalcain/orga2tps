@@ -13,7 +13,7 @@ void game_jugador_inicializar(jugador_t *j, uint tipo_jugador)
 {
 
 	j->index = tipo_jugador;
-
+	j->cant_perros_vivos = 0;
 	if (j->index == JUGADOR_A) {
 		j->x = POS_INIT_A_X;
 		j->y = POS_INIT_A_Y;
@@ -69,9 +69,10 @@ void game_jugador_lanzar_perro(jugador_t *j, uint tipo, int x, int y)
 	perro_t *perro = game_jugador_dame_perro_libre(j);
 	if (perro == NULL)
 		return;
-
+	
 	game_perro_reciclar_y_lanzar(perro, tipo);
-	if (scheduler.jugador_actual == NULL) {
+	j->cant_perros_vivos++;
+	if (scheduler.jugador_actual == -1) {
 		if (j->index == JUGADOR_A)
 		{
 			scheduler.jugador_actual = JUGADOR_B; // para que el scheduler busque el a
@@ -88,6 +89,7 @@ uint game_jugador_moverse(jugador_t *j, int x, int y)
 {
 	int nuevo_x = j->x + x;
 	int nuevo_y = j->y + y;
+	
 
     // ~~~ completar ~~~
     return nuevo_x + nuevo_y; // uso todas las variables locales para que no tire warning -> error

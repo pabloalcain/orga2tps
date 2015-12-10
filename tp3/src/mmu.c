@@ -257,10 +257,9 @@ void* mmu_solicitar_cr3_nuevo(unsigned int jugador){
 void mmu_mover_perro(perro_t *perro, uint viejo_x, uint viejo_y){
 	
 	//mmu_mapear_pagina(mmu_xy2fisica(perro->x,perro->y), rcr3(), mmu_xy2fisica(perro->x,perro->y),0x007);
-    breakpoint();   
+    
     mmu_mapear_pagina(mmu_xy2virtual(perro->x,perro->y), ( page_directory_entry *) rcr3(), mmu_xy2fisica(viejo_x,viejo_y), 1, 1);
     mmu_mapear_pagina(0x401000, ( page_directory_entry *) rcr3(), mmu_xy2fisica(perro->x,perro->y), 1, 1);
-    breakpoint();
     copiar_codigo(mmu_xy2virtual(perro->x,perro->y), 0x401000); 
 	//mmu_mapear_pagina(mmu_xy2fisica(perro->x,perro->y), ( page_directory_entry *) rcr3(), mmu_xy2virtual(perro->x,perro->y), 0, 1);
 	//mmu_mapear_pagina(mmu_xy2virtual(perro->x,perro->y), ( page_directory_entry *) rcr3(), mmu_xy2fisica(perro->x,perro->y), 0, 1 );

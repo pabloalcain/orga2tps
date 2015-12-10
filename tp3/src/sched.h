@@ -35,7 +35,7 @@ typedef struct sched_t
 {
     sched_task_t tasks[MAX_CANT_TAREAS_VIVAS+1];
     ushort current;
-    ushort jugador_actual; // indica el jugador actual (JUGADOR_A o JUGADOR_B)
+    int jugador_actual; // indica el jugador actual (JUGADOR_A o JUGADOR_B)
     ushort ultimo_jugador; // indica el ultimo jugador jugador (JUGADOR_A o JUGADOR_B)
     uint indice_jugador_actual;
     uint indice_ultimo_jugador_A; // valores válidos: de 1 a 8 inclusive
@@ -67,5 +67,7 @@ ushort sched_atender_tick(ushort x);
 uint sched_jugador_actual();
 
 int sched_buscar_tarea_libre2(uint jugador);
+
+unsigned int get_cant_perros_activos();
 
 #endif	/* !__SCHED_H__ */

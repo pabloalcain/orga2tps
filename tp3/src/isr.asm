@@ -158,11 +158,11 @@ _isr32:
     cmp bx, ax    ; si la proxima tarea a saltar es la misma, no salto 
     je .fin
 
-    xchg bx, bx
     mov eax, ebx
     push eax
     call sched_atender_tick
     pop eax
+    
     mov word [sched_tarea_selector], ax
     jmp far [sched_tarea_offset]
 

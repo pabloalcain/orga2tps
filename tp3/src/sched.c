@@ -15,7 +15,7 @@ void sched_inicializar()
 {
 	scheduler.tasks[MAX_CANT_TAREAS_VIVAS].gdt_index = COD_TAREA_IDLE_DIR; // tarea idle
 	scheduler.tasks[MAX_CANT_TAREAS_VIVAS].perro = NULL; // tarea idle
-
+	scheduler.jugador_actual = -1;
 	int i;
 	for (i = 0; i < MAX_CANT_PERROS_VIVOS; i++) {
 		scheduler.tasks[i].gdt_index = (GDT_IDX_TSS_BASE_PERROS_A + i);	// inicializar scheduler con la dir en la gdt de las tareas
@@ -106,48 +106,49 @@ void sched_remover_tarea(unsigned int jugador)
 
 uint sched_proxima_a_ejecutar()
 {
-	if (scheduler.jugador_actual == NULL){
-		return 	GDT_IDX_TSS_TAREA_IDLE;
+	if (get_cant_perros_activos() == 0) {
+		return GDT_IDX_TSS_TAREA_IDLE;
 	}
-
-	if (scheduler.jugador_actual != JUGADOR_A) {
-		scheduler.ultimo_jugador = JUGADOR_A;
+	if (scheduler.jugador_actual == JUGADOR_B) {
+		scheduler.jugador_actual = JUGADOR_A;
+		//scheduler.ultimo_jugador = JUGADOR_A;
 		int indice_perro = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_A);
 		if (indice_perro == PERRO_NOT_FOUND) {
-			scheduler.ultimo_jugador = JUGADOR_B;
+			//scheduler.ultimo_jugador = JUGADOR_B;
 			jugadorB.indice_perro_actual = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_B); /* Caso cuando solo un jugador tiene perros activos */
 			scheduler.current = jugadorB.indice_perro_actual;
 			scheduler.tasks[scheduler.current].perro = &jugadorB.perros[scheduler.current];
 			game_perro_actual = scheduler.tasks[scheduler.current].perro;
-			scheduler.jugador_actual = JUGADOR_A;
 			return GDT_IDX_TSS_BASE_PERROS_B + jugadorB.indice_perro_actual;
 		}
 		jugadorA.indice_perro_actual = indice_perro;
 		scheduler.current = indice_perro;
 		scheduler.tasks[scheduler.current].perro = &jugadorA.perros[scheduler.current];
 		game_perro_actual = scheduler.tasks[scheduler.current].perro;
-		scheduler.jugador_actual = JUGADOR_B;
+		//scheduler.jugador_actual = JUGADOR_A;
 		return GDT_IDX_TSS_BASE_PERROS_A + indice_perro;
-	} else {
-		scheduler.ultimo_jugador = JUGADOR_B;
+	} else
+	if (scheduler.jugador_actual == JUGADOR_A) {
+		//scheduler.ultimo_jugador = JUGADOR_B;
+		scheduler.jugador_actual = JUGADOR_B;
 		int indice_perro = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_B);
 		if (indice_perro == PERRO_NOT_FOUND) {
-
-			scheduler.ultimo_jugador = JUGADOR_A;
+			//scheduler.ultimo_jugador = JUGADOR_A;
 			jugadorA.indice_perro_actual = jugador_obtener_proximo_perro_a_ejecutar(JUGADOR_A);  /* Caso cuando solo un jugador tiene perros activos */
 			scheduler.current = jugadorA.indice_perro_actual;
 			scheduler.tasks[scheduler.current].perro = &jugadorA.perros[scheduler.current];
 			game_perro_actual = scheduler.tasks[scheduler.current].perro;
-			scheduler.jugador_actual = JUGADOR_B;
+			//scheduler.jugador_actual = JUGADOR_B;
 			return GDT_IDX_TSS_BASE_PERROS_A + jugadorA.indice_perro_actual; 
 		}
 		jugadorB.indice_perro_actual = indice_perro;
 		scheduler.current = indice_perro;
 		scheduler.tasks[scheduler.current].perro = &jugadorB.perros[scheduler.current];
 		game_perro_actual = scheduler.tasks[scheduler.current].perro;
-		scheduler.jugador_actual = JUGADOR_A;
+		//scheduler.jugador_actual = JUGADOR_B;
 		return GDT_IDX_TSS_BASE_PERROS_B + indice_perro;
 	}
+	return 	GDT_IDX_TSS_TAREA_IDLE;
 }
 
 

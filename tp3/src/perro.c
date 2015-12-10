@@ -75,6 +75,10 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 void game_perro_termino(perro_t *perro)
 {
 //	~~~ completar ~~~
+	scheduler.tasks[perro->index].perro = NULL; 
+	perro->libre = TRUE;
+	jugador_t* j = perro->jugador;
+	j->cant_perros_vivos--;
 }
 
 // transforma código de dirección en valores x e y 
@@ -105,17 +109,18 @@ uint game_perro_mover(perro_t *perro, direccion dir)
     int viejo_y = perro->y;
     // ~~~ completar ~~~
    	if (game_perro_en_posicion(nuevo_x,nuevo_y) != NULL){ 			
-   		if (!(game_perro_en_posicion(nuevo_x,nuevo_y)->jugador == perro->jugador))
-   		{ 	
-   			perro->x = nuevo_x;
-   			perro->y = nuevo_y;
-   			mmu_mover_perro(perro, viejo_x, viejo_y);
-			screen_pintar_perro(perro);
-			//screen_actualizar_posicion_mapa(perro->x, perro->y);
-   			if((nuevo_x>79 || nuevo_y>49) || (nuevo_x == perro->jugador->x_cucha && nuevo_y == perro->jugador->y_cucha)){
-   				game_perro_termino(perro);
-   			}
-   		}
+   // 		if (!(game_perro_en_posicion(nuevo_x,nuevo_y)->jugador == perro->jugador))
+   // 		{ 	
+   // 			perro->x = nuevo_x;
+   // 			perro->y = nuevo_y;
+   // 			mmu_mover_perro(perro, viejo_x, viejo_y);
+			// screen_pintar_perro(perro);
+			// //screen_actualizar_posicion_mapa(perro->x, perro->y);
+   // 			if((nuevo_x<1 || nuevo_y<1) || (nuevo_x>79 || nuevo_y>49) || (nuevo_x == perro->jugador->x_cucha && nuevo_y == perro->jugador->y_cucha)){
+   // 				game_perro_termino(perro);
+   // 			}
+   // 		}
+   		game_perro_termino(perro);
    	} else {
    		perro->x = nuevo_x;
 		perro->y = nuevo_y;
@@ -124,7 +129,7 @@ uint game_perro_mover(perro_t *perro, direccion dir)
 		screen_pintar_perro(perro);
 		//screen_actualizar_posicion_mapa(perro->x, perro->y);
 		
-		if((nuevo_x>79 || nuevo_y>49) || (nuevo_x == perro->jugador->x_cucha && nuevo_y == perro->jugador->y_cucha)){
+		if((nuevo_x<1 || nuevo_y<1) ||(nuevo_x>79 || nuevo_y>49) || (nuevo_x == perro->jugador->x_cucha && nuevo_y == perro->jugador->y_cucha)){
 			game_perro_termino(perro);
 		}
    	}
