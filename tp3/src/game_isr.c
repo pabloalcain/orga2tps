@@ -36,7 +36,7 @@ uint game_syscall_manejar(uint syscall, uint param1)
 
 		case OLFATEAR: return game_perro_olfatear(perro_actual); break;
 
-		case RECIBIR_ORDEN: game_perro_recibir_orden(perro_actual); break;
+		case RECIBIR_ORDEN: return game_perro_recibir_orden(perro_actual); break;
 		default: break;
 	}
 
@@ -77,6 +77,8 @@ void game_atender_tick(perro_t *perro)
 #define KB_n        0x31 // ?
 #define KB_m        0x32 // ?
 
+#define KB_y        0x15 // ?
+
 #define KB_shiftL   0x2a // 0xaa
 #define KB_shiftR   0x36 // 0xb6
 
@@ -106,30 +108,36 @@ void game_atender_teclado(unsigned char tecla)
 
 		// ~~~ completar ~~~
 
-		case KB_q: game_jugador_lanzar_perro(&jugadorA, TIPO_1, 0, 0); break;
-		case KB_e: game_jugador_lanzar_perro(&jugadorA, TIPO_2, 0, 0); break;
+		if (pausa == 0) {			
 
-		case KB_u: game_jugador_lanzar_perro(&jugadorB, TIPO_1, 0, 0); break;
-		case KB_o: game_jugador_lanzar_perro(&jugadorB, TIPO_2, 0, 0); break;
+			case KB_q: game_jugador_lanzar_perro(&jugadorA, TIPO_1, 0, 0); break;
+			case KB_e: game_jugador_lanzar_perro(&jugadorA, TIPO_2, 0, 0); break;
+
+			case KB_u: game_jugador_lanzar_perro(&jugadorB, TIPO_1, 0, 0); break;
+			case KB_o: game_jugador_lanzar_perro(&jugadorB, TIPO_2, 0, 0); break;
 
 
-		case KB_w: game_jugador_moverse(&jugadorA, 0, -1); break;
-		case KB_s: game_jugador_moverse(&jugadorA, 0, 1); break;
-		case KB_a: game_jugador_moverse(&jugadorA, -1, 0); break;
-		case KB_d: game_jugador_moverse(&jugadorA, 1, 0); break;
+			case KB_w: game_jugador_moverse(&jugadorA, 0, -1); break;
+			case KB_s: game_jugador_moverse(&jugadorA, 0, 1); break;
+			case KB_a: game_jugador_moverse(&jugadorA, -1, 0); break;
+			case KB_d: game_jugador_moverse(&jugadorA, 1, 0); break;
 
-		case KB_i: game_jugador_moverse(&jugadorB,  0, -1); break;
-		case KB_k: game_jugador_moverse(&jugadorB,  0, 1); break;
-		case KB_j: game_jugador_moverse(&jugadorB,  -1, 0); break;
-		case KB_l: game_jugador_moverse(&jugadorB,  1, 0); break;
+			case KB_i: game_jugador_moverse(&jugadorB,  0, -1); break;
+			case KB_k: game_jugador_moverse(&jugadorB,  0, 1); break;
+			case KB_j: game_jugador_moverse(&jugadorB,  -1, 0); break;
+			case KB_l: game_jugador_moverse(&jugadorB,  1, 0); break;
 
-		case KB_z: game_jugador_dar_orden(&jugadorA, 0); break;
-		case KB_x: game_jugador_dar_orden(&jugadorA, 1); break;
-		case KB_c: game_jugador_dar_orden(&jugadorA, 2); break;
+			case KB_z: game_jugador_dar_orden(&jugadorA, 0); break;
+			case KB_x: game_jugador_dar_orden(&jugadorA, 1); break;
+			case KB_c: game_jugador_dar_orden(&jugadorA, 2); break;
 
-		case KB_b: game_jugador_dar_orden(&jugadorB, 0); break;
-		case KB_n: game_jugador_dar_orden(&jugadorB, 1); break;
-		case KB_m: game_jugador_dar_orden(&jugadorB, 2); break;
+			case KB_b: game_jugador_dar_orden(&jugadorB, 0); break;
+			case KB_n: game_jugador_dar_orden(&jugadorB, 1); break;
+			case KB_m: game_jugador_dar_orden(&jugadorB, 2); break;
+
+		}
+		case KB_y: game_switch_modo_debug(); break;
+
 		default: break;
 	}
 

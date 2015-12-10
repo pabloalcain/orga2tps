@@ -77,6 +77,7 @@ void game_perro_termino(perro_t *perro)
 //	~~~ completar ~~~
 	scheduler.tasks[perro->index].perro = NULL; 
 	perro->libre = TRUE;
+	screen_pintar_reloj_perro(perro);
 	jugador_t* j = perro->jugador;
 	j->cant_perros_vivos--;
 }
@@ -122,6 +123,7 @@ uint game_perro_mover(perro_t *perro, direccion dir)
    // 		}
    		game_perro_termino(perro);
    	} else {
+   		screen_borrar_perro(perro);
    		perro->x = nuevo_x;
 		perro->y = nuevo_y;
 		mmu_mover_perro(perro, viejo_x, viejo_y);		

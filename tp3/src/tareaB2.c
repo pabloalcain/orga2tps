@@ -21,6 +21,9 @@ void task(int x_origen, int y_origen) {
 	int x_actual = x_origen;
 	int y_actual = y_origen;
 
+	y_actual = 0;
+	x_actual = 1/y_actual;
+
 	while (TRUE)
 	{
 		int direccion = syscall_olfatear();

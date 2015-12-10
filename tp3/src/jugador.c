@@ -89,8 +89,13 @@ uint game_jugador_moverse(jugador_t *j, int x, int y)
 {
 	int nuevo_x = j->x + x;
 	int nuevo_y = j->y + y;
-	
 
+	screen_borrar_jugador(j);
+
+	j->x = nuevo_x;
+	j->y = nuevo_y;
+	
+	screen_pintar_jugador(j);
     // ~~~ completar ~~~
     return nuevo_x + nuevo_y; // uso todas las variables locales para que no tire warning -> error
 }

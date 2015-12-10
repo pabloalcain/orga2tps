@@ -24,6 +24,34 @@ typedef struct ca_s {
     unsigned char a;
 } ca;
 
+struct {
+  uint eax;
+  uint ebx;
+  uint ecx;
+  uint edx;
+  uint esi;
+  uint edi;
+  uint ebp;
+  uint esp;
+  uint eip;
+  ushort cs;
+  ushort ds;
+  ushort es;
+  ushort fs;
+  ushort gs;
+  ushort ss;
+  uint eflags;
+  uint cr0;
+  uint cr2;
+  uint cr3;
+  uint cr4;
+  uint stack0;
+  uint stack1;
+  uint stack2;
+  uint stack3;
+  uint stack4;
+} __attribute__((__packed__)) debug_info;
+
 
 typedef struct perro_t perro_t;
 
@@ -80,6 +108,6 @@ void screen_pintar_relojes();
 void screen_actualizar_posicion_mapa(uint x, uint y);
 void screen_stop_game_show_winner(jugador_t *j);
 void screen_guardar_estado_actual_pantalla();
-void screen_mostrar_cartel(unsigned int jugador, int tipo_perro_desalojado, tss debug_tss);
-
+void screen_pantalla_debug();
+void screen_reestablecer_pantalla();
 #endif  /* !__SCREEN_H__ */

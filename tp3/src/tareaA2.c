@@ -29,7 +29,7 @@ void task(int x_origen, int y_origen) {
 		
 		actualizar(&x_actual, &y_actual, direccion);
 		
-		syscall_moverse(direccion);
+		syscall_recibir_ordenes(0);
 	}
 	while (syscall_cavar() != 0)
 	{}

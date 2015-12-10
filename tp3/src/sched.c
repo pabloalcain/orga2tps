@@ -84,12 +84,6 @@ int sched_buscar_tarea_libre2(uint jugador)
 	return 0;
 }
 
-
-
-
-
-
-
 void sched_remover_tarea(unsigned int jugador)
 {
 	if(jugador == JUGADOR_A){
@@ -99,6 +93,10 @@ void sched_remover_tarea(unsigned int jugador)
 	 } else{
 		jugadorB.cant_perros_vivos--;
 		jugadorB.perros[jugadorB.indice_perro_actual].libre = TRUE;
+	}
+
+	if(modo_debug == TRUE){
+		set_pausa();
 	}
 
 }

@@ -222,8 +222,8 @@ page_directory_entry * mmu_inicializar_memoria_perro(jugador_t * jugador, perro_
 
     uint x;
     uint y;
-    x = jugador->x;
-    y = jugador->y;
+    x = jugador->x_cucha;
+    y = jugador->y_cucha;
     //mapeo paginas
     mmu_mapear_pagina(0x401000, resultado, game_xy2lineal(x,y)*0x1000+0x500000, 1, 1);
 

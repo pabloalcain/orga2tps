@@ -32,6 +32,9 @@ typedef enum {A, B} jugador_tipo;
 struct jugador_t;
 
 extern int escondites[ESCONDITES_CANTIDAD][3];
+extern unsigned int modo_debug ;
+extern unsigned int pausa ;
+
 
 typedef struct perro_t
 {
@@ -138,7 +141,7 @@ void game_jugador_anotar_punto(jugador_t *j);
 // guarda la orden en el jugador para que los perros puedan preguntarla luego (mediante un syscall)
 void game_jugador_dar_orden(jugador_t *jugador, int orden);
 
-
+unsigned int game_en_pausa();
 /*
 ================================================================================
                          ~~~ auxiliares del juego ~~~
@@ -163,6 +166,8 @@ int jugador_obtener_proximo_perro_a_ejecutar(unsigned int jugador_actual);
 uint game_perro_recibir_orden(perro_t *perro);
 
 void game_restar_hueso_en_posicion(uint x, uint y);
+
+void game_switch_modo_debug();
 
 void set_pausa();
 

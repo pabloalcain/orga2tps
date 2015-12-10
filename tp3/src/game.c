@@ -10,9 +10,9 @@ TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 #include "screen.h"
 
 #include <stdarg.h>
-unsigned int modo_debug = FALSE;
-unsigned int pausa = FALSE;
 
+unsigned int modo_debug ;
+unsigned int pausa ;
 
 int escondites[ESCONDITES_CANTIDAD][3] = { // TRIPLAS DE LA FORMA (X, Y, HUESOS)
                                         {76,  25, 50}, {12, 15, 50}, {9, 10, 100}, {47, 21, 100} ,
@@ -60,6 +60,9 @@ uint game_es_posicion_valida(int x, int y) {
 
 void game_inicializar()
 {
+
+	modo_debug = FALSE;
+	pausa = FALSE;
 	game_jugador_inicializar(&jugadorA, JUGADOR_A );
 	game_jugador_inicializar(&jugadorB, JUGADOR_B );
 	
@@ -103,7 +106,9 @@ perro_t* game_perro_en_posicion(uint x, uint y)
 	return NULL;
 }
 
-
+unsigned int game_en_pausa() {
+	return pausa;
+}
 
 // termina si se agotaron los huesos o si hace tiempo que no hay ningun cambio
 void game_terminar_si_es_hora()
@@ -145,8 +150,21 @@ unsigned int game_get_is_modo_debug() {
 	return modo_debug;
 }
 
+void game_switch_modo_debug() {
+	if(modo_debug == 1) {
+		modo_debug = 0; 
+		pausa = 0;
+		screen_reestablecer_pantalla();
+	} else {
+		modo_debug = 1;
+		pausa = 0;
+	}
+}
+
 void set_pausa() {
-	pausa = TRUE;	
+	screen_pantalla_debug();
+	
+	pausa = TRUE;
 }
 
 jugador_t game_get_jugador_from_perro(perro_t *perro) {
