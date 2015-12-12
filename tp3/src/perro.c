@@ -1,6 +1,6 @@
 // #include "game.h"
 #include "mmu.h"
- #include "screen.h"
+#include "screen.h"
 #include "tss.h"
 #include "sched.h"
 
@@ -9,7 +9,7 @@
 
 typedef struct posicion_x_y
 {
-    unsigned int x;
+  unsigned int x;
 	unsigned int y;
 	unsigned int id_orden;
 } posicion_x_y;
@@ -18,18 +18,19 @@ typedef struct posicion_x_y
 void game_perro_inicializar(perro_t *perro, jugador_t *j, uint index, uint id)
 {
 	perro->id   = id;
-    perro->index = index;
-    perro->jugador = j;
+  perro->index = index;
+  perro->jugador = j;
 	perro->libre = TRUE;
-
-    perro->x = j->x_cucha;
-    perro->y = j->y_cucha;
-
-    perro->huesos = 0; // perro.huesos vale a lo sumo 10
-
+  perro->x = j->x_cucha;
+  perro->y = j->y_cucha;
+  
+  perro->huesos = 0; // perro.huesos vale a lo sumo 10
+  
   // ~~~ para ser completado ~~~
 
 }
+
+
 
 
 int jugador_get_indice_perro_nuevo(perro_t *perro){
@@ -80,6 +81,18 @@ void game_perro_termino(perro_t *perro)
 	screen_pintar_reloj_perro(perro);
 	jugador_t* j = perro->jugador;
 	j->cant_perros_vivos--;
+  int tot_perros = jugadorA.cant_perros_vivos + jugadorB.cant_perros_vivos;
+  if (huesos_totales == 0 && tot_perros == 0) {
+    j = jugadorA.puntos > jugadorB.puntos ? &jugadorA : &jugadorB;
+    if (jugadorA.puntos > jugadorB.puntos)
+      j = &jugadorA;
+    else if (jugadorB.puntos > jugadorA.puntos)
+      j = &jugadorB;
+    else
+      j = NULL;
+    /* en caso de empate gana el jugador A porque yo lo digo */
+    screen_stop_game_show_winner(j);
+  }
 }
 
 // transforma código de dirección en valores x e y 
@@ -106,38 +119,26 @@ uint game_perro_mover(perro_t *perro, direccion dir)
 	uint res = game_dir2xy(dir, &x, &y);
 	int nuevo_x = perro->x + x;
 	int nuevo_y = perro->y + y;
-    int viejo_x = perro->x;
-    int viejo_y = perro->y;
-    // ~~~ completar ~~~
-   	if (game_perro_en_posicion(nuevo_x,nuevo_y) != NULL){ 			
-   // 		if (!(game_perro_en_posicion(nuevo_x,nuevo_y)->jugador == perro->jugador))
-   // 		{ 	
-   // 			perro->x = nuevo_x;
-   // 			perro->y = nuevo_y;
-   // 			mmu_mover_perro(perro, viejo_x, viejo_y);
-			// screen_pintar_perro(perro);
-			// //screen_actualizar_posicion_mapa(perro->x, perro->y);
-   // 			if((nuevo_x<1 || nuevo_y<1) || (nuevo_x>79 || nuevo_y>49) || (nuevo_x == perro->jugador->x_cucha && nuevo_y == perro->jugador->y_cucha)){
-   // 				game_perro_termino(perro);
-   // 			}
-   // 		}
-   		game_perro_termino(perro);
-   	} else {
-   		screen_borrar_perro(perro);
-   		perro->x = nuevo_x;
+  int viejo_x = perro->x;
+  int viejo_y = perro->y;
+  if (game_perro_en_posicion(nuevo_x,nuevo_y) != NULL){ 			
+    game_perro_termino(perro);
+  } else {
+    screen_borrar_perro(perro);
+    perro->x = nuevo_x;
 		perro->y = nuevo_y;
-		mmu_mover_perro(perro, viejo_x, viejo_y);		
-		
 		screen_pintar_perro(perro);
 		//screen_actualizar_posicion_mapa(perro->x, perro->y);
 		
-		if((nuevo_x<1 || nuevo_y<1) ||(nuevo_x>79 || nuevo_y>49) || (nuevo_x == perro->jugador->x_cucha && nuevo_y == perro->jugador->y_cucha)){
+		if((nuevo_x<1 || nuevo_y<1) ||(nuevo_x >= MAPA_ANCHO || nuevo_y >= MAPA_ALTO)){
 			game_perro_termino(perro);
 		}
-   	}
-    
-
-    return nuevo_x + nuevo_y + viejo_x + viejo_y + res; // uso todas las variables para que no tire warning->error.
+    mmu_mover_perro(perro, viejo_x, viejo_y);		
+    game_perro_ver_si_en_cucha(perro);
+  }
+  
+  
+  return nuevo_x + nuevo_y + viejo_x + viejo_y + res; // uso todas las variables para que no tire warning->error.
 }
 // recibe un perro, el cual debe cavar en su posición
 // *** viene del syscall cavar ***
@@ -146,7 +147,8 @@ uint game_perro_cavar(perro_t *perro)
 	// ~~~ completar ~~~
 	uint huesos_aqui = game_huesos_en_posicion(perro->x, perro->y);
 	if (huesos_aqui > 0 && perro->huesos <= 10) {
-		perro->huesos ++;
+		perro->huesos++;
+    huesos_totales--;
 		game_restar_hueso_en_posicion(perro->x, perro->y);
 	}
 	return 0;
@@ -198,10 +200,8 @@ void game_perro_ver_si_en_cucha(perro_t *perro)
 
 	if (perro->huesos == 0)
 		return;
-
 	game_jugador_anotar_punto(perro->jugador);
 	perro->huesos--;
 	if (perro->huesos == 0)
-		game_perro_termino(perro);
+    game_perro_termino(perro);
 }
-

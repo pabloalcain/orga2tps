@@ -88,10 +88,8 @@ void game_atender_teclado(unsigned char tecla)
 {
 	switch (tecla)
 	{
-		
 		/* Ejercicio 5 c)*/
-		// case KB_q: screen_pintar('q',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
-
+    // case KB_q: screen_pintar('q',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
 		// case KB_a: screen_pintar('a',C_FG_MAGENTA | C_BG_LIGHT_GREY , 0, 79); break;
 
 
@@ -109,7 +107,7 @@ void game_atender_teclado(unsigned char tecla)
 		// ~~~ completar ~~~
 
 		if (pausa == 0) {			
-
+      
 			case KB_q: game_jugador_lanzar_perro(&jugadorA, TIPO_1, 0, 0); break;
 			case KB_e: game_jugador_lanzar_perro(&jugadorA, TIPO_2, 0, 0); break;
 

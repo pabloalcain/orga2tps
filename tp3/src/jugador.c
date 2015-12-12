@@ -1,7 +1,7 @@
 
 #include "game.h"
 // #include "mmu.h"
- #include "screen.h"
+#include "screen.h"
 #include "sched.h"
 
 #define POS_INIT_A_X                      1
@@ -62,7 +62,6 @@ perro_t* game_jugador_dame_perro_libre(jugador_t *j)
 // debe encargarse de buscar un perro libre, configurarlo, y inicializar su mapeo de memoria, tss, y lugar en el sched
 void game_jugador_lanzar_perro(jugador_t *j, uint tipo, int x, int y)
 {
-
 	if (game_perro_en_posicion(x,y) != NULL)
 		return;
 
@@ -103,11 +102,11 @@ uint game_jugador_moverse(jugador_t *j, int x, int y)
 // descarga 1 hueso en la cucha y actualiza el screen
 void game_jugador_anotar_punto(jugador_t *j)
 {
-    ultimo_cambio = MAX_SIN_CAMBIOS;
-
+  ultimo_cambio = MAX_SIN_CAMBIOS;
+  
 	j->puntos++;
-
-    screen_pintar_puntajes();
+  
+  screen_pintar_puntajes();
 
 	if(j->puntos==999)
 		screen_stop_game_show_winner(j);

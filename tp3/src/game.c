@@ -15,8 +15,8 @@ unsigned int modo_debug ;
 unsigned int pausa ;
 
 int escondites[ESCONDITES_CANTIDAD][3] = { // TRIPLAS DE LA FORMA (X, Y, HUESOS)
-                                        {76,  25, 50}, {12, 15, 50}, {9, 10, 100}, {47, 21, 100} ,
-                                        {34,  11, 50}, {75, 38, 50}, {40, 21, 100}, {72, 17, 100}
+                                        {76,  25, 1}, {12, 15, 1}, {9, 10, 1}, {47, 21, 1} ,
+                                        {34,  11, 1}, {75, 38, 1}, {40, 21, 1}, {72, 17, 1}
                                     };
 
 jugador_t jugadorA;
@@ -60,13 +60,17 @@ uint game_es_posicion_valida(int x, int y) {
 
 void game_inicializar()
 {
-
+  int i;
+  huesos_totales = 0;
 	modo_debug = FALSE;
 	pausa = FALSE;
 	game_jugador_inicializar(&jugadorA, JUGADOR_A );
 	game_jugador_inicializar(&jugadorB, JUGADOR_B );
-	
-    screen_pintar_puntajes();
+  screen_pintar_puntajes();
+	for (i = 0; i < ESCONDITES_CANTIDAD; i++)
+	{
+    huesos_totales += escondites[i][2];
+	}
 }
 
 
@@ -84,10 +88,11 @@ uint game_huesos_en_posicion(uint x, uint y) {
 void game_restar_hueso_en_posicion(uint x, uint y) {
 	int i;
 	for (i = 0; i < ESCONDITES_CANTIDAD; i++)
-	{
-		if (escondites[i][0] == x && escondites[i][1] == y)
-			escondites[i][2]--;
-	}
+    {
+      if (escondites[i][0] == x && escondites[i][1] == y){
+        escondites[i][2] = escondites[i][2] - 1;
+      }
+    }
 }
 
 

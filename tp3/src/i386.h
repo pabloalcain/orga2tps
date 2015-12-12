@@ -104,4 +104,13 @@ LS_INLINE void breakpoint(void) {
     __asm __volatile("xchg %%bx, %%bx" : :);
 }
 
+LS_INLINE void break_eax(unsigned int val) {
+  unsigned int eax;
+__asm __volatile("mov %%eax, %0" : "=r" (eax));
+ __asm __volatile("mov %0, %%eax": : "r" (val));
+  breakpoint();
+  __asm __volatile("mov %0, %%eax": : "r" (eax));
+}
+
+
 #endif  /* !__i386_H__ */

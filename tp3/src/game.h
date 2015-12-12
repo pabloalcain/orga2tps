@@ -28,6 +28,7 @@
 
 typedef enum direccion_e { ARR = 0x4, ABA = 0x7, DER = 0xA, IZQ = 0xD, AQUI = 0x10} direccion;
 typedef enum {A, B} jugador_tipo;
+int huesos_totales;
 
 struct jugador_t;
 

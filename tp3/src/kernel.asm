@@ -99,14 +99,13 @@ start:
     ; Inicializar pantalla
     xor ebx, ebx
     xor ax, ax
-    limpiar_pantalla:
-        mov [fs:ebx*2], ax
-        inc ebx
-        cmp ebx, 2000
-        jb limpiar_pantalla
+    ;; limpiar_pantalla:
+    ;;      mov [fs:ebx*2], ax
+    ;;      inc ebx
+    ;;      cmp ebx, 2000
+    ;;      jb limpiar_pantalla
 
     call screen_inicializar
-
     ; Inicializar el manejador de memoria
     call mmu_inicializar
 
@@ -123,14 +122,11 @@ start:
 
     ; Inicializar tss
 
-    ;xchg bx, bx
     ; Inicializar tss de la tarea Idle
     call tss_inicializar
 
     ; Inicializar el scheduler
- ;   xchg bx, bx
     call sched_inicializar
- ;   xchg bx, bx
     ; Inicializar la IDT
     call idt_inicializar
 

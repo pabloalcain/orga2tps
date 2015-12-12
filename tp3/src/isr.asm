@@ -248,13 +248,12 @@ _isr33:
     pushad
     pushfd
     call fin_intr_pic1
-
+  
     in al, 0x60
     push eax
     call game_atender_teclado
     pop eax
 
-fin33:
     popfd
     popad
     sti

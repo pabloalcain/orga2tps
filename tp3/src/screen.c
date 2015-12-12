@@ -6,7 +6,7 @@ definicion de funciones del scheduler
 */
 
 #include "screen.h"
-// #include "game.h"
+#include "game.h"
 
 #define POSICION_RELOJES_F   46
 #define POSICION_RELOJES_C_A 4
@@ -158,7 +158,6 @@ void screen_pintar_reloj_perro(perro_t *perro)
     uint columna = j->index == JUGADOR_A ? POSICION_RELOJES_C_A : POSICION_RELOJES_C_B;
 
     uchar col_libre = C_BG_BLACK | screen_color_jugador(j);
-
     uchar c, col;
     if (perro->libre == TRUE) {
         c = 'X';
