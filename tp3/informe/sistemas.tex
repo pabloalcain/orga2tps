@@ -1,0 +1,628 @@
+\documentclass[twocolumn,10pt]{article}
+\linespread{1.3}
+\usepackage[margin=2cm]{geometry}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{tikz}
+\usepackage{paralist}
+\usepackage{subcaption} \usepackage{graphicx}
+\usepackage{amsmath} \usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{listings}
+\lstset{language=C}
+\bibliographystyle{apsrev4-1}
+
+\graphicspath{{./fig/}}
+
+\newcommand{\IDT}{\texttt{IDT}}
+\newcommand{\MMU}{\texttt{MMU}}
+\newcommand{\GDT}{\texttt{GDT}}
+\newcommand{\TSS}{\texttt{TSS}}
+\newcommand{\PD}{\texttt{PD}}
+
+\begin{document} 
+
+\title{Jaurías: Programación de Sistemas Operativos}
+
+\author{M. I. Gamarra, D. Santos y P. N. Alcain}
+
+% \affiliation{\textbf{Grupo:} My Generation}
+
+\date{\today}
+
+%\begin{abstract}
+%\end{abstract}
+
+\maketitle
+
+\section{Introducción}
+El trabajo práctico consiste en la implementación de un pequeño
+Sistema Operativo que dé soporte para que corra una version del juego
+\textbf{Jaurías}. El desarrollo se basó en una serie de ejercicios que
+sirvieron como pautas de ordenamiento para la implementación del
+sistema.
+
+Los ejercicios estaban enfocados en la implementación del SO a través
+de ciertas etapas específicas para el funcionamiento del sistema.
+
+Las etapas desarrolladas son:
+
+\begin{itemize}
+\item Tabla de Descriptores Globales (\GDT): Armamos la tabla
+  \GDT para direccionar los primeros \texttt{500 MB} que
+  contengan los niveles \emph{usuario} y \emph{kernel} y tanto datos
+  como códigos. La segmentación es del tipo \emph{flat} (es decir,
+  todos los segmentos comparten el espacio total de los \texttt{500
+    MB}) ya que los permisos luego se conforman con la
+  paginación.
+
+\item Tabla de Descriptores de Interrupción (\IDT) de Procesador: Armamos la
+  tabla correspondiente a \IDT para las interrupciones del
+  procesador.
+
+\item Inicialización de Directorio de Páginas (\PD): Creamos e
+  inicializamos el directorio páginas y las tablas de pagina para el
+  \emph{kernel} con \emph{identity mapping} para el mapeo de las
+  páginas. Una vez que está mapeada la primera entrada, activamos
+  paginación.
+
+\item Unidad de Manejo de Memoria (\MMU): Escribimos una
+  unidad de memoria para manejar la paginación dinámica, que mapea y
+  desmapea páginas a medida que las tareas lo requieren.
+
+\item Tabla de Descriptores de Interrupción (\IDT) de Usuario:
+  Completamos la \IDT con las rutinas de atención de interrupciones
+  del usuario (teclado, reloj y servicio \texttt{0x46}). Además se
+  cambió el handler de las otras interrupciones para que, ante
+  cualquier excepción generada por una tarea asociada a un jugador,
+  ésta sea eliminada. La interrupción \texttt{0x46} es una
+  \texttt{syscall} que programamos de acuerdo a las acciones de las tareas.
+
+\item Tabla de Tareas (\TSS): Armamos la tabla de \TSS con 18 entradas
+  en total (la tarea inicial, la tarea \texttt{Idle} y las tareas de
+  los 8 perros para cada jugador). Luego completamos en la \GDT los
+  selectores de todas las táreas. Completamos cada entrada de la \TSS
+  con el código de ejecución común a los perros,
+  \texttt{0x401000}. Como \texttt{cr3} cambia según el tipo de perro,
+  \texttt{0x401000} está mapeado a distintas posiciones de memoria y, en
+  consecuencia, ejecuta código distinto. Aquí estamos usando
+  claramente la ventaja de la paginación.
+
+\item Scheduler: Programamos un scheduler de tipo Round-Robin que
+  intercambia las tareas, de modo tal de poder simular el
+  procesamiento ``simultáneo'' de tareas.
+
+\item Modo Debug: La idea era implementar esta característica del
+  juego, que pone el sistema en pausa y muestra el estado de los
+  registros del procesador cuando una tarea genera una excepción.
+
+\end{itemize}
+
+\section{El kernel}
+
+La tarea clave del kernel es pasar de modo real a modo protegido. Una
+vez en modo protegido, ya tenemos un kernel de 32 bits
+funcionando. Para pasar a modo protegido necesitamos definir la \GDT.
+
+\subsection{Ejercicio 1: \GDT}
+
+En este ejercicio armamos la \GDT. Es simplemente un arreglo de
+entradas con la siguiente estructura:
+
+\begin{lstlisting}
+  struct str_gdt_entry {
+    unsigned short  limit_0_15;
+    unsigned short  base_0_15;
+    unsigned char   base_23_16;
+    unsigned char   type:4;
+    unsigned char   s:1;
+    unsigned char   dpl:2;
+    unsigned char   p:1;
+    unsigned char   limit_16_19:4;
+    unsigned char   avl:1;
+    unsigned char   l:1;
+    unsigned char   db:1;
+    unsigned char   g:1;
+    unsigned char   base_31_24;
+  } __attribute__((__packed__, aligned (8)));
+
+  /* sizeof(struct str_gdt_entry) = 8 bytes */
+\end{lstlisting}
+
+Hay un detalle específico a este TP en particular, y es que además del
+\texttt{NULL\_DESCRIPTOR} en la posicion 0, recién llenamos la \GDT a
+partir del índice 8. La segmentación, como ya dijimos, es de tipo
+\emph{flat}, así que todas las entradas de la \GDT tienen que
+direccionar los primeros \texttt{500 MB}. Para poder direccionar tanta
+memoria, necesitamos que la granularidad sea 1 así direcciona de a
+páginas de \texttt{4 KB}. La primera entrada de la GDT es una entrada
+nula y, a partir de la octava entrada, cargamos los descriptores
+correspondientes a cada nivel (0 y 3) para código y datos
+respectivamente. La única diferencia entre cada par de segmentos en el
+mismo nivel es únicamente el campo tipo. El límite es \texttt{500
+  MB/4kb - 1= 0x1F400 - 1 = 0x1F3FF}, la última página
+direccionada. Así, por ejemplo, un descriptor de segmento de código de
+nivel 0 es de la forma:
+\begin{itemize}
+\item \textbf{límite} = \texttt{0x001F3FF} (\texttt{limit(0:15) =
+    0xF3FF} y \texttt{limit(16:19) = 0x1}).
+\item \textbf{base} = \texttt{0x0} (\texttt{base(0:15) = 0x0} y
+  \texttt{base(16:19) = 0x0}).
+\item \textbf{tipo} = \texttt{0xA} (de acuerdo a la tabla 3-1 de
+  Intel. También se puede pensar en setear cada bit por separado) que
+  indicar que es de código y permitir que se pueda leer y ejecutar. (o
+  sea, el tipo de memoria y el privilegio)
+\item En el bit de sistema le pusimos 1 para indicar que no es
+  de sistema.
+\item Le asignamos privilegio de kernel (DPL = 0).
+\item Lo marcamos como presente.
+\item En el campo AVL pusimos 0 al igual que en el campo \textit{l}
+  pues trabajamos con la arquitectura de 32 bits y como trabajamos con
+  segmentos de 32 bits marcamos el bit DB como uno.  
+\end{itemize}
+
+
+El resto de las definiciones es análoga. Una vez hecho esto,
+preparamos el sistema para pasar a modo protegido. Para pasar a modo
+protegido, lo que realizamos fue:
+\begin{itemize}
+\item Deshabilitar las interrupciones, usando \textbf{cli}.
+\item Habilitamos A20 (llamando a la rutina \texttt{habilitar\_ A20}).
+\item Cargamos la GDT utilizando la instrucción
+  \texttt{lgdt[GDT\_ DESC]}, donde \texttt{GDT\_DESC} es la base en la
+  que definimos la la GDT.
+\item Seteamos el bit PE del registro CR0 realizando un OR
+  entre lo que contiene este registro y \textbf{0x1}
+\item Finalmente realizamos el salto a
+  \texttt{(0x8*8):modo\_rotegido}, pues en la posición \textbf{0x8} de
+  la GDT se encuentra el selector de código de nivel 0 y
+  \texttt{modo\_protegido} es la etiqueta donde empezamos a definir el
+  código correspondiente al modo protegido.
+\end{itemize} 
+
+Estando en modo protegido, seteamos los correspondientes registros de
+segmento de datos y el segmento extra para video (en
+\texttt{fs}). Finalmente, seteamos la pila en la dirección
+\texttt{0x27000}, una vez en modo protegido, cargamos los registros
+\texttt{ebp} y \texttt{esp} con el valor \texttt{0x27000}.
+
+\subsubsection*{Específicos de este ejercicio}
+
+Finalmente, para terminar el ejercicio, inicializamos la pantalla
+llamando a la función proporcionada por la cátedra
+\texttt{screen\_inicializar()} la cual pinta el área de la pantalla
+con los colores que se muestran en el enunciado.
+
+\subsection{Ejercicio 2: Interrupciones del procesador}
+
+Completamos las entradas de la IDT para las entradas 0-19 (20 a 31
+estan reservadas). Todas estas entradas fueron inicializadas con los
+siguientes valores:
+\begin{itemize}
+\item En el campo offset(15:0) se colocan los últimos 2 bytes de la
+  dirección donde se encuentra la rutina de atención de la interrupción
+  en cuestión.
+\item En el selector de segmento ponemos \texttt{0x0008}, que corresponde a un
+  segmento de código de nivel 0.
+\item En los atributos de la entrada \texttt{IDT} usuario colocamos \texttt{0xEE00}
+  (macro \texttt{ID\_ENTRY}) que indica que estamos trabajando con una
+  interrupt gate, de tamaño 32 bits, \texttt{DPL} 3 y presente.
+\item En los atributos de la entrada \texttt{IDT} supervisor colocamos \texttt{0x8E00}
+  (macro \texttt{IDT\_ENTRY}) que indica que estamos trabajando con
+  una interrupt gate, de tamaño 32 bits, dpl 0 y presente.
+\item En el campo \texttt{offset(32:16)} colocamos los primero 2 bytes de la
+  dirección donde se encuentra la rutina de atención de la interrupción
+  en cuestión.
+\end{itemize}
+
+\begin{lstlisting}
+  struct str_idt_entry {
+    unsigned short offset_0_15;
+    unsigned short segsel;
+    unsigned char zero;
+    unsigned char type:4;
+    unsigned char s:1;
+    unsigned char dpl:2;
+    unsigned char p:1;
+    unsigned short offset_16_31;
+  } __attribute__((__packed__, aligned (8)));
+  
+  /* sizeof(struct str_idt_entry) = 8 bytes */
+\end{lstlisting}
+
+La macro sencillamente pone en el handler el código de ejecución
+definido en \texttt{isr.asm}. Éste sólo imprime en pantalla el tipo de
+interrupción.
+
+
+\subsubsection*{Específicos de este ejercicio}
+
+Para probar el uso de estas rutinas por parte del procesador,
+realizamos una división por cero, y efectivamente, se nos imprime en
+pantalla el mensaje de \texttt{Divide Error}.
+
+
+\subsubsection{Ejercicio 3: Iniciar el directorio de página} 
+
+La inicialización del directorio y la tabla de páginas la
+completamos sin hacer uso de la funci\'on inicializar\_dir\_kernel
+sino que lo hamos directamente en kernel.asm de la siguiente forma:
+\begin{itemize}
+\item Inicializamos todas las posiciones del Page Directory (PD) en
+  0x00000002.
+\item Apuntamos la primer página de PD a la page table y seteamos los
+  bits de presente y lectura/escritura
+\item Realizamos el identity mapping para las \texttt{0x1000} cada
+  p\'aginas de la \texttt{PAGE TABLE} y activamos la lectura/escritura
+  y el bit de presencia de cada página. (atributos)
+\end{itemize}
+
+Para relacionar una entrada en la tabla de páginas con una posicíon de
+memoria física, necesitamos dividir la posición por \texttt{0x1000}
+(\texttt{4 KB}), que es el tamaño de las páginas. Esto es lo que nos
+permite direcccionar hasta \texttt{4 GB} de memoria con la estructura
+de directorio+tabla de paginación. esto lo cumplimos al utilizar como
+posición inicial del Page Directory a la \texttt{0x27000} y a la del Page Table
+\texttt{0x28000}.
+
+
+\begin{lstlisting}
+  struct str_pd_entry {
+    unsigned char present:1;
+    unsigned char rw:1;
+    unsigned char user_supervisor:1;
+    unsigned char page_level_write_through:1;
+    unsigned char page_level_cache_disable:1;
+    unsigned char accessed:1;
+    unsigned char ignored:1;
+    unsigned char page_size:1;
+    unsigned char global:1;
+    unsigned char disp:3;
+    unsigned int  base_dir:20;
+} __attribute__((__packed__));
+  /* sizeof(struct str_pd_entry) = 4 bytes */
+\end{lstlisting}
+
+\begin{lstlisting}
+  struct str_pt_entry {
+    unsigned char present:1;
+    unsigned char rw:1;
+    unsigned char user_supervisor:1;
+    unsigned char page_level_write_through:1;
+    unsigned char page_level_cache_disable:1;
+    unsigned char accessed:1;
+    unsigned char dirty_bit:1;
+    unsigned char page_table_attr_index:1;
+    unsigned char global:1;
+    unsigned char disp:3;
+    unsigned int  base_dir:20;
+  } __attribute__((__packed__));
+  /* sizeof(struct str_pt_entry) = 4 bytes */
+\end{lstlisting}
+
+Para activar paginación cargamos en el campo base del \texttt{cr3} la
+dirección del \PD y seteamos el bit de paginación con \texttt{or cr3,
+  0x80000000}.
+
+\subsubsection*{Específicos de este ejercicio}
+Testeamos el ejercicio desmapeando la última página
+\texttt{0x3FF000}.
+
+
+\subsubsection{Ejercicio 4: Unidad de Manejo de Memoria}
+
+Escribimos una rutina (\texttt{inicializar\_mmu}) que inicializa las
+estructuras globales necesarias para administrar la memoria en el area
+libre (un contador de paginas libres):
+
+\begin{itemize}
+\item \texttt{PRIMER\_PAG\_LIBR: 0x101000}
+\item \texttt{ULTIMA\_PAG\_LIBR: 0x3FE000}
+\end{itemize}
+
+Además implementamos algunas funciones para el mapeo de las
+páginas:
+
+\begin{itemize} 
+\item \texttt{int mmu\_proxima\_pagina\_fisica\_libre()}
+\item \texttt{void mmu\_mapear\_pagina (uint virtual, uint cr3, uint fisica, uint attrs)}
+\end{itemize}
+
+Esto fue necesario para escribir la rutina
+\texttt{mmu\_inicializar\_memoria\_perro} encargada de inicializar un
+directorio de páginas y una tabla de páginas para cada una de las
+tareas.
+
+\subsubsection*{Específicos de este ejercicio}
+
+Con todo implementado inicializamos la tarea de un perro y la
+intercambiamos con el kernel, luego cambiamos de el color del fondo
+del primer caracter. Para luego volver a la normalidad, con esto nos
+aseguramos el correcto funcionamiento de lo recién implmentado.
+
+
+\subsection{Ejercicio 5: Interrupciones del Usuario}
+
+Agregamos 3 entradas a la IDT:
+
+\begin{itemize} 
+\item \texttt{32} para reloj
+\item \texttt{33} para teclado
+\item \texttt{0x46} para syscall
+\end{itemize}
+
+Las primeras 2 entradas las completamos de la misma forma que hicimos
+con las interrupciones del procesador en el punto 3. Es decir, para
+completar la entrada de \IDT pusimos como offset el campo
+\texttt{offset(15:0)} la direccióon donde se encuentra la rutina de
+atención de la interrupción en cuestión, en el selector de segmento
+ponemos 0x08 (que corresponde a un segmento de código de nivel 0) y en
+los atributos colocamos \texttt{0x8E00} (que indica que estamos
+trabajando con una interrupt gate, de tamaño 32 bits, dpl 0 y
+presente). La entrada de IDT correspondiente a la interrupcion \texttt{0x46},
+la completamos exactamente de la misma forma, pero poniendo el dpl en
+3 (o sea attrs en 0xEE00), pues es una interrupcion de tareas.
+
+Luego hay que escribir los handlers de las interrupciones: 
+
+\subsubsection{Reloj}
+
+Esta rutina, por cada tick, llama a la función
+\texttt{proximo\_reloj}, que realiza la animación de un cursor
+rotando. La función \texttt{proximo\_reloj} está definida en
+\texttt{isr.asm}.
+
+Esta rutina entonces es la entrada \texttt{\_isr32} en
+\texttt{isr.asm}. Hace los siguientes pasos:
+
+\begin{enumerate}
+\item desactivamos interrupciones \texttt{cli}
+\item preservamos registros \texttt{pushfd}
+\item preservamos EFLAGS \texttt{pushad}
+\item comunicamos al PIC que se atendió la interrupción
+  \texttt{fin\_intr\_pic1}
+\item llamamos a la rutina \texttt{proximo\_reloj}
+\item restauramos EFLAGS \texttt{popfd}
+\item restuaramos registros \texttt{popad}. 
+\item activamos interrupciones \texttt{sti}
+\item retornamos \texttt{iret}
+\end{enumerate}
+
+En el caso de la rutina de teclado, hacemos esencialmente lo mismo,
+pero movemos al registro \texttt{eax} la tecla apretada mediante
+\texttt{in al, 0x60}. ponemos \texttt{eax} en la pila y llamamos a la
+funcion \texttt{game\_atender\_teclado}. Luego restauramos \texttt{eax}
+y su ruta.
+
+La función \texttt{game\_atender\_teclado} es la que se encarga de realizar
+alguna acción segun la tecla que fue presionada.
+
+Para la rutina de la \texttt{\_isr46} por ahoa sólo modifica el vaor
+de \texttt{eax}, pero luego va a modificarse.
+
+\subsubsection{Ejercicio 6: Tabla de Tareas}
+
+\begin{lstlisting}
+  struct str_tss {
+    unsigned short  ptl;
+    unsigned short  unused0;
+    unsigned int    esp0;
+    unsigned short  ss0;
+    unsigned short  unused1;
+    unsigned int    esp1;
+    unsigned short  ss1;
+    unsigned short  unused2;
+    unsigned int    esp2;
+    unsigned short  ss2;
+    unsigned short  unused3;
+    unsigned int    cr3;
+    unsigned int    eip;
+    unsigned int    eflags;
+    unsigned int    eax;
+    unsigned int    ecx;
+    unsigned int    edx;
+    unsigned int    ebx;
+    unsigned int    esp;
+    unsigned int    ebp;
+    unsigned int    esi;
+    unsigned int    edi;
+    unsigned short  es;
+    unsigned short  unused4;
+    unsigned short  cs;
+    unsigned short  unused5;
+    unsigned short  ss;
+    unsigned short  unused6;
+    unsigned short  ds;
+    unsigned short  unused7;
+    unsigned short  fs;
+    unsigned short  unused8;
+    unsigned short  gs;
+    unsigned short  unused9;
+    unsigned short  ldt;
+    unsigned short  unused10;
+    unsigned short  dtrap;
+    unsigned short  iomap;
+  } __attribute__((__packed__, aligned (8)));
+
+  /* sizeof(struct str_tss) = 104 */
+\end{lstlisting}
+
+
+Como primer paso, definimos las entradas para la tarea inicial e idle
+en la \GDT dejando algunos valores para completar desde
+\texttt{tss.c}:
+
+\begin{itemize}
+\item \texttt{base\_0\_15}
+\item \texttt{base\_23\_16}
+\item \texttt{base\_31\_24}
+\item \texttt{limit\_0\_15}
+\end{itemize} 
+
+Estos valores se van a definir una vez inicializada la tabla con
+\texttt{tss\_inicializar}.
+
+Para inicializar la \TSS de la tarea \texttt{Idle}, realizamos una
+función (\texttt{tss\_initializar\_tarea\_idle}) que mapea a dirección
+virtual del código de la tarea con la dirección física del código de idle y
+completa la entrada \TSS con los siguientes valores:
+\begin{itemize}
+\item \texttt{cr3} es el del del kernel (no cambiamos el \PD);
+\item \texttt{eip} es la posición del código de la tarea en el \PD del
+  kernel (porque es el que seteamos en \texttt{cr3}).
+\item \texttt{EFLAGS} en \texttt{0x202}, es decir con interrupciones
+  en 1 y presente;
+\item Como la tarea IDLE corre en nivel 0, se mantienen los registros
+  de segmentación del kernel;
+\item Se apuntan el esp0, el esp y el ebp a donde se aloja la pila de
+  la tarea IDLE
+\end{itemize}
+
+La función \texttt{tss\_inicializar\_tarea} tiene como fin completar
+la \TSS de una tarea en particular, la que se pasa por parámetro y lo
+hace de la siguiente manera:
+\begin{itemize}
+\item \texttt{cr3} el directorio de páginas de la tarea (a priori no
+  tiene por qué ser el del kernel);
+\item \texttt{eip} a donde se encuentra la
+  tarea en el \PD;
+\item \texttt{EFLAGS} nuevamente en \texttt{0x202};
+\item Como las tareas corren en nivel 3 y para cumplir con lo
+  pedido, se almacenan los siguientes valores para los registros de
+  segmentación:
+  \begin{itemize}
+  \item \texttt{es = ss = ds = fs = gs = 0x33}, que es un
+    segmento de datos de nivel 3;
+  \item \texttt{cs = 0x2B}, que es un segmento de código de nivel
+    3;
+  \end{itemize}
+\item Tanto \texttt{esp} como \texttt{ebp} se ubican en la dirección de la pila
+  de la tarea que es \texttt{TASK\_STACK};
+\item El \texttt{esp0} en la dirección física de la pila de nivel 0 de
+  la tarea.
+\item El \texttt{ss} de nivel 0 en el segmento de datos de nivel 0 ubicado en
+  la posicipón \texttt{0x60};
+\end{itemize}
+
+En \texttt{tss\_initializar\_tarea\_inicial} no hace falta setear
+valores para la \TSS puesto que nunca se va a saltar a esa
+tarea, sólo nos interesa setear los valores de la GDT que no pudimos
+setear en la inicializaciónn.
+
+Para completar los descriptores anteriormente nombrados,
+utilizamos una función que se llama \texttt{tss\_inicializar}, la cual se
+encarga de llamar a :
+\begin{itemize}
+\item \texttt{tss\_initializar\_tarea\_inicial}
+\item \texttt{tss\_initializar\_tarea\_idle}
+\end{itemize}
+
+Una vez hecho todo eso, para ejecutar la tarea \texttt{Idle}, primero
+llamamos a \texttt{inicializar\_scheduler}, que inicializa todas las
+estructuras necesarias para arrancar el scheduler. Posteriormente
+cargamos el selector de la tarea inicial en un registro, es decir, el
+\texttt{0x40} y lo cargamos en el task register. Luego de cargar el
+task register, hacemos un cambio de tareas pasando a la tarea idle
+mediante un \texttt{0x48:0}. La CPU correrá la tarea idle y cuando se
+produzca la próxima interrupción de reloj saltará a la primera tarea.
+
+
+\subsubsection{Ejercicio 7: Scheduler}
+
+Implementamos la función \texttt{sched\_inicializar} seteando:
+
+Primero para la \texttt{Idle}:
+\begin{itemize}
+\item \texttt{scheduler.tasks[MAX\_CANT\_TAREAS\_VIVAS].gdt\_index =
+    COD\_TAREA\_IDLE\_DIR}
+\item \texttt{scheduler.tasks[MAX\_CANT\_TAREAS\_VIVAS].perro = NULL}
+\end{itemize}
+
+Luego para cada perro en el arreglo de tareas: 
+
+\begin{itemize}
+\item \texttt{scheduler.tasks[i].gdt\_index =
+  (GDT\_IDX\_TSS\_BASE\_PERROS\_A + i)}
+\item \texttt{scheduler.tasks[i].perro = NULL}
+\end{itemize}
+y
+\begin{itemize}
+\item \texttt{scheduler.tasks[MAX\_CANT\_PERROS\_VIVOS + i].gdt\_index =
+  (GDT\_IDX\_TSS\_BASE\_PERROS\_B + i)}
+\item \texttt{scheduler.tasks[MAX\_CANT\_PERROS\_VIVOS + i].perro = NULL}
+\end{itemize}
+
+aquí el índice \texttt{i} corre hasta 8, seteando los 8 perros de cada
+jugador.
+
+Y por último, el estado inicial del \texttt{scheduler}, con los
+jugadores:
+
+\begin{itemize}
+\item \texttt{scheduler.current = 0}
+\item \texttt{scheduler.indice\_ultimo\_jugador\_A = 1}
+\item \texttt{scheduler.indice\_ultimo\_jugador\_B = 9}
+\end{itemize}
+
+
+Implementamos la función \texttt{sched\_proxima\_a\_ejecutar}, cuya
+funcionalidad es hacer el switcheo round-robin de tareas entre los
+perros de cada jugador. Intercala las ejecuciones de los perros de
+cada jugador a la vez sin repetir el perro en caso de que tengan vivo
+mas de uno.
+
+Específico al problema es cómo se guarda la lista de tareas del
+scheduler. Lo más importante es tener las rutinas que la manejen
+adecuadamente. Básicamente, tenemos que poder:
+
+\begin{itemize}
+\item Agregar tarea
+\item Remover tarea
+\item Siguiente tarea
+\end{itemize}
+
+Es natural suponer que la estructura de datos óptima de la lista de
+tareas del scheduler va a depender mucho de la naturaleza del SO. En
+nuestro caso, la lista de tareas es un array, así que quitar una tarea
+es disminuir la cantidad de perros del jugador en cuestión y liberar
+la última posición. Agregar una tarea es aumentar la cantidad de
+perros del jugador y setear la entrada en la \TSS de acuerdo al tipo
+de perro y al nombre del jugador.
+
+Así, \texttt{sched\_proxima\_a\_ejecutar}, va cambiando entre los
+jugadores (en caso de que los dos tengan tareas activas) y dentro de
+cada jugador toma la acción del siguiente perro.  Cada interrupción de
+reloj llama a \texttt{sched\_proxima\_a\_ejecutar} en caso de que haya
+un perro vivo y en caso de que no haya tareas en ninguno de los
+jugadores, ejecuta la tarea \texttt{Idle}.
+
+Finalmente, los movimientos de los perros requieren privilegios de
+kernel para, por ejemplo, pintar el mapa. Como esto no pueden hacerlo
+las tareas directamente (no tienen los permisos), hay que hacerlo a
+través de una interrupción. En este caso, modificamos la interrupción
+de \texttt{syscall} \texttt{0x46} para que comunique al kernel la
+acción del perro. Como esta interrupción la tiene que pedir el
+usuario, la entrada de \IDT de \texttt{0x46} tiene que tener
+\texttt{DPL = 3}. Una vez que se lanza la interrupción, el kernel la
+maneja y decide qué hace. Es decir, la interrupción sólo es un
+\emph{pedido} al kernel. Éste después decide si le da curso y cómo,
+pudiendo incluso desalojar otra tarea.
+
+\subsubsection{Modo Debug}
+
+Tal como se especificó en el enunciado, las excepciones del procesador
+activan el modo debug en el juego, en el cual se setea la variable
+booleana \texttt{debug}. Así, cuando se produzca la próxima excepción
+causada por una tarea se imprime el cartel con el tipo de excepción
+que produjo y el valor de cada uno de los registros de la \TSS de esa
+tarea y el estado de la pila. Por último, al volver a presionar una
+tecla se desactiva el modo Debug y se reanuda el juego desde el estado
+anterior.
+
+\newpage
+
+
+
+
+\end{document}
