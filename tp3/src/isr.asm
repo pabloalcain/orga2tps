@@ -94,23 +94,23 @@ _isr%1:
     mov dword [debug_info + 20], edi
     mov dword [debug_info + 24], ebp
     mov dword [debug_info + 28], esp
- 
-  mov eax, [esp+12] ; eip
-  mov dword [debug_info + 32], eax ;eip  \
-    
-  mov ax, cs
-  mov word [debug_info + 36], ax
-  mov ax, ds
-  mov word [debug_info + 38], ax
-  mov ax, es
-  mov word [debug_info + 40], ax
-  mov ax, fs
-  mov word [debug_info + 42], ax
-  mov ax, gs
-  mov word [debug_info + 44], ax
-  mov ax, ss
-  mov word [debug_info + 46], ax
-    
+   
+    mov eax, [esp+12] ; eip
+    mov dword [debug_info + 32], eax ;eip  \
+      
+    mov ax, cs
+    mov word [debug_info + 36], ax
+    mov ax, ds
+    mov word [debug_info + 38], ax
+    mov ax, es
+    mov word [debug_info + 40], ax
+    mov ax, fs
+    mov word [debug_info + 42], ax
+    mov ax, gs
+    mov word [debug_info + 44], ax
+    mov ax, ss
+    mov word [debug_info + 46], ax
+      
     xor eax, eax
     pushf    ; obtenemos el registro
     pop ax   ; eflags

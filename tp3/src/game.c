@@ -167,8 +167,6 @@ void game_switch_modo_debug() {
 }
 
 void set_pausa() {
-	screen_pantalla_debug();
-	
 	pausa = TRUE;
 }
 

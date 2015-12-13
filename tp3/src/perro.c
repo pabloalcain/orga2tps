@@ -127,12 +127,12 @@ uint game_perro_mover(perro_t *perro, direccion dir)
     screen_borrar_perro(perro);
     perro->x = nuevo_x;
 		perro->y = nuevo_y;
-		screen_pintar_perro(perro);
 		//screen_actualizar_posicion_mapa(perro->x, perro->y);
 		
 		if((nuevo_x<1 || nuevo_y<1) ||(nuevo_x >= MAPA_ANCHO || nuevo_y >= MAPA_ALTO)){
 			game_perro_termino(perro);
 		}
+		screen_pintar_perro(perro);
     mmu_mover_perro(perro, viejo_x, viejo_y);		
     game_perro_ver_si_en_cucha(perro);
   }

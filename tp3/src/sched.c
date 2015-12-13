@@ -7,7 +7,7 @@ definicion de funciones del scheduler
 
 #include "sched.h"
 #include "i386.h"
-// #include "screen.h"
+#include "screen.h"
 
 //sched_t scheduler;
 
@@ -97,6 +97,8 @@ void sched_remover_tarea(unsigned int jugador)
 
 	if(modo_debug == TRUE){
 		set_pausa();
+		screen_guardar_estado_actual_pantalla();
+		screen_pantalla_debug();
 	}
 
 }

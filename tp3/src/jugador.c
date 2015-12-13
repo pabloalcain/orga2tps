@@ -88,6 +88,7 @@ uint game_jugador_moverse(jugador_t *j, int x, int y)
 {
 	int nuevo_x = j->x + x;
 	int nuevo_y = j->y + y;
+	if((nuevo_x<0 || nuevo_y<0) ||(nuevo_x >= MAPA_ANCHO || nuevo_y >= MAPA_ALTO)) return 0;
 
 	screen_borrar_jugador(j);
 
